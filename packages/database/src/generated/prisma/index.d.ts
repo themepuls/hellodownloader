@@ -58,6 +58,31 @@ export type CreditLog = $Result.DefaultSelection<Prisma.$CreditLogPayload>
  * 
  */
 export type Analytics = $Result.DefaultSelection<Prisma.$AnalyticsPayload>
+/**
+ * Model PaymentProviderConfig
+ * 
+ */
+export type PaymentProviderConfig = $Result.DefaultSelection<Prisma.$PaymentProviderConfigPayload>
+/**
+ * Model ContentPage
+ * 
+ */
+export type ContentPage = $Result.DefaultSelection<Prisma.$ContentPagePayload>
+/**
+ * Model AiImageProviderConfig
+ * 
+ */
+export type AiImageProviderConfig = $Result.DefaultSelection<Prisma.$AiImageProviderConfigPayload>
+/**
+ * Model ThumbnailAiSettings
+ * 
+ */
+export type ThumbnailAiSettings = $Result.DefaultSelection<Prisma.$ThumbnailAiSettingsPayload>
+/**
+ * Model AiApiSettings
+ * 
+ */
+export type AiApiSettings = $Result.DefaultSelection<Prisma.$AiApiSettingsPayload>
 
 /**
  * Enums
@@ -134,6 +159,16 @@ export const PaymentProvider: {
 export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
 
 
+export const AiImageProvider: {
+  FAL: 'FAL',
+  OPENAI: 'OPENAI',
+  REPLICATE: 'REPLICATE',
+  IDEOGRAM: 'IDEOGRAM'
+};
+
+export type AiImageProvider = (typeof AiImageProvider)[keyof typeof AiImageProvider]
+
+
 export const PaymentStatus: {
   PENDING: 'PENDING',
   COMPLETED: 'COMPLETED',
@@ -182,6 +217,10 @@ export const ThumbnailRatio: typeof $Enums.ThumbnailRatio
 export type PaymentProvider = $Enums.PaymentProvider
 
 export const PaymentProvider: typeof $Enums.PaymentProvider
+
+export type AiImageProvider = $Enums.AiImageProvider
+
+export const AiImageProvider: typeof $Enums.AiImageProvider
 
 export type PaymentStatus = $Enums.PaymentStatus
 
@@ -398,6 +437,56 @@ export class PrismaClient<
     * ```
     */
   get analytics(): Prisma.AnalyticsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.paymentProviderConfig`: Exposes CRUD operations for the **PaymentProviderConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PaymentProviderConfigs
+    * const paymentProviderConfigs = await prisma.paymentProviderConfig.findMany()
+    * ```
+    */
+  get paymentProviderConfig(): Prisma.PaymentProviderConfigDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.contentPage`: Exposes CRUD operations for the **ContentPage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ContentPages
+    * const contentPages = await prisma.contentPage.findMany()
+    * ```
+    */
+  get contentPage(): Prisma.ContentPageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aiImageProviderConfig`: Exposes CRUD operations for the **AiImageProviderConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AiImageProviderConfigs
+    * const aiImageProviderConfigs = await prisma.aiImageProviderConfig.findMany()
+    * ```
+    */
+  get aiImageProviderConfig(): Prisma.AiImageProviderConfigDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.thumbnailAiSettings`: Exposes CRUD operations for the **ThumbnailAiSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ThumbnailAiSettings
+    * const thumbnailAiSettings = await prisma.thumbnailAiSettings.findMany()
+    * ```
+    */
+  get thumbnailAiSettings(): Prisma.ThumbnailAiSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aiApiSettings`: Exposes CRUD operations for the **AiApiSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AiApiSettings
+    * const aiApiSettings = await prisma.aiApiSettings.findMany()
+    * ```
+    */
+  get aiApiSettings(): Prisma.AiApiSettingsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -847,7 +936,12 @@ export namespace Prisma {
     Transaction: 'Transaction',
     Payment: 'Payment',
     CreditLog: 'CreditLog',
-    Analytics: 'Analytics'
+    Analytics: 'Analytics',
+    PaymentProviderConfig: 'PaymentProviderConfig',
+    ContentPage: 'ContentPage',
+    AiImageProviderConfig: 'AiImageProviderConfig',
+    ThumbnailAiSettings: 'ThumbnailAiSettings',
+    AiApiSettings: 'AiApiSettings'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -866,7 +960,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "download" | "playlist" | "thumbnail" | "subscription" | "transaction" | "payment" | "creditLog" | "analytics"
+      modelProps: "user" | "download" | "playlist" | "thumbnail" | "subscription" | "transaction" | "payment" | "creditLog" | "analytics" | "paymentProviderConfig" | "contentPage" | "aiImageProviderConfig" | "thumbnailAiSettings" | "aiApiSettings"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1536,6 +1630,376 @@ export namespace Prisma {
           }
         }
       }
+      PaymentProviderConfig: {
+        payload: Prisma.$PaymentProviderConfigPayload<ExtArgs>
+        fields: Prisma.PaymentProviderConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PaymentProviderConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PaymentProviderConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.PaymentProviderConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PaymentProviderConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>
+          }
+          findMany: {
+            args: Prisma.PaymentProviderConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>[]
+          }
+          create: {
+            args: Prisma.PaymentProviderConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>
+          }
+          createMany: {
+            args: Prisma.PaymentProviderConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PaymentProviderConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.PaymentProviderConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>
+          }
+          update: {
+            args: Prisma.PaymentProviderConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.PaymentProviderConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PaymentProviderConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PaymentProviderConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.PaymentProviderConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentProviderConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.PaymentProviderConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePaymentProviderConfig>
+          }
+          groupBy: {
+            args: Prisma.PaymentProviderConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PaymentProviderConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PaymentProviderConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<PaymentProviderConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      ContentPage: {
+        payload: Prisma.$ContentPagePayload<ExtArgs>
+        fields: Prisma.ContentPageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ContentPageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ContentPageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>
+          }
+          findFirst: {
+            args: Prisma.ContentPageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ContentPageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>
+          }
+          findMany: {
+            args: Prisma.ContentPageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>[]
+          }
+          create: {
+            args: Prisma.ContentPageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>
+          }
+          createMany: {
+            args: Prisma.ContentPageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ContentPageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>[]
+          }
+          delete: {
+            args: Prisma.ContentPageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>
+          }
+          update: {
+            args: Prisma.ContentPageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>
+          }
+          deleteMany: {
+            args: Prisma.ContentPageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ContentPageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ContentPageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>[]
+          }
+          upsert: {
+            args: Prisma.ContentPageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentPagePayload>
+          }
+          aggregate: {
+            args: Prisma.ContentPageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContentPage>
+          }
+          groupBy: {
+            args: Prisma.ContentPageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContentPageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ContentPageCountArgs<ExtArgs>
+            result: $Utils.Optional<ContentPageCountAggregateOutputType> | number
+          }
+        }
+      }
+      AiImageProviderConfig: {
+        payload: Prisma.$AiImageProviderConfigPayload<ExtArgs>
+        fields: Prisma.AiImageProviderConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AiImageProviderConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AiImageProviderConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.AiImageProviderConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AiImageProviderConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>
+          }
+          findMany: {
+            args: Prisma.AiImageProviderConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>[]
+          }
+          create: {
+            args: Prisma.AiImageProviderConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>
+          }
+          createMany: {
+            args: Prisma.AiImageProviderConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AiImageProviderConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.AiImageProviderConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>
+          }
+          update: {
+            args: Prisma.AiImageProviderConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.AiImageProviderConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AiImageProviderConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AiImageProviderConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.AiImageProviderConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiImageProviderConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.AiImageProviderConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAiImageProviderConfig>
+          }
+          groupBy: {
+            args: Prisma.AiImageProviderConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AiImageProviderConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AiImageProviderConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<AiImageProviderConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      ThumbnailAiSettings: {
+        payload: Prisma.$ThumbnailAiSettingsPayload<ExtArgs>
+        fields: Prisma.ThumbnailAiSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ThumbnailAiSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ThumbnailAiSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.ThumbnailAiSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ThumbnailAiSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.ThumbnailAiSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.ThumbnailAiSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.ThumbnailAiSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ThumbnailAiSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.ThumbnailAiSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>
+          }
+          update: {
+            args: Prisma.ThumbnailAiSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.ThumbnailAiSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ThumbnailAiSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ThumbnailAiSettingsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>[]
+          }
+          upsert: {
+            args: Prisma.ThumbnailAiSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailAiSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.ThumbnailAiSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateThumbnailAiSettings>
+          }
+          groupBy: {
+            args: Prisma.ThumbnailAiSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ThumbnailAiSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ThumbnailAiSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<ThumbnailAiSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
+      AiApiSettings: {
+        payload: Prisma.$AiApiSettingsPayload<ExtArgs>
+        fields: Prisma.AiApiSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AiApiSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AiApiSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.AiApiSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AiApiSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.AiApiSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.AiApiSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.AiApiSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AiApiSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.AiApiSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>
+          }
+          update: {
+            args: Prisma.AiApiSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.AiApiSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AiApiSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AiApiSettingsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>[]
+          }
+          upsert: {
+            args: Prisma.AiApiSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiApiSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.AiApiSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAiApiSettings>
+          }
+          groupBy: {
+            args: Prisma.AiApiSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AiApiSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AiApiSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<AiApiSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1641,6 +2105,11 @@ export namespace Prisma {
     payment?: PaymentOmit
     creditLog?: CreditLogOmit
     analytics?: AnalyticsOmit
+    paymentProviderConfig?: PaymentProviderConfigOmit
+    contentPage?: ContentPageOmit
+    aiImageProviderConfig?: AiImageProviderConfigOmit
+    thumbnailAiSettings?: ThumbnailAiSettingsOmit
+    aiApiSettings?: AiApiSettingsOmit
   }
 
   /* Types for Logging */
@@ -12622,6 +13091,5277 @@ export namespace Prisma {
 
 
   /**
+   * Model PaymentProviderConfig
+   */
+
+  export type AggregatePaymentProviderConfig = {
+    _count: PaymentProviderConfigCountAggregateOutputType | null
+    _avg: PaymentProviderConfigAvgAggregateOutputType | null
+    _sum: PaymentProviderConfigSumAggregateOutputType | null
+    _min: PaymentProviderConfigMinAggregateOutputType | null
+    _max: PaymentProviderConfigMaxAggregateOutputType | null
+  }
+
+  export type PaymentProviderConfigAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type PaymentProviderConfigSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type PaymentProviderConfigMinAggregateOutputType = {
+    provider: $Enums.PaymentProvider | null
+    enabled: boolean | null
+    mode: string | null
+    amount: number | null
+    currency: string | null
+    updatedAt: Date | null
+  }
+
+  export type PaymentProviderConfigMaxAggregateOutputType = {
+    provider: $Enums.PaymentProvider | null
+    enabled: boolean | null
+    mode: string | null
+    amount: number | null
+    currency: string | null
+    updatedAt: Date | null
+  }
+
+  export type PaymentProviderConfigCountAggregateOutputType = {
+    provider: number
+    enabled: number
+    mode: number
+    amount: number
+    currency: number
+    secrets: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PaymentProviderConfigAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type PaymentProviderConfigSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type PaymentProviderConfigMinAggregateInputType = {
+    provider?: true
+    enabled?: true
+    mode?: true
+    amount?: true
+    currency?: true
+    updatedAt?: true
+  }
+
+  export type PaymentProviderConfigMaxAggregateInputType = {
+    provider?: true
+    enabled?: true
+    mode?: true
+    amount?: true
+    currency?: true
+    updatedAt?: true
+  }
+
+  export type PaymentProviderConfigCountAggregateInputType = {
+    provider?: true
+    enabled?: true
+    mode?: true
+    amount?: true
+    currency?: true
+    secrets?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PaymentProviderConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PaymentProviderConfig to aggregate.
+     */
+    where?: PaymentProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentProviderConfigs to fetch.
+     */
+    orderBy?: PaymentProviderConfigOrderByWithRelationInput | PaymentProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PaymentProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentProviderConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PaymentProviderConfigs
+    **/
+    _count?: true | PaymentProviderConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PaymentProviderConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PaymentProviderConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PaymentProviderConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PaymentProviderConfigMaxAggregateInputType
+  }
+
+  export type GetPaymentProviderConfigAggregateType<T extends PaymentProviderConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregatePaymentProviderConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePaymentProviderConfig[P]>
+      : GetScalarType<T[P], AggregatePaymentProviderConfig[P]>
+  }
+
+
+
+
+  export type PaymentProviderConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentProviderConfigWhereInput
+    orderBy?: PaymentProviderConfigOrderByWithAggregationInput | PaymentProviderConfigOrderByWithAggregationInput[]
+    by: PaymentProviderConfigScalarFieldEnum[] | PaymentProviderConfigScalarFieldEnum
+    having?: PaymentProviderConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PaymentProviderConfigCountAggregateInputType | true
+    _avg?: PaymentProviderConfigAvgAggregateInputType
+    _sum?: PaymentProviderConfigSumAggregateInputType
+    _min?: PaymentProviderConfigMinAggregateInputType
+    _max?: PaymentProviderConfigMaxAggregateInputType
+  }
+
+  export type PaymentProviderConfigGroupByOutputType = {
+    provider: $Enums.PaymentProvider
+    enabled: boolean
+    mode: string
+    amount: number
+    currency: string
+    secrets: JsonValue | null
+    updatedAt: Date
+    _count: PaymentProviderConfigCountAggregateOutputType | null
+    _avg: PaymentProviderConfigAvgAggregateOutputType | null
+    _sum: PaymentProviderConfigSumAggregateOutputType | null
+    _min: PaymentProviderConfigMinAggregateOutputType | null
+    _max: PaymentProviderConfigMaxAggregateOutputType | null
+  }
+
+  type GetPaymentProviderConfigGroupByPayload<T extends PaymentProviderConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PaymentProviderConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PaymentProviderConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PaymentProviderConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], PaymentProviderConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PaymentProviderConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    provider?: boolean
+    enabled?: boolean
+    mode?: boolean
+    amount?: boolean
+    currency?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["paymentProviderConfig"]>
+
+  export type PaymentProviderConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    provider?: boolean
+    enabled?: boolean
+    mode?: boolean
+    amount?: boolean
+    currency?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["paymentProviderConfig"]>
+
+  export type PaymentProviderConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    provider?: boolean
+    enabled?: boolean
+    mode?: boolean
+    amount?: boolean
+    currency?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["paymentProviderConfig"]>
+
+  export type PaymentProviderConfigSelectScalar = {
+    provider?: boolean
+    enabled?: boolean
+    mode?: boolean
+    amount?: boolean
+    currency?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PaymentProviderConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"provider" | "enabled" | "mode" | "amount" | "currency" | "secrets" | "updatedAt", ExtArgs["result"]["paymentProviderConfig"]>
+
+  export type $PaymentProviderConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PaymentProviderConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      provider: $Enums.PaymentProvider
+      enabled: boolean
+      mode: string
+      amount: number
+      currency: string
+      secrets: Prisma.JsonValue | null
+      updatedAt: Date
+    }, ExtArgs["result"]["paymentProviderConfig"]>
+    composites: {}
+  }
+
+  type PaymentProviderConfigGetPayload<S extends boolean | null | undefined | PaymentProviderConfigDefaultArgs> = $Result.GetResult<Prisma.$PaymentProviderConfigPayload, S>
+
+  type PaymentProviderConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PaymentProviderConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PaymentProviderConfigCountAggregateInputType | true
+    }
+
+  export interface PaymentProviderConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PaymentProviderConfig'], meta: { name: 'PaymentProviderConfig' } }
+    /**
+     * Find zero or one PaymentProviderConfig that matches the filter.
+     * @param {PaymentProviderConfigFindUniqueArgs} args - Arguments to find a PaymentProviderConfig
+     * @example
+     * // Get one PaymentProviderConfig
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PaymentProviderConfigFindUniqueArgs>(args: SelectSubset<T, PaymentProviderConfigFindUniqueArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PaymentProviderConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PaymentProviderConfigFindUniqueOrThrowArgs} args - Arguments to find a PaymentProviderConfig
+     * @example
+     * // Get one PaymentProviderConfig
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PaymentProviderConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, PaymentProviderConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PaymentProviderConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentProviderConfigFindFirstArgs} args - Arguments to find a PaymentProviderConfig
+     * @example
+     * // Get one PaymentProviderConfig
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PaymentProviderConfigFindFirstArgs>(args?: SelectSubset<T, PaymentProviderConfigFindFirstArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PaymentProviderConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentProviderConfigFindFirstOrThrowArgs} args - Arguments to find a PaymentProviderConfig
+     * @example
+     * // Get one PaymentProviderConfig
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PaymentProviderConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, PaymentProviderConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PaymentProviderConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentProviderConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PaymentProviderConfigs
+     * const paymentProviderConfigs = await prisma.paymentProviderConfig.findMany()
+     * 
+     * // Get first 10 PaymentProviderConfigs
+     * const paymentProviderConfigs = await prisma.paymentProviderConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `enabled`
+     * const paymentProviderConfigWithEnabledOnly = await prisma.paymentProviderConfig.findMany({ select: { enabled: true } })
+     * 
+     */
+    findMany<T extends PaymentProviderConfigFindManyArgs>(args?: SelectSubset<T, PaymentProviderConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PaymentProviderConfig.
+     * @param {PaymentProviderConfigCreateArgs} args - Arguments to create a PaymentProviderConfig.
+     * @example
+     * // Create one PaymentProviderConfig
+     * const PaymentProviderConfig = await prisma.paymentProviderConfig.create({
+     *   data: {
+     *     // ... data to create a PaymentProviderConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends PaymentProviderConfigCreateArgs>(args: SelectSubset<T, PaymentProviderConfigCreateArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PaymentProviderConfigs.
+     * @param {PaymentProviderConfigCreateManyArgs} args - Arguments to create many PaymentProviderConfigs.
+     * @example
+     * // Create many PaymentProviderConfigs
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PaymentProviderConfigCreateManyArgs>(args?: SelectSubset<T, PaymentProviderConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PaymentProviderConfigs and returns the data saved in the database.
+     * @param {PaymentProviderConfigCreateManyAndReturnArgs} args - Arguments to create many PaymentProviderConfigs.
+     * @example
+     * // Create many PaymentProviderConfigs
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PaymentProviderConfigs and only return the `enabled`
+     * const paymentProviderConfigWithEnabledOnly = await prisma.paymentProviderConfig.createManyAndReturn({
+     *   select: { enabled: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PaymentProviderConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, PaymentProviderConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PaymentProviderConfig.
+     * @param {PaymentProviderConfigDeleteArgs} args - Arguments to delete one PaymentProviderConfig.
+     * @example
+     * // Delete one PaymentProviderConfig
+     * const PaymentProviderConfig = await prisma.paymentProviderConfig.delete({
+     *   where: {
+     *     // ... filter to delete one PaymentProviderConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PaymentProviderConfigDeleteArgs>(args: SelectSubset<T, PaymentProviderConfigDeleteArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PaymentProviderConfig.
+     * @param {PaymentProviderConfigUpdateArgs} args - Arguments to update one PaymentProviderConfig.
+     * @example
+     * // Update one PaymentProviderConfig
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PaymentProviderConfigUpdateArgs>(args: SelectSubset<T, PaymentProviderConfigUpdateArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PaymentProviderConfigs.
+     * @param {PaymentProviderConfigDeleteManyArgs} args - Arguments to filter PaymentProviderConfigs to delete.
+     * @example
+     * // Delete a few PaymentProviderConfigs
+     * const { count } = await prisma.paymentProviderConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PaymentProviderConfigDeleteManyArgs>(args?: SelectSubset<T, PaymentProviderConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PaymentProviderConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentProviderConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PaymentProviderConfigs
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PaymentProviderConfigUpdateManyArgs>(args: SelectSubset<T, PaymentProviderConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PaymentProviderConfigs and returns the data updated in the database.
+     * @param {PaymentProviderConfigUpdateManyAndReturnArgs} args - Arguments to update many PaymentProviderConfigs.
+     * @example
+     * // Update many PaymentProviderConfigs
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PaymentProviderConfigs and only return the `enabled`
+     * const paymentProviderConfigWithEnabledOnly = await prisma.paymentProviderConfig.updateManyAndReturn({
+     *   select: { enabled: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PaymentProviderConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, PaymentProviderConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PaymentProviderConfig.
+     * @param {PaymentProviderConfigUpsertArgs} args - Arguments to update or create a PaymentProviderConfig.
+     * @example
+     * // Update or create a PaymentProviderConfig
+     * const paymentProviderConfig = await prisma.paymentProviderConfig.upsert({
+     *   create: {
+     *     // ... data to create a PaymentProviderConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PaymentProviderConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PaymentProviderConfigUpsertArgs>(args: SelectSubset<T, PaymentProviderConfigUpsertArgs<ExtArgs>>): Prisma__PaymentProviderConfigClient<$Result.GetResult<Prisma.$PaymentProviderConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PaymentProviderConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentProviderConfigCountArgs} args - Arguments to filter PaymentProviderConfigs to count.
+     * @example
+     * // Count the number of PaymentProviderConfigs
+     * const count = await prisma.paymentProviderConfig.count({
+     *   where: {
+     *     // ... the filter for the PaymentProviderConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends PaymentProviderConfigCountArgs>(
+      args?: Subset<T, PaymentProviderConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PaymentProviderConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PaymentProviderConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentProviderConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PaymentProviderConfigAggregateArgs>(args: Subset<T, PaymentProviderConfigAggregateArgs>): Prisma.PrismaPromise<GetPaymentProviderConfigAggregateType<T>>
+
+    /**
+     * Group by PaymentProviderConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentProviderConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PaymentProviderConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PaymentProviderConfigGroupByArgs['orderBy'] }
+        : { orderBy?: PaymentProviderConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PaymentProviderConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPaymentProviderConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PaymentProviderConfig model
+   */
+  readonly fields: PaymentProviderConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PaymentProviderConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PaymentProviderConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PaymentProviderConfig model
+   */
+  interface PaymentProviderConfigFieldRefs {
+    readonly provider: FieldRef<"PaymentProviderConfig", 'PaymentProvider'>
+    readonly enabled: FieldRef<"PaymentProviderConfig", 'Boolean'>
+    readonly mode: FieldRef<"PaymentProviderConfig", 'String'>
+    readonly amount: FieldRef<"PaymentProviderConfig", 'Float'>
+    readonly currency: FieldRef<"PaymentProviderConfig", 'String'>
+    readonly secrets: FieldRef<"PaymentProviderConfig", 'Json'>
+    readonly updatedAt: FieldRef<"PaymentProviderConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PaymentProviderConfig findUnique
+   */
+  export type PaymentProviderConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which PaymentProviderConfig to fetch.
+     */
+    where: PaymentProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * PaymentProviderConfig findUniqueOrThrow
+   */
+  export type PaymentProviderConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which PaymentProviderConfig to fetch.
+     */
+    where: PaymentProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * PaymentProviderConfig findFirst
+   */
+  export type PaymentProviderConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which PaymentProviderConfig to fetch.
+     */
+    where?: PaymentProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentProviderConfigs to fetch.
+     */
+    orderBy?: PaymentProviderConfigOrderByWithRelationInput | PaymentProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PaymentProviderConfigs.
+     */
+    cursor?: PaymentProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentProviderConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentProviderConfigs.
+     */
+    distinct?: PaymentProviderConfigScalarFieldEnum | PaymentProviderConfigScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentProviderConfig findFirstOrThrow
+   */
+  export type PaymentProviderConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which PaymentProviderConfig to fetch.
+     */
+    where?: PaymentProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentProviderConfigs to fetch.
+     */
+    orderBy?: PaymentProviderConfigOrderByWithRelationInput | PaymentProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PaymentProviderConfigs.
+     */
+    cursor?: PaymentProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentProviderConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PaymentProviderConfigs.
+     */
+    distinct?: PaymentProviderConfigScalarFieldEnum | PaymentProviderConfigScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentProviderConfig findMany
+   */
+  export type PaymentProviderConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which PaymentProviderConfigs to fetch.
+     */
+    where?: PaymentProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PaymentProviderConfigs to fetch.
+     */
+    orderBy?: PaymentProviderConfigOrderByWithRelationInput | PaymentProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PaymentProviderConfigs.
+     */
+    cursor?: PaymentProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PaymentProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PaymentProviderConfigs.
+     */
+    skip?: number
+    distinct?: PaymentProviderConfigScalarFieldEnum | PaymentProviderConfigScalarFieldEnum[]
+  }
+
+  /**
+   * PaymentProviderConfig create
+   */
+  export type PaymentProviderConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to create a PaymentProviderConfig.
+     */
+    data: XOR<PaymentProviderConfigCreateInput, PaymentProviderConfigUncheckedCreateInput>
+  }
+
+  /**
+   * PaymentProviderConfig createMany
+   */
+  export type PaymentProviderConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PaymentProviderConfigs.
+     */
+    data: PaymentProviderConfigCreateManyInput | PaymentProviderConfigCreateManyInput[]
+  }
+
+  /**
+   * PaymentProviderConfig createManyAndReturn
+   */
+  export type PaymentProviderConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many PaymentProviderConfigs.
+     */
+    data: PaymentProviderConfigCreateManyInput | PaymentProviderConfigCreateManyInput[]
+  }
+
+  /**
+   * PaymentProviderConfig update
+   */
+  export type PaymentProviderConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to update a PaymentProviderConfig.
+     */
+    data: XOR<PaymentProviderConfigUpdateInput, PaymentProviderConfigUncheckedUpdateInput>
+    /**
+     * Choose, which PaymentProviderConfig to update.
+     */
+    where: PaymentProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * PaymentProviderConfig updateMany
+   */
+  export type PaymentProviderConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PaymentProviderConfigs.
+     */
+    data: XOR<PaymentProviderConfigUpdateManyMutationInput, PaymentProviderConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which PaymentProviderConfigs to update
+     */
+    where?: PaymentProviderConfigWhereInput
+    /**
+     * Limit how many PaymentProviderConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PaymentProviderConfig updateManyAndReturn
+   */
+  export type PaymentProviderConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update PaymentProviderConfigs.
+     */
+    data: XOR<PaymentProviderConfigUpdateManyMutationInput, PaymentProviderConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which PaymentProviderConfigs to update
+     */
+    where?: PaymentProviderConfigWhereInput
+    /**
+     * Limit how many PaymentProviderConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PaymentProviderConfig upsert
+   */
+  export type PaymentProviderConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * The filter to search for the PaymentProviderConfig to update in case it exists.
+     */
+    where: PaymentProviderConfigWhereUniqueInput
+    /**
+     * In case the PaymentProviderConfig found by the `where` argument doesn't exist, create a new PaymentProviderConfig with this data.
+     */
+    create: XOR<PaymentProviderConfigCreateInput, PaymentProviderConfigUncheckedCreateInput>
+    /**
+     * In case the PaymentProviderConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PaymentProviderConfigUpdateInput, PaymentProviderConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * PaymentProviderConfig delete
+   */
+  export type PaymentProviderConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter which PaymentProviderConfig to delete.
+     */
+    where: PaymentProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * PaymentProviderConfig deleteMany
+   */
+  export type PaymentProviderConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PaymentProviderConfigs to delete
+     */
+    where?: PaymentProviderConfigWhereInput
+    /**
+     * Limit how many PaymentProviderConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PaymentProviderConfig without action
+   */
+  export type PaymentProviderConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PaymentProviderConfig
+     */
+    select?: PaymentProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PaymentProviderConfig
+     */
+    omit?: PaymentProviderConfigOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ContentPage
+   */
+
+  export type AggregateContentPage = {
+    _count: ContentPageCountAggregateOutputType | null
+    _min: ContentPageMinAggregateOutputType | null
+    _max: ContentPageMaxAggregateOutputType | null
+  }
+
+  export type ContentPageMinAggregateOutputType = {
+    slug: string | null
+    title: string | null
+    published: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type ContentPageMaxAggregateOutputType = {
+    slug: string | null
+    title: string | null
+    published: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type ContentPageCountAggregateOutputType = {
+    slug: number
+    title: number
+    sections: number
+    published: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ContentPageMinAggregateInputType = {
+    slug?: true
+    title?: true
+    published?: true
+    updatedAt?: true
+  }
+
+  export type ContentPageMaxAggregateInputType = {
+    slug?: true
+    title?: true
+    published?: true
+    updatedAt?: true
+  }
+
+  export type ContentPageCountAggregateInputType = {
+    slug?: true
+    title?: true
+    sections?: true
+    published?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ContentPageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContentPage to aggregate.
+     */
+    where?: ContentPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentPages to fetch.
+     */
+    orderBy?: ContentPageOrderByWithRelationInput | ContentPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ContentPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentPages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ContentPages
+    **/
+    _count?: true | ContentPageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ContentPageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ContentPageMaxAggregateInputType
+  }
+
+  export type GetContentPageAggregateType<T extends ContentPageAggregateArgs> = {
+        [P in keyof T & keyof AggregateContentPage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateContentPage[P]>
+      : GetScalarType<T[P], AggregateContentPage[P]>
+  }
+
+
+
+
+  export type ContentPageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContentPageWhereInput
+    orderBy?: ContentPageOrderByWithAggregationInput | ContentPageOrderByWithAggregationInput[]
+    by: ContentPageScalarFieldEnum[] | ContentPageScalarFieldEnum
+    having?: ContentPageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ContentPageCountAggregateInputType | true
+    _min?: ContentPageMinAggregateInputType
+    _max?: ContentPageMaxAggregateInputType
+  }
+
+  export type ContentPageGroupByOutputType = {
+    slug: string
+    title: string
+    sections: JsonValue | null
+    published: boolean
+    updatedAt: Date
+    _count: ContentPageCountAggregateOutputType | null
+    _min: ContentPageMinAggregateOutputType | null
+    _max: ContentPageMaxAggregateOutputType | null
+  }
+
+  type GetContentPageGroupByPayload<T extends ContentPageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ContentPageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ContentPageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ContentPageGroupByOutputType[P]>
+            : GetScalarType<T[P], ContentPageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ContentPageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    slug?: boolean
+    title?: boolean
+    sections?: boolean
+    published?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["contentPage"]>
+
+  export type ContentPageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    slug?: boolean
+    title?: boolean
+    sections?: boolean
+    published?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["contentPage"]>
+
+  export type ContentPageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    slug?: boolean
+    title?: boolean
+    sections?: boolean
+    published?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["contentPage"]>
+
+  export type ContentPageSelectScalar = {
+    slug?: boolean
+    title?: boolean
+    sections?: boolean
+    published?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ContentPageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"slug" | "title" | "sections" | "published" | "updatedAt", ExtArgs["result"]["contentPage"]>
+
+  export type $ContentPagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContentPage"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      slug: string
+      title: string
+      sections: Prisma.JsonValue | null
+      published: boolean
+      updatedAt: Date
+    }, ExtArgs["result"]["contentPage"]>
+    composites: {}
+  }
+
+  type ContentPageGetPayload<S extends boolean | null | undefined | ContentPageDefaultArgs> = $Result.GetResult<Prisma.$ContentPagePayload, S>
+
+  type ContentPageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ContentPageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ContentPageCountAggregateInputType | true
+    }
+
+  export interface ContentPageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContentPage'], meta: { name: 'ContentPage' } }
+    /**
+     * Find zero or one ContentPage that matches the filter.
+     * @param {ContentPageFindUniqueArgs} args - Arguments to find a ContentPage
+     * @example
+     * // Get one ContentPage
+     * const contentPage = await prisma.contentPage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ContentPageFindUniqueArgs>(args: SelectSubset<T, ContentPageFindUniqueArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ContentPage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ContentPageFindUniqueOrThrowArgs} args - Arguments to find a ContentPage
+     * @example
+     * // Get one ContentPage
+     * const contentPage = await prisma.contentPage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ContentPageFindUniqueOrThrowArgs>(args: SelectSubset<T, ContentPageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContentPage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentPageFindFirstArgs} args - Arguments to find a ContentPage
+     * @example
+     * // Get one ContentPage
+     * const contentPage = await prisma.contentPage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ContentPageFindFirstArgs>(args?: SelectSubset<T, ContentPageFindFirstArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContentPage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentPageFindFirstOrThrowArgs} args - Arguments to find a ContentPage
+     * @example
+     * // Get one ContentPage
+     * const contentPage = await prisma.contentPage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ContentPageFindFirstOrThrowArgs>(args?: SelectSubset<T, ContentPageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ContentPages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentPageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ContentPages
+     * const contentPages = await prisma.contentPage.findMany()
+     * 
+     * // Get first 10 ContentPages
+     * const contentPages = await prisma.contentPage.findMany({ take: 10 })
+     * 
+     * // Only select the `slug`
+     * const contentPageWithSlugOnly = await prisma.contentPage.findMany({ select: { slug: true } })
+     * 
+     */
+    findMany<T extends ContentPageFindManyArgs>(args?: SelectSubset<T, ContentPageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ContentPage.
+     * @param {ContentPageCreateArgs} args - Arguments to create a ContentPage.
+     * @example
+     * // Create one ContentPage
+     * const ContentPage = await prisma.contentPage.create({
+     *   data: {
+     *     // ... data to create a ContentPage
+     *   }
+     * })
+     * 
+     */
+    create<T extends ContentPageCreateArgs>(args: SelectSubset<T, ContentPageCreateArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ContentPages.
+     * @param {ContentPageCreateManyArgs} args - Arguments to create many ContentPages.
+     * @example
+     * // Create many ContentPages
+     * const contentPage = await prisma.contentPage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ContentPageCreateManyArgs>(args?: SelectSubset<T, ContentPageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ContentPages and returns the data saved in the database.
+     * @param {ContentPageCreateManyAndReturnArgs} args - Arguments to create many ContentPages.
+     * @example
+     * // Create many ContentPages
+     * const contentPage = await prisma.contentPage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ContentPages and only return the `slug`
+     * const contentPageWithSlugOnly = await prisma.contentPage.createManyAndReturn({
+     *   select: { slug: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ContentPageCreateManyAndReturnArgs>(args?: SelectSubset<T, ContentPageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ContentPage.
+     * @param {ContentPageDeleteArgs} args - Arguments to delete one ContentPage.
+     * @example
+     * // Delete one ContentPage
+     * const ContentPage = await prisma.contentPage.delete({
+     *   where: {
+     *     // ... filter to delete one ContentPage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ContentPageDeleteArgs>(args: SelectSubset<T, ContentPageDeleteArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ContentPage.
+     * @param {ContentPageUpdateArgs} args - Arguments to update one ContentPage.
+     * @example
+     * // Update one ContentPage
+     * const contentPage = await prisma.contentPage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ContentPageUpdateArgs>(args: SelectSubset<T, ContentPageUpdateArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ContentPages.
+     * @param {ContentPageDeleteManyArgs} args - Arguments to filter ContentPages to delete.
+     * @example
+     * // Delete a few ContentPages
+     * const { count } = await prisma.contentPage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ContentPageDeleteManyArgs>(args?: SelectSubset<T, ContentPageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContentPages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentPageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ContentPages
+     * const contentPage = await prisma.contentPage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ContentPageUpdateManyArgs>(args: SelectSubset<T, ContentPageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContentPages and returns the data updated in the database.
+     * @param {ContentPageUpdateManyAndReturnArgs} args - Arguments to update many ContentPages.
+     * @example
+     * // Update many ContentPages
+     * const contentPage = await prisma.contentPage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ContentPages and only return the `slug`
+     * const contentPageWithSlugOnly = await prisma.contentPage.updateManyAndReturn({
+     *   select: { slug: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ContentPageUpdateManyAndReturnArgs>(args: SelectSubset<T, ContentPageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ContentPage.
+     * @param {ContentPageUpsertArgs} args - Arguments to update or create a ContentPage.
+     * @example
+     * // Update or create a ContentPage
+     * const contentPage = await prisma.contentPage.upsert({
+     *   create: {
+     *     // ... data to create a ContentPage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ContentPage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ContentPageUpsertArgs>(args: SelectSubset<T, ContentPageUpsertArgs<ExtArgs>>): Prisma__ContentPageClient<$Result.GetResult<Prisma.$ContentPagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ContentPages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentPageCountArgs} args - Arguments to filter ContentPages to count.
+     * @example
+     * // Count the number of ContentPages
+     * const count = await prisma.contentPage.count({
+     *   where: {
+     *     // ... the filter for the ContentPages we want to count
+     *   }
+     * })
+    **/
+    count<T extends ContentPageCountArgs>(
+      args?: Subset<T, ContentPageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ContentPageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ContentPage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentPageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ContentPageAggregateArgs>(args: Subset<T, ContentPageAggregateArgs>): Prisma.PrismaPromise<GetContentPageAggregateType<T>>
+
+    /**
+     * Group by ContentPage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentPageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ContentPageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ContentPageGroupByArgs['orderBy'] }
+        : { orderBy?: ContentPageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ContentPageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContentPageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ContentPage model
+   */
+  readonly fields: ContentPageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ContentPage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ContentPageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ContentPage model
+   */
+  interface ContentPageFieldRefs {
+    readonly slug: FieldRef<"ContentPage", 'String'>
+    readonly title: FieldRef<"ContentPage", 'String'>
+    readonly sections: FieldRef<"ContentPage", 'Json'>
+    readonly published: FieldRef<"ContentPage", 'Boolean'>
+    readonly updatedAt: FieldRef<"ContentPage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ContentPage findUnique
+   */
+  export type ContentPageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContentPage to fetch.
+     */
+    where: ContentPageWhereUniqueInput
+  }
+
+  /**
+   * ContentPage findUniqueOrThrow
+   */
+  export type ContentPageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContentPage to fetch.
+     */
+    where: ContentPageWhereUniqueInput
+  }
+
+  /**
+   * ContentPage findFirst
+   */
+  export type ContentPageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContentPage to fetch.
+     */
+    where?: ContentPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentPages to fetch.
+     */
+    orderBy?: ContentPageOrderByWithRelationInput | ContentPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContentPages.
+     */
+    cursor?: ContentPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentPages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContentPages.
+     */
+    distinct?: ContentPageScalarFieldEnum | ContentPageScalarFieldEnum[]
+  }
+
+  /**
+   * ContentPage findFirstOrThrow
+   */
+  export type ContentPageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContentPage to fetch.
+     */
+    where?: ContentPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentPages to fetch.
+     */
+    orderBy?: ContentPageOrderByWithRelationInput | ContentPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContentPages.
+     */
+    cursor?: ContentPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentPages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContentPages.
+     */
+    distinct?: ContentPageScalarFieldEnum | ContentPageScalarFieldEnum[]
+  }
+
+  /**
+   * ContentPage findMany
+   */
+  export type ContentPageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContentPages to fetch.
+     */
+    where?: ContentPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentPages to fetch.
+     */
+    orderBy?: ContentPageOrderByWithRelationInput | ContentPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ContentPages.
+     */
+    cursor?: ContentPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentPages.
+     */
+    skip?: number
+    distinct?: ContentPageScalarFieldEnum | ContentPageScalarFieldEnum[]
+  }
+
+  /**
+   * ContentPage create
+   */
+  export type ContentPageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ContentPage.
+     */
+    data: XOR<ContentPageCreateInput, ContentPageUncheckedCreateInput>
+  }
+
+  /**
+   * ContentPage createMany
+   */
+  export type ContentPageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ContentPages.
+     */
+    data: ContentPageCreateManyInput | ContentPageCreateManyInput[]
+  }
+
+  /**
+   * ContentPage createManyAndReturn
+   */
+  export type ContentPageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * The data used to create many ContentPages.
+     */
+    data: ContentPageCreateManyInput | ContentPageCreateManyInput[]
+  }
+
+  /**
+   * ContentPage update
+   */
+  export type ContentPageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ContentPage.
+     */
+    data: XOR<ContentPageUpdateInput, ContentPageUncheckedUpdateInput>
+    /**
+     * Choose, which ContentPage to update.
+     */
+    where: ContentPageWhereUniqueInput
+  }
+
+  /**
+   * ContentPage updateMany
+   */
+  export type ContentPageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ContentPages.
+     */
+    data: XOR<ContentPageUpdateManyMutationInput, ContentPageUncheckedUpdateManyInput>
+    /**
+     * Filter which ContentPages to update
+     */
+    where?: ContentPageWhereInput
+    /**
+     * Limit how many ContentPages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContentPage updateManyAndReturn
+   */
+  export type ContentPageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * The data used to update ContentPages.
+     */
+    data: XOR<ContentPageUpdateManyMutationInput, ContentPageUncheckedUpdateManyInput>
+    /**
+     * Filter which ContentPages to update
+     */
+    where?: ContentPageWhereInput
+    /**
+     * Limit how many ContentPages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContentPage upsert
+   */
+  export type ContentPageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ContentPage to update in case it exists.
+     */
+    where: ContentPageWhereUniqueInput
+    /**
+     * In case the ContentPage found by the `where` argument doesn't exist, create a new ContentPage with this data.
+     */
+    create: XOR<ContentPageCreateInput, ContentPageUncheckedCreateInput>
+    /**
+     * In case the ContentPage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ContentPageUpdateInput, ContentPageUncheckedUpdateInput>
+  }
+
+  /**
+   * ContentPage delete
+   */
+  export type ContentPageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+    /**
+     * Filter which ContentPage to delete.
+     */
+    where: ContentPageWhereUniqueInput
+  }
+
+  /**
+   * ContentPage deleteMany
+   */
+  export type ContentPageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContentPages to delete
+     */
+    where?: ContentPageWhereInput
+    /**
+     * Limit how many ContentPages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContentPage without action
+   */
+  export type ContentPageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentPage
+     */
+    select?: ContentPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentPage
+     */
+    omit?: ContentPageOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AiImageProviderConfig
+   */
+
+  export type AggregateAiImageProviderConfig = {
+    _count: AiImageProviderConfigCountAggregateOutputType | null
+    _avg: AiImageProviderConfigAvgAggregateOutputType | null
+    _sum: AiImageProviderConfigSumAggregateOutputType | null
+    _min: AiImageProviderConfigMinAggregateOutputType | null
+    _max: AiImageProviderConfigMaxAggregateOutputType | null
+  }
+
+  export type AiImageProviderConfigAvgAggregateOutputType = {
+    priority: number | null
+  }
+
+  export type AiImageProviderConfigSumAggregateOutputType = {
+    priority: number | null
+  }
+
+  export type AiImageProviderConfigMinAggregateOutputType = {
+    provider: $Enums.AiImageProvider | null
+    enabled: boolean | null
+    priority: number | null
+    modelId: string | null
+    updatedAt: Date | null
+  }
+
+  export type AiImageProviderConfigMaxAggregateOutputType = {
+    provider: $Enums.AiImageProvider | null
+    enabled: boolean | null
+    priority: number | null
+    modelId: string | null
+    updatedAt: Date | null
+  }
+
+  export type AiImageProviderConfigCountAggregateOutputType = {
+    provider: number
+    enabled: number
+    priority: number
+    modelId: number
+    secrets: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AiImageProviderConfigAvgAggregateInputType = {
+    priority?: true
+  }
+
+  export type AiImageProviderConfigSumAggregateInputType = {
+    priority?: true
+  }
+
+  export type AiImageProviderConfigMinAggregateInputType = {
+    provider?: true
+    enabled?: true
+    priority?: true
+    modelId?: true
+    updatedAt?: true
+  }
+
+  export type AiImageProviderConfigMaxAggregateInputType = {
+    provider?: true
+    enabled?: true
+    priority?: true
+    modelId?: true
+    updatedAt?: true
+  }
+
+  export type AiImageProviderConfigCountAggregateInputType = {
+    provider?: true
+    enabled?: true
+    priority?: true
+    modelId?: true
+    secrets?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AiImageProviderConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiImageProviderConfig to aggregate.
+     */
+    where?: AiImageProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiImageProviderConfigs to fetch.
+     */
+    orderBy?: AiImageProviderConfigOrderByWithRelationInput | AiImageProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AiImageProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiImageProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiImageProviderConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AiImageProviderConfigs
+    **/
+    _count?: true | AiImageProviderConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AiImageProviderConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AiImageProviderConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AiImageProviderConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AiImageProviderConfigMaxAggregateInputType
+  }
+
+  export type GetAiImageProviderConfigAggregateType<T extends AiImageProviderConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateAiImageProviderConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAiImageProviderConfig[P]>
+      : GetScalarType<T[P], AggregateAiImageProviderConfig[P]>
+  }
+
+
+
+
+  export type AiImageProviderConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AiImageProviderConfigWhereInput
+    orderBy?: AiImageProviderConfigOrderByWithAggregationInput | AiImageProviderConfigOrderByWithAggregationInput[]
+    by: AiImageProviderConfigScalarFieldEnum[] | AiImageProviderConfigScalarFieldEnum
+    having?: AiImageProviderConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AiImageProviderConfigCountAggregateInputType | true
+    _avg?: AiImageProviderConfigAvgAggregateInputType
+    _sum?: AiImageProviderConfigSumAggregateInputType
+    _min?: AiImageProviderConfigMinAggregateInputType
+    _max?: AiImageProviderConfigMaxAggregateInputType
+  }
+
+  export type AiImageProviderConfigGroupByOutputType = {
+    provider: $Enums.AiImageProvider
+    enabled: boolean
+    priority: number
+    modelId: string
+    secrets: JsonValue | null
+    updatedAt: Date
+    _count: AiImageProviderConfigCountAggregateOutputType | null
+    _avg: AiImageProviderConfigAvgAggregateOutputType | null
+    _sum: AiImageProviderConfigSumAggregateOutputType | null
+    _min: AiImageProviderConfigMinAggregateOutputType | null
+    _max: AiImageProviderConfigMaxAggregateOutputType | null
+  }
+
+  type GetAiImageProviderConfigGroupByPayload<T extends AiImageProviderConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AiImageProviderConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AiImageProviderConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AiImageProviderConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], AiImageProviderConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AiImageProviderConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    provider?: boolean
+    enabled?: boolean
+    priority?: boolean
+    modelId?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aiImageProviderConfig"]>
+
+  export type AiImageProviderConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    provider?: boolean
+    enabled?: boolean
+    priority?: boolean
+    modelId?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aiImageProviderConfig"]>
+
+  export type AiImageProviderConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    provider?: boolean
+    enabled?: boolean
+    priority?: boolean
+    modelId?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aiImageProviderConfig"]>
+
+  export type AiImageProviderConfigSelectScalar = {
+    provider?: boolean
+    enabled?: boolean
+    priority?: boolean
+    modelId?: boolean
+    secrets?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AiImageProviderConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"provider" | "enabled" | "priority" | "modelId" | "secrets" | "updatedAt", ExtArgs["result"]["aiImageProviderConfig"]>
+
+  export type $AiImageProviderConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AiImageProviderConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      provider: $Enums.AiImageProvider
+      enabled: boolean
+      priority: number
+      modelId: string
+      secrets: Prisma.JsonValue | null
+      updatedAt: Date
+    }, ExtArgs["result"]["aiImageProviderConfig"]>
+    composites: {}
+  }
+
+  type AiImageProviderConfigGetPayload<S extends boolean | null | undefined | AiImageProviderConfigDefaultArgs> = $Result.GetResult<Prisma.$AiImageProviderConfigPayload, S>
+
+  type AiImageProviderConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AiImageProviderConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AiImageProviderConfigCountAggregateInputType | true
+    }
+
+  export interface AiImageProviderConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AiImageProviderConfig'], meta: { name: 'AiImageProviderConfig' } }
+    /**
+     * Find zero or one AiImageProviderConfig that matches the filter.
+     * @param {AiImageProviderConfigFindUniqueArgs} args - Arguments to find a AiImageProviderConfig
+     * @example
+     * // Get one AiImageProviderConfig
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AiImageProviderConfigFindUniqueArgs>(args: SelectSubset<T, AiImageProviderConfigFindUniqueArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AiImageProviderConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AiImageProviderConfigFindUniqueOrThrowArgs} args - Arguments to find a AiImageProviderConfig
+     * @example
+     * // Get one AiImageProviderConfig
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AiImageProviderConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, AiImageProviderConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiImageProviderConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiImageProviderConfigFindFirstArgs} args - Arguments to find a AiImageProviderConfig
+     * @example
+     * // Get one AiImageProviderConfig
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AiImageProviderConfigFindFirstArgs>(args?: SelectSubset<T, AiImageProviderConfigFindFirstArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiImageProviderConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiImageProviderConfigFindFirstOrThrowArgs} args - Arguments to find a AiImageProviderConfig
+     * @example
+     * // Get one AiImageProviderConfig
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AiImageProviderConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, AiImageProviderConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AiImageProviderConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiImageProviderConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AiImageProviderConfigs
+     * const aiImageProviderConfigs = await prisma.aiImageProviderConfig.findMany()
+     * 
+     * // Get first 10 AiImageProviderConfigs
+     * const aiImageProviderConfigs = await prisma.aiImageProviderConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `enabled`
+     * const aiImageProviderConfigWithEnabledOnly = await prisma.aiImageProviderConfig.findMany({ select: { enabled: true } })
+     * 
+     */
+    findMany<T extends AiImageProviderConfigFindManyArgs>(args?: SelectSubset<T, AiImageProviderConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AiImageProviderConfig.
+     * @param {AiImageProviderConfigCreateArgs} args - Arguments to create a AiImageProviderConfig.
+     * @example
+     * // Create one AiImageProviderConfig
+     * const AiImageProviderConfig = await prisma.aiImageProviderConfig.create({
+     *   data: {
+     *     // ... data to create a AiImageProviderConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends AiImageProviderConfigCreateArgs>(args: SelectSubset<T, AiImageProviderConfigCreateArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AiImageProviderConfigs.
+     * @param {AiImageProviderConfigCreateManyArgs} args - Arguments to create many AiImageProviderConfigs.
+     * @example
+     * // Create many AiImageProviderConfigs
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AiImageProviderConfigCreateManyArgs>(args?: SelectSubset<T, AiImageProviderConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AiImageProviderConfigs and returns the data saved in the database.
+     * @param {AiImageProviderConfigCreateManyAndReturnArgs} args - Arguments to create many AiImageProviderConfigs.
+     * @example
+     * // Create many AiImageProviderConfigs
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AiImageProviderConfigs and only return the `enabled`
+     * const aiImageProviderConfigWithEnabledOnly = await prisma.aiImageProviderConfig.createManyAndReturn({
+     *   select: { enabled: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AiImageProviderConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, AiImageProviderConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AiImageProviderConfig.
+     * @param {AiImageProviderConfigDeleteArgs} args - Arguments to delete one AiImageProviderConfig.
+     * @example
+     * // Delete one AiImageProviderConfig
+     * const AiImageProviderConfig = await prisma.aiImageProviderConfig.delete({
+     *   where: {
+     *     // ... filter to delete one AiImageProviderConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AiImageProviderConfigDeleteArgs>(args: SelectSubset<T, AiImageProviderConfigDeleteArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AiImageProviderConfig.
+     * @param {AiImageProviderConfigUpdateArgs} args - Arguments to update one AiImageProviderConfig.
+     * @example
+     * // Update one AiImageProviderConfig
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AiImageProviderConfigUpdateArgs>(args: SelectSubset<T, AiImageProviderConfigUpdateArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AiImageProviderConfigs.
+     * @param {AiImageProviderConfigDeleteManyArgs} args - Arguments to filter AiImageProviderConfigs to delete.
+     * @example
+     * // Delete a few AiImageProviderConfigs
+     * const { count } = await prisma.aiImageProviderConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AiImageProviderConfigDeleteManyArgs>(args?: SelectSubset<T, AiImageProviderConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiImageProviderConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiImageProviderConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AiImageProviderConfigs
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AiImageProviderConfigUpdateManyArgs>(args: SelectSubset<T, AiImageProviderConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiImageProviderConfigs and returns the data updated in the database.
+     * @param {AiImageProviderConfigUpdateManyAndReturnArgs} args - Arguments to update many AiImageProviderConfigs.
+     * @example
+     * // Update many AiImageProviderConfigs
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AiImageProviderConfigs and only return the `enabled`
+     * const aiImageProviderConfigWithEnabledOnly = await prisma.aiImageProviderConfig.updateManyAndReturn({
+     *   select: { enabled: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AiImageProviderConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, AiImageProviderConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AiImageProviderConfig.
+     * @param {AiImageProviderConfigUpsertArgs} args - Arguments to update or create a AiImageProviderConfig.
+     * @example
+     * // Update or create a AiImageProviderConfig
+     * const aiImageProviderConfig = await prisma.aiImageProviderConfig.upsert({
+     *   create: {
+     *     // ... data to create a AiImageProviderConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AiImageProviderConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AiImageProviderConfigUpsertArgs>(args: SelectSubset<T, AiImageProviderConfigUpsertArgs<ExtArgs>>): Prisma__AiImageProviderConfigClient<$Result.GetResult<Prisma.$AiImageProviderConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AiImageProviderConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiImageProviderConfigCountArgs} args - Arguments to filter AiImageProviderConfigs to count.
+     * @example
+     * // Count the number of AiImageProviderConfigs
+     * const count = await prisma.aiImageProviderConfig.count({
+     *   where: {
+     *     // ... the filter for the AiImageProviderConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AiImageProviderConfigCountArgs>(
+      args?: Subset<T, AiImageProviderConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AiImageProviderConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AiImageProviderConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiImageProviderConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AiImageProviderConfigAggregateArgs>(args: Subset<T, AiImageProviderConfigAggregateArgs>): Prisma.PrismaPromise<GetAiImageProviderConfigAggregateType<T>>
+
+    /**
+     * Group by AiImageProviderConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiImageProviderConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AiImageProviderConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AiImageProviderConfigGroupByArgs['orderBy'] }
+        : { orderBy?: AiImageProviderConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AiImageProviderConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAiImageProviderConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AiImageProviderConfig model
+   */
+  readonly fields: AiImageProviderConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AiImageProviderConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AiImageProviderConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AiImageProviderConfig model
+   */
+  interface AiImageProviderConfigFieldRefs {
+    readonly provider: FieldRef<"AiImageProviderConfig", 'AiImageProvider'>
+    readonly enabled: FieldRef<"AiImageProviderConfig", 'Boolean'>
+    readonly priority: FieldRef<"AiImageProviderConfig", 'Int'>
+    readonly modelId: FieldRef<"AiImageProviderConfig", 'String'>
+    readonly secrets: FieldRef<"AiImageProviderConfig", 'Json'>
+    readonly updatedAt: FieldRef<"AiImageProviderConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AiImageProviderConfig findUnique
+   */
+  export type AiImageProviderConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which AiImageProviderConfig to fetch.
+     */
+    where: AiImageProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * AiImageProviderConfig findUniqueOrThrow
+   */
+  export type AiImageProviderConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which AiImageProviderConfig to fetch.
+     */
+    where: AiImageProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * AiImageProviderConfig findFirst
+   */
+  export type AiImageProviderConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which AiImageProviderConfig to fetch.
+     */
+    where?: AiImageProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiImageProviderConfigs to fetch.
+     */
+    orderBy?: AiImageProviderConfigOrderByWithRelationInput | AiImageProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiImageProviderConfigs.
+     */
+    cursor?: AiImageProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiImageProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiImageProviderConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiImageProviderConfigs.
+     */
+    distinct?: AiImageProviderConfigScalarFieldEnum | AiImageProviderConfigScalarFieldEnum[]
+  }
+
+  /**
+   * AiImageProviderConfig findFirstOrThrow
+   */
+  export type AiImageProviderConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which AiImageProviderConfig to fetch.
+     */
+    where?: AiImageProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiImageProviderConfigs to fetch.
+     */
+    orderBy?: AiImageProviderConfigOrderByWithRelationInput | AiImageProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiImageProviderConfigs.
+     */
+    cursor?: AiImageProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiImageProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiImageProviderConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiImageProviderConfigs.
+     */
+    distinct?: AiImageProviderConfigScalarFieldEnum | AiImageProviderConfigScalarFieldEnum[]
+  }
+
+  /**
+   * AiImageProviderConfig findMany
+   */
+  export type AiImageProviderConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which AiImageProviderConfigs to fetch.
+     */
+    where?: AiImageProviderConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiImageProviderConfigs to fetch.
+     */
+    orderBy?: AiImageProviderConfigOrderByWithRelationInput | AiImageProviderConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AiImageProviderConfigs.
+     */
+    cursor?: AiImageProviderConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiImageProviderConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiImageProviderConfigs.
+     */
+    skip?: number
+    distinct?: AiImageProviderConfigScalarFieldEnum | AiImageProviderConfigScalarFieldEnum[]
+  }
+
+  /**
+   * AiImageProviderConfig create
+   */
+  export type AiImageProviderConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AiImageProviderConfig.
+     */
+    data: XOR<AiImageProviderConfigCreateInput, AiImageProviderConfigUncheckedCreateInput>
+  }
+
+  /**
+   * AiImageProviderConfig createMany
+   */
+  export type AiImageProviderConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AiImageProviderConfigs.
+     */
+    data: AiImageProviderConfigCreateManyInput | AiImageProviderConfigCreateManyInput[]
+  }
+
+  /**
+   * AiImageProviderConfig createManyAndReturn
+   */
+  export type AiImageProviderConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many AiImageProviderConfigs.
+     */
+    data: AiImageProviderConfigCreateManyInput | AiImageProviderConfigCreateManyInput[]
+  }
+
+  /**
+   * AiImageProviderConfig update
+   */
+  export type AiImageProviderConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AiImageProviderConfig.
+     */
+    data: XOR<AiImageProviderConfigUpdateInput, AiImageProviderConfigUncheckedUpdateInput>
+    /**
+     * Choose, which AiImageProviderConfig to update.
+     */
+    where: AiImageProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * AiImageProviderConfig updateMany
+   */
+  export type AiImageProviderConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AiImageProviderConfigs.
+     */
+    data: XOR<AiImageProviderConfigUpdateManyMutationInput, AiImageProviderConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which AiImageProviderConfigs to update
+     */
+    where?: AiImageProviderConfigWhereInput
+    /**
+     * Limit how many AiImageProviderConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiImageProviderConfig updateManyAndReturn
+   */
+  export type AiImageProviderConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update AiImageProviderConfigs.
+     */
+    data: XOR<AiImageProviderConfigUpdateManyMutationInput, AiImageProviderConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which AiImageProviderConfigs to update
+     */
+    where?: AiImageProviderConfigWhereInput
+    /**
+     * Limit how many AiImageProviderConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiImageProviderConfig upsert
+   */
+  export type AiImageProviderConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AiImageProviderConfig to update in case it exists.
+     */
+    where: AiImageProviderConfigWhereUniqueInput
+    /**
+     * In case the AiImageProviderConfig found by the `where` argument doesn't exist, create a new AiImageProviderConfig with this data.
+     */
+    create: XOR<AiImageProviderConfigCreateInput, AiImageProviderConfigUncheckedCreateInput>
+    /**
+     * In case the AiImageProviderConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AiImageProviderConfigUpdateInput, AiImageProviderConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * AiImageProviderConfig delete
+   */
+  export type AiImageProviderConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+    /**
+     * Filter which AiImageProviderConfig to delete.
+     */
+    where: AiImageProviderConfigWhereUniqueInput
+  }
+
+  /**
+   * AiImageProviderConfig deleteMany
+   */
+  export type AiImageProviderConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiImageProviderConfigs to delete
+     */
+    where?: AiImageProviderConfigWhereInput
+    /**
+     * Limit how many AiImageProviderConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiImageProviderConfig without action
+   */
+  export type AiImageProviderConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiImageProviderConfig
+     */
+    select?: AiImageProviderConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiImageProviderConfig
+     */
+    omit?: AiImageProviderConfigOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ThumbnailAiSettings
+   */
+
+  export type AggregateThumbnailAiSettings = {
+    _count: ThumbnailAiSettingsCountAggregateOutputType | null
+    _avg: ThumbnailAiSettingsAvgAggregateOutputType | null
+    _sum: ThumbnailAiSettingsSumAggregateOutputType | null
+    _min: ThumbnailAiSettingsMinAggregateOutputType | null
+    _max: ThumbnailAiSettingsMaxAggregateOutputType | null
+  }
+
+  export type ThumbnailAiSettingsAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ThumbnailAiSettingsSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ThumbnailAiSettingsMinAggregateOutputType = {
+    id: number | null
+    globalPrompt: string | null
+    enableFallback: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type ThumbnailAiSettingsMaxAggregateOutputType = {
+    id: number | null
+    globalPrompt: string | null
+    enableFallback: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type ThumbnailAiSettingsCountAggregateOutputType = {
+    id: number
+    globalPrompt: number
+    enableFallback: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ThumbnailAiSettingsAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type ThumbnailAiSettingsSumAggregateInputType = {
+    id?: true
+  }
+
+  export type ThumbnailAiSettingsMinAggregateInputType = {
+    id?: true
+    globalPrompt?: true
+    enableFallback?: true
+    updatedAt?: true
+  }
+
+  export type ThumbnailAiSettingsMaxAggregateInputType = {
+    id?: true
+    globalPrompt?: true
+    enableFallback?: true
+    updatedAt?: true
+  }
+
+  export type ThumbnailAiSettingsCountAggregateInputType = {
+    id?: true
+    globalPrompt?: true
+    enableFallback?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ThumbnailAiSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ThumbnailAiSettings to aggregate.
+     */
+    where?: ThumbnailAiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailAiSettings to fetch.
+     */
+    orderBy?: ThumbnailAiSettingsOrderByWithRelationInput | ThumbnailAiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ThumbnailAiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailAiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailAiSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ThumbnailAiSettings
+    **/
+    _count?: true | ThumbnailAiSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ThumbnailAiSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ThumbnailAiSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ThumbnailAiSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ThumbnailAiSettingsMaxAggregateInputType
+  }
+
+  export type GetThumbnailAiSettingsAggregateType<T extends ThumbnailAiSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateThumbnailAiSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateThumbnailAiSettings[P]>
+      : GetScalarType<T[P], AggregateThumbnailAiSettings[P]>
+  }
+
+
+
+
+  export type ThumbnailAiSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ThumbnailAiSettingsWhereInput
+    orderBy?: ThumbnailAiSettingsOrderByWithAggregationInput | ThumbnailAiSettingsOrderByWithAggregationInput[]
+    by: ThumbnailAiSettingsScalarFieldEnum[] | ThumbnailAiSettingsScalarFieldEnum
+    having?: ThumbnailAiSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ThumbnailAiSettingsCountAggregateInputType | true
+    _avg?: ThumbnailAiSettingsAvgAggregateInputType
+    _sum?: ThumbnailAiSettingsSumAggregateInputType
+    _min?: ThumbnailAiSettingsMinAggregateInputType
+    _max?: ThumbnailAiSettingsMaxAggregateInputType
+  }
+
+  export type ThumbnailAiSettingsGroupByOutputType = {
+    id: number
+    globalPrompt: string
+    enableFallback: boolean
+    updatedAt: Date
+    _count: ThumbnailAiSettingsCountAggregateOutputType | null
+    _avg: ThumbnailAiSettingsAvgAggregateOutputType | null
+    _sum: ThumbnailAiSettingsSumAggregateOutputType | null
+    _min: ThumbnailAiSettingsMinAggregateOutputType | null
+    _max: ThumbnailAiSettingsMaxAggregateOutputType | null
+  }
+
+  type GetThumbnailAiSettingsGroupByPayload<T extends ThumbnailAiSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ThumbnailAiSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ThumbnailAiSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ThumbnailAiSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], ThumbnailAiSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ThumbnailAiSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    globalPrompt?: boolean
+    enableFallback?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["thumbnailAiSettings"]>
+
+  export type ThumbnailAiSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    globalPrompt?: boolean
+    enableFallback?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["thumbnailAiSettings"]>
+
+  export type ThumbnailAiSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    globalPrompt?: boolean
+    enableFallback?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["thumbnailAiSettings"]>
+
+  export type ThumbnailAiSettingsSelectScalar = {
+    id?: boolean
+    globalPrompt?: boolean
+    enableFallback?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ThumbnailAiSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "globalPrompt" | "enableFallback" | "updatedAt", ExtArgs["result"]["thumbnailAiSettings"]>
+
+  export type $ThumbnailAiSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ThumbnailAiSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      globalPrompt: string
+      enableFallback: boolean
+      updatedAt: Date
+    }, ExtArgs["result"]["thumbnailAiSettings"]>
+    composites: {}
+  }
+
+  type ThumbnailAiSettingsGetPayload<S extends boolean | null | undefined | ThumbnailAiSettingsDefaultArgs> = $Result.GetResult<Prisma.$ThumbnailAiSettingsPayload, S>
+
+  type ThumbnailAiSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ThumbnailAiSettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ThumbnailAiSettingsCountAggregateInputType | true
+    }
+
+  export interface ThumbnailAiSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ThumbnailAiSettings'], meta: { name: 'ThumbnailAiSettings' } }
+    /**
+     * Find zero or one ThumbnailAiSettings that matches the filter.
+     * @param {ThumbnailAiSettingsFindUniqueArgs} args - Arguments to find a ThumbnailAiSettings
+     * @example
+     * // Get one ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ThumbnailAiSettingsFindUniqueArgs>(args: SelectSubset<T, ThumbnailAiSettingsFindUniqueArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ThumbnailAiSettings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ThumbnailAiSettingsFindUniqueOrThrowArgs} args - Arguments to find a ThumbnailAiSettings
+     * @example
+     * // Get one ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ThumbnailAiSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, ThumbnailAiSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ThumbnailAiSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailAiSettingsFindFirstArgs} args - Arguments to find a ThumbnailAiSettings
+     * @example
+     * // Get one ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ThumbnailAiSettingsFindFirstArgs>(args?: SelectSubset<T, ThumbnailAiSettingsFindFirstArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ThumbnailAiSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailAiSettingsFindFirstOrThrowArgs} args - Arguments to find a ThumbnailAiSettings
+     * @example
+     * // Get one ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ThumbnailAiSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, ThumbnailAiSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ThumbnailAiSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailAiSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.findMany()
+     * 
+     * // Get first 10 ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const thumbnailAiSettingsWithIdOnly = await prisma.thumbnailAiSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ThumbnailAiSettingsFindManyArgs>(args?: SelectSubset<T, ThumbnailAiSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ThumbnailAiSettings.
+     * @param {ThumbnailAiSettingsCreateArgs} args - Arguments to create a ThumbnailAiSettings.
+     * @example
+     * // Create one ThumbnailAiSettings
+     * const ThumbnailAiSettings = await prisma.thumbnailAiSettings.create({
+     *   data: {
+     *     // ... data to create a ThumbnailAiSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends ThumbnailAiSettingsCreateArgs>(args: SelectSubset<T, ThumbnailAiSettingsCreateArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ThumbnailAiSettings.
+     * @param {ThumbnailAiSettingsCreateManyArgs} args - Arguments to create many ThumbnailAiSettings.
+     * @example
+     * // Create many ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ThumbnailAiSettingsCreateManyArgs>(args?: SelectSubset<T, ThumbnailAiSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ThumbnailAiSettings and returns the data saved in the database.
+     * @param {ThumbnailAiSettingsCreateManyAndReturnArgs} args - Arguments to create many ThumbnailAiSettings.
+     * @example
+     * // Create many ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ThumbnailAiSettings and only return the `id`
+     * const thumbnailAiSettingsWithIdOnly = await prisma.thumbnailAiSettings.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ThumbnailAiSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, ThumbnailAiSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ThumbnailAiSettings.
+     * @param {ThumbnailAiSettingsDeleteArgs} args - Arguments to delete one ThumbnailAiSettings.
+     * @example
+     * // Delete one ThumbnailAiSettings
+     * const ThumbnailAiSettings = await prisma.thumbnailAiSettings.delete({
+     *   where: {
+     *     // ... filter to delete one ThumbnailAiSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ThumbnailAiSettingsDeleteArgs>(args: SelectSubset<T, ThumbnailAiSettingsDeleteArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ThumbnailAiSettings.
+     * @param {ThumbnailAiSettingsUpdateArgs} args - Arguments to update one ThumbnailAiSettings.
+     * @example
+     * // Update one ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ThumbnailAiSettingsUpdateArgs>(args: SelectSubset<T, ThumbnailAiSettingsUpdateArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ThumbnailAiSettings.
+     * @param {ThumbnailAiSettingsDeleteManyArgs} args - Arguments to filter ThumbnailAiSettings to delete.
+     * @example
+     * // Delete a few ThumbnailAiSettings
+     * const { count } = await prisma.thumbnailAiSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ThumbnailAiSettingsDeleteManyArgs>(args?: SelectSubset<T, ThumbnailAiSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ThumbnailAiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailAiSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ThumbnailAiSettingsUpdateManyArgs>(args: SelectSubset<T, ThumbnailAiSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ThumbnailAiSettings and returns the data updated in the database.
+     * @param {ThumbnailAiSettingsUpdateManyAndReturnArgs} args - Arguments to update many ThumbnailAiSettings.
+     * @example
+     * // Update many ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ThumbnailAiSettings and only return the `id`
+     * const thumbnailAiSettingsWithIdOnly = await prisma.thumbnailAiSettings.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ThumbnailAiSettingsUpdateManyAndReturnArgs>(args: SelectSubset<T, ThumbnailAiSettingsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ThumbnailAiSettings.
+     * @param {ThumbnailAiSettingsUpsertArgs} args - Arguments to update or create a ThumbnailAiSettings.
+     * @example
+     * // Update or create a ThumbnailAiSettings
+     * const thumbnailAiSettings = await prisma.thumbnailAiSettings.upsert({
+     *   create: {
+     *     // ... data to create a ThumbnailAiSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ThumbnailAiSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ThumbnailAiSettingsUpsertArgs>(args: SelectSubset<T, ThumbnailAiSettingsUpsertArgs<ExtArgs>>): Prisma__ThumbnailAiSettingsClient<$Result.GetResult<Prisma.$ThumbnailAiSettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ThumbnailAiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailAiSettingsCountArgs} args - Arguments to filter ThumbnailAiSettings to count.
+     * @example
+     * // Count the number of ThumbnailAiSettings
+     * const count = await prisma.thumbnailAiSettings.count({
+     *   where: {
+     *     // ... the filter for the ThumbnailAiSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends ThumbnailAiSettingsCountArgs>(
+      args?: Subset<T, ThumbnailAiSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ThumbnailAiSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ThumbnailAiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailAiSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ThumbnailAiSettingsAggregateArgs>(args: Subset<T, ThumbnailAiSettingsAggregateArgs>): Prisma.PrismaPromise<GetThumbnailAiSettingsAggregateType<T>>
+
+    /**
+     * Group by ThumbnailAiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailAiSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ThumbnailAiSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ThumbnailAiSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: ThumbnailAiSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ThumbnailAiSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetThumbnailAiSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ThumbnailAiSettings model
+   */
+  readonly fields: ThumbnailAiSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ThumbnailAiSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ThumbnailAiSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ThumbnailAiSettings model
+   */
+  interface ThumbnailAiSettingsFieldRefs {
+    readonly id: FieldRef<"ThumbnailAiSettings", 'Int'>
+    readonly globalPrompt: FieldRef<"ThumbnailAiSettings", 'String'>
+    readonly enableFallback: FieldRef<"ThumbnailAiSettings", 'Boolean'>
+    readonly updatedAt: FieldRef<"ThumbnailAiSettings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ThumbnailAiSettings findUnique
+   */
+  export type ThumbnailAiSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailAiSettings to fetch.
+     */
+    where: ThumbnailAiSettingsWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailAiSettings findUniqueOrThrow
+   */
+  export type ThumbnailAiSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailAiSettings to fetch.
+     */
+    where: ThumbnailAiSettingsWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailAiSettings findFirst
+   */
+  export type ThumbnailAiSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailAiSettings to fetch.
+     */
+    where?: ThumbnailAiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailAiSettings to fetch.
+     */
+    orderBy?: ThumbnailAiSettingsOrderByWithRelationInput | ThumbnailAiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ThumbnailAiSettings.
+     */
+    cursor?: ThumbnailAiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailAiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailAiSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ThumbnailAiSettings.
+     */
+    distinct?: ThumbnailAiSettingsScalarFieldEnum | ThumbnailAiSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * ThumbnailAiSettings findFirstOrThrow
+   */
+  export type ThumbnailAiSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailAiSettings to fetch.
+     */
+    where?: ThumbnailAiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailAiSettings to fetch.
+     */
+    orderBy?: ThumbnailAiSettingsOrderByWithRelationInput | ThumbnailAiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ThumbnailAiSettings.
+     */
+    cursor?: ThumbnailAiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailAiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailAiSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ThumbnailAiSettings.
+     */
+    distinct?: ThumbnailAiSettingsScalarFieldEnum | ThumbnailAiSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * ThumbnailAiSettings findMany
+   */
+  export type ThumbnailAiSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailAiSettings to fetch.
+     */
+    where?: ThumbnailAiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailAiSettings to fetch.
+     */
+    orderBy?: ThumbnailAiSettingsOrderByWithRelationInput | ThumbnailAiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ThumbnailAiSettings.
+     */
+    cursor?: ThumbnailAiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailAiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailAiSettings.
+     */
+    skip?: number
+    distinct?: ThumbnailAiSettingsScalarFieldEnum | ThumbnailAiSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * ThumbnailAiSettings create
+   */
+  export type ThumbnailAiSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ThumbnailAiSettings.
+     */
+    data: XOR<ThumbnailAiSettingsCreateInput, ThumbnailAiSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * ThumbnailAiSettings createMany
+   */
+  export type ThumbnailAiSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ThumbnailAiSettings.
+     */
+    data: ThumbnailAiSettingsCreateManyInput | ThumbnailAiSettingsCreateManyInput[]
+  }
+
+  /**
+   * ThumbnailAiSettings createManyAndReturn
+   */
+  export type ThumbnailAiSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to create many ThumbnailAiSettings.
+     */
+    data: ThumbnailAiSettingsCreateManyInput | ThumbnailAiSettingsCreateManyInput[]
+  }
+
+  /**
+   * ThumbnailAiSettings update
+   */
+  export type ThumbnailAiSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ThumbnailAiSettings.
+     */
+    data: XOR<ThumbnailAiSettingsUpdateInput, ThumbnailAiSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which ThumbnailAiSettings to update.
+     */
+    where: ThumbnailAiSettingsWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailAiSettings updateMany
+   */
+  export type ThumbnailAiSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ThumbnailAiSettings.
+     */
+    data: XOR<ThumbnailAiSettingsUpdateManyMutationInput, ThumbnailAiSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which ThumbnailAiSettings to update
+     */
+    where?: ThumbnailAiSettingsWhereInput
+    /**
+     * Limit how many ThumbnailAiSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ThumbnailAiSettings updateManyAndReturn
+   */
+  export type ThumbnailAiSettingsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to update ThumbnailAiSettings.
+     */
+    data: XOR<ThumbnailAiSettingsUpdateManyMutationInput, ThumbnailAiSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which ThumbnailAiSettings to update
+     */
+    where?: ThumbnailAiSettingsWhereInput
+    /**
+     * Limit how many ThumbnailAiSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ThumbnailAiSettings upsert
+   */
+  export type ThumbnailAiSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ThumbnailAiSettings to update in case it exists.
+     */
+    where: ThumbnailAiSettingsWhereUniqueInput
+    /**
+     * In case the ThumbnailAiSettings found by the `where` argument doesn't exist, create a new ThumbnailAiSettings with this data.
+     */
+    create: XOR<ThumbnailAiSettingsCreateInput, ThumbnailAiSettingsUncheckedCreateInput>
+    /**
+     * In case the ThumbnailAiSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ThumbnailAiSettingsUpdateInput, ThumbnailAiSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * ThumbnailAiSettings delete
+   */
+  export type ThumbnailAiSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter which ThumbnailAiSettings to delete.
+     */
+    where: ThumbnailAiSettingsWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailAiSettings deleteMany
+   */
+  export type ThumbnailAiSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ThumbnailAiSettings to delete
+     */
+    where?: ThumbnailAiSettingsWhereInput
+    /**
+     * Limit how many ThumbnailAiSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ThumbnailAiSettings without action
+   */
+  export type ThumbnailAiSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailAiSettings
+     */
+    select?: ThumbnailAiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailAiSettings
+     */
+    omit?: ThumbnailAiSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AiApiSettings
+   */
+
+  export type AggregateAiApiSettings = {
+    _count: AiApiSettingsCountAggregateOutputType | null
+    _avg: AiApiSettingsAvgAggregateOutputType | null
+    _sum: AiApiSettingsSumAggregateOutputType | null
+    _min: AiApiSettingsMinAggregateOutputType | null
+    _max: AiApiSettingsMaxAggregateOutputType | null
+  }
+
+  export type AiApiSettingsAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type AiApiSettingsSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type AiApiSettingsMinAggregateOutputType = {
+    id: number | null
+    openaiApiKey: string | null
+    openaiModel: string | null
+    openaiConnectionStatus: string | null
+    openaiLastTestedAt: Date | null
+    freepikApiKey: string | null
+    freepikConnectionStatus: string | null
+    freepikLastTestedAt: Date | null
+    basicPlanModel: string | null
+    proPlanModel: string | null
+    enableAiAnalysis: boolean | null
+    enableAiThumbnailGeneration: boolean | null
+    enableAiImproveThumbnail: boolean | null
+    enableAutoCategoryDetection: boolean | null
+    enableThumbnailScoring: boolean | null
+    enableAutoLayoutDetection: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type AiApiSettingsMaxAggregateOutputType = {
+    id: number | null
+    openaiApiKey: string | null
+    openaiModel: string | null
+    openaiConnectionStatus: string | null
+    openaiLastTestedAt: Date | null
+    freepikApiKey: string | null
+    freepikConnectionStatus: string | null
+    freepikLastTestedAt: Date | null
+    basicPlanModel: string | null
+    proPlanModel: string | null
+    enableAiAnalysis: boolean | null
+    enableAiThumbnailGeneration: boolean | null
+    enableAiImproveThumbnail: boolean | null
+    enableAutoCategoryDetection: boolean | null
+    enableThumbnailScoring: boolean | null
+    enableAutoLayoutDetection: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type AiApiSettingsCountAggregateOutputType = {
+    id: number
+    openaiApiKey: number
+    openaiModel: number
+    openaiConnectionStatus: number
+    openaiLastTestedAt: number
+    freepikApiKey: number
+    freepikConnectionStatus: number
+    freepikLastTestedAt: number
+    basicPlanModel: number
+    proPlanModel: number
+    enableAiAnalysis: number
+    enableAiThumbnailGeneration: number
+    enableAiImproveThumbnail: number
+    enableAutoCategoryDetection: number
+    enableThumbnailScoring: number
+    enableAutoLayoutDetection: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AiApiSettingsAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type AiApiSettingsSumAggregateInputType = {
+    id?: true
+  }
+
+  export type AiApiSettingsMinAggregateInputType = {
+    id?: true
+    openaiApiKey?: true
+    openaiModel?: true
+    openaiConnectionStatus?: true
+    openaiLastTestedAt?: true
+    freepikApiKey?: true
+    freepikConnectionStatus?: true
+    freepikLastTestedAt?: true
+    basicPlanModel?: true
+    proPlanModel?: true
+    enableAiAnalysis?: true
+    enableAiThumbnailGeneration?: true
+    enableAiImproveThumbnail?: true
+    enableAutoCategoryDetection?: true
+    enableThumbnailScoring?: true
+    enableAutoLayoutDetection?: true
+    updatedAt?: true
+  }
+
+  export type AiApiSettingsMaxAggregateInputType = {
+    id?: true
+    openaiApiKey?: true
+    openaiModel?: true
+    openaiConnectionStatus?: true
+    openaiLastTestedAt?: true
+    freepikApiKey?: true
+    freepikConnectionStatus?: true
+    freepikLastTestedAt?: true
+    basicPlanModel?: true
+    proPlanModel?: true
+    enableAiAnalysis?: true
+    enableAiThumbnailGeneration?: true
+    enableAiImproveThumbnail?: true
+    enableAutoCategoryDetection?: true
+    enableThumbnailScoring?: true
+    enableAutoLayoutDetection?: true
+    updatedAt?: true
+  }
+
+  export type AiApiSettingsCountAggregateInputType = {
+    id?: true
+    openaiApiKey?: true
+    openaiModel?: true
+    openaiConnectionStatus?: true
+    openaiLastTestedAt?: true
+    freepikApiKey?: true
+    freepikConnectionStatus?: true
+    freepikLastTestedAt?: true
+    basicPlanModel?: true
+    proPlanModel?: true
+    enableAiAnalysis?: true
+    enableAiThumbnailGeneration?: true
+    enableAiImproveThumbnail?: true
+    enableAutoCategoryDetection?: true
+    enableThumbnailScoring?: true
+    enableAutoLayoutDetection?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AiApiSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiApiSettings to aggregate.
+     */
+    where?: AiApiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiApiSettings to fetch.
+     */
+    orderBy?: AiApiSettingsOrderByWithRelationInput | AiApiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AiApiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiApiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiApiSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AiApiSettings
+    **/
+    _count?: true | AiApiSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AiApiSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AiApiSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AiApiSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AiApiSettingsMaxAggregateInputType
+  }
+
+  export type GetAiApiSettingsAggregateType<T extends AiApiSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateAiApiSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAiApiSettings[P]>
+      : GetScalarType<T[P], AggregateAiApiSettings[P]>
+  }
+
+
+
+
+  export type AiApiSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AiApiSettingsWhereInput
+    orderBy?: AiApiSettingsOrderByWithAggregationInput | AiApiSettingsOrderByWithAggregationInput[]
+    by: AiApiSettingsScalarFieldEnum[] | AiApiSettingsScalarFieldEnum
+    having?: AiApiSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AiApiSettingsCountAggregateInputType | true
+    _avg?: AiApiSettingsAvgAggregateInputType
+    _sum?: AiApiSettingsSumAggregateInputType
+    _min?: AiApiSettingsMinAggregateInputType
+    _max?: AiApiSettingsMaxAggregateInputType
+  }
+
+  export type AiApiSettingsGroupByOutputType = {
+    id: number
+    openaiApiKey: string
+    openaiModel: string
+    openaiConnectionStatus: string
+    openaiLastTestedAt: Date | null
+    freepikApiKey: string
+    freepikConnectionStatus: string
+    freepikLastTestedAt: Date | null
+    basicPlanModel: string
+    proPlanModel: string
+    enableAiAnalysis: boolean
+    enableAiThumbnailGeneration: boolean
+    enableAiImproveThumbnail: boolean
+    enableAutoCategoryDetection: boolean
+    enableThumbnailScoring: boolean
+    enableAutoLayoutDetection: boolean
+    updatedAt: Date
+    _count: AiApiSettingsCountAggregateOutputType | null
+    _avg: AiApiSettingsAvgAggregateOutputType | null
+    _sum: AiApiSettingsSumAggregateOutputType | null
+    _min: AiApiSettingsMinAggregateOutputType | null
+    _max: AiApiSettingsMaxAggregateOutputType | null
+  }
+
+  type GetAiApiSettingsGroupByPayload<T extends AiApiSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AiApiSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AiApiSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AiApiSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], AiApiSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AiApiSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    openaiApiKey?: boolean
+    openaiModel?: boolean
+    openaiConnectionStatus?: boolean
+    openaiLastTestedAt?: boolean
+    freepikApiKey?: boolean
+    freepikConnectionStatus?: boolean
+    freepikLastTestedAt?: boolean
+    basicPlanModel?: boolean
+    proPlanModel?: boolean
+    enableAiAnalysis?: boolean
+    enableAiThumbnailGeneration?: boolean
+    enableAiImproveThumbnail?: boolean
+    enableAutoCategoryDetection?: boolean
+    enableThumbnailScoring?: boolean
+    enableAutoLayoutDetection?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aiApiSettings"]>
+
+  export type AiApiSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    openaiApiKey?: boolean
+    openaiModel?: boolean
+    openaiConnectionStatus?: boolean
+    openaiLastTestedAt?: boolean
+    freepikApiKey?: boolean
+    freepikConnectionStatus?: boolean
+    freepikLastTestedAt?: boolean
+    basicPlanModel?: boolean
+    proPlanModel?: boolean
+    enableAiAnalysis?: boolean
+    enableAiThumbnailGeneration?: boolean
+    enableAiImproveThumbnail?: boolean
+    enableAutoCategoryDetection?: boolean
+    enableThumbnailScoring?: boolean
+    enableAutoLayoutDetection?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aiApiSettings"]>
+
+  export type AiApiSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    openaiApiKey?: boolean
+    openaiModel?: boolean
+    openaiConnectionStatus?: boolean
+    openaiLastTestedAt?: boolean
+    freepikApiKey?: boolean
+    freepikConnectionStatus?: boolean
+    freepikLastTestedAt?: boolean
+    basicPlanModel?: boolean
+    proPlanModel?: boolean
+    enableAiAnalysis?: boolean
+    enableAiThumbnailGeneration?: boolean
+    enableAiImproveThumbnail?: boolean
+    enableAutoCategoryDetection?: boolean
+    enableThumbnailScoring?: boolean
+    enableAutoLayoutDetection?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aiApiSettings"]>
+
+  export type AiApiSettingsSelectScalar = {
+    id?: boolean
+    openaiApiKey?: boolean
+    openaiModel?: boolean
+    openaiConnectionStatus?: boolean
+    openaiLastTestedAt?: boolean
+    freepikApiKey?: boolean
+    freepikConnectionStatus?: boolean
+    freepikLastTestedAt?: boolean
+    basicPlanModel?: boolean
+    proPlanModel?: boolean
+    enableAiAnalysis?: boolean
+    enableAiThumbnailGeneration?: boolean
+    enableAiImproveThumbnail?: boolean
+    enableAutoCategoryDetection?: boolean
+    enableThumbnailScoring?: boolean
+    enableAutoLayoutDetection?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AiApiSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "openaiApiKey" | "openaiModel" | "openaiConnectionStatus" | "openaiLastTestedAt" | "freepikApiKey" | "freepikConnectionStatus" | "freepikLastTestedAt" | "basicPlanModel" | "proPlanModel" | "enableAiAnalysis" | "enableAiThumbnailGeneration" | "enableAiImproveThumbnail" | "enableAutoCategoryDetection" | "enableThumbnailScoring" | "enableAutoLayoutDetection" | "updatedAt", ExtArgs["result"]["aiApiSettings"]>
+
+  export type $AiApiSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AiApiSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      openaiApiKey: string
+      openaiModel: string
+      openaiConnectionStatus: string
+      openaiLastTestedAt: Date | null
+      freepikApiKey: string
+      freepikConnectionStatus: string
+      freepikLastTestedAt: Date | null
+      basicPlanModel: string
+      proPlanModel: string
+      enableAiAnalysis: boolean
+      enableAiThumbnailGeneration: boolean
+      enableAiImproveThumbnail: boolean
+      enableAutoCategoryDetection: boolean
+      enableThumbnailScoring: boolean
+      enableAutoLayoutDetection: boolean
+      updatedAt: Date
+    }, ExtArgs["result"]["aiApiSettings"]>
+    composites: {}
+  }
+
+  type AiApiSettingsGetPayload<S extends boolean | null | undefined | AiApiSettingsDefaultArgs> = $Result.GetResult<Prisma.$AiApiSettingsPayload, S>
+
+  type AiApiSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AiApiSettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AiApiSettingsCountAggregateInputType | true
+    }
+
+  export interface AiApiSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AiApiSettings'], meta: { name: 'AiApiSettings' } }
+    /**
+     * Find zero or one AiApiSettings that matches the filter.
+     * @param {AiApiSettingsFindUniqueArgs} args - Arguments to find a AiApiSettings
+     * @example
+     * // Get one AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AiApiSettingsFindUniqueArgs>(args: SelectSubset<T, AiApiSettingsFindUniqueArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AiApiSettings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AiApiSettingsFindUniqueOrThrowArgs} args - Arguments to find a AiApiSettings
+     * @example
+     * // Get one AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AiApiSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, AiApiSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiApiSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiApiSettingsFindFirstArgs} args - Arguments to find a AiApiSettings
+     * @example
+     * // Get one AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AiApiSettingsFindFirstArgs>(args?: SelectSubset<T, AiApiSettingsFindFirstArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiApiSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiApiSettingsFindFirstOrThrowArgs} args - Arguments to find a AiApiSettings
+     * @example
+     * // Get one AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AiApiSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, AiApiSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AiApiSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiApiSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.findMany()
+     * 
+     * // Get first 10 AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aiApiSettingsWithIdOnly = await prisma.aiApiSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AiApiSettingsFindManyArgs>(args?: SelectSubset<T, AiApiSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AiApiSettings.
+     * @param {AiApiSettingsCreateArgs} args - Arguments to create a AiApiSettings.
+     * @example
+     * // Create one AiApiSettings
+     * const AiApiSettings = await prisma.aiApiSettings.create({
+     *   data: {
+     *     // ... data to create a AiApiSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends AiApiSettingsCreateArgs>(args: SelectSubset<T, AiApiSettingsCreateArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AiApiSettings.
+     * @param {AiApiSettingsCreateManyArgs} args - Arguments to create many AiApiSettings.
+     * @example
+     * // Create many AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AiApiSettingsCreateManyArgs>(args?: SelectSubset<T, AiApiSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AiApiSettings and returns the data saved in the database.
+     * @param {AiApiSettingsCreateManyAndReturnArgs} args - Arguments to create many AiApiSettings.
+     * @example
+     * // Create many AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AiApiSettings and only return the `id`
+     * const aiApiSettingsWithIdOnly = await prisma.aiApiSettings.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AiApiSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, AiApiSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AiApiSettings.
+     * @param {AiApiSettingsDeleteArgs} args - Arguments to delete one AiApiSettings.
+     * @example
+     * // Delete one AiApiSettings
+     * const AiApiSettings = await prisma.aiApiSettings.delete({
+     *   where: {
+     *     // ... filter to delete one AiApiSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AiApiSettingsDeleteArgs>(args: SelectSubset<T, AiApiSettingsDeleteArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AiApiSettings.
+     * @param {AiApiSettingsUpdateArgs} args - Arguments to update one AiApiSettings.
+     * @example
+     * // Update one AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AiApiSettingsUpdateArgs>(args: SelectSubset<T, AiApiSettingsUpdateArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AiApiSettings.
+     * @param {AiApiSettingsDeleteManyArgs} args - Arguments to filter AiApiSettings to delete.
+     * @example
+     * // Delete a few AiApiSettings
+     * const { count } = await prisma.aiApiSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AiApiSettingsDeleteManyArgs>(args?: SelectSubset<T, AiApiSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiApiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiApiSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AiApiSettingsUpdateManyArgs>(args: SelectSubset<T, AiApiSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiApiSettings and returns the data updated in the database.
+     * @param {AiApiSettingsUpdateManyAndReturnArgs} args - Arguments to update many AiApiSettings.
+     * @example
+     * // Update many AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AiApiSettings and only return the `id`
+     * const aiApiSettingsWithIdOnly = await prisma.aiApiSettings.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AiApiSettingsUpdateManyAndReturnArgs>(args: SelectSubset<T, AiApiSettingsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AiApiSettings.
+     * @param {AiApiSettingsUpsertArgs} args - Arguments to update or create a AiApiSettings.
+     * @example
+     * // Update or create a AiApiSettings
+     * const aiApiSettings = await prisma.aiApiSettings.upsert({
+     *   create: {
+     *     // ... data to create a AiApiSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AiApiSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AiApiSettingsUpsertArgs>(args: SelectSubset<T, AiApiSettingsUpsertArgs<ExtArgs>>): Prisma__AiApiSettingsClient<$Result.GetResult<Prisma.$AiApiSettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AiApiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiApiSettingsCountArgs} args - Arguments to filter AiApiSettings to count.
+     * @example
+     * // Count the number of AiApiSettings
+     * const count = await prisma.aiApiSettings.count({
+     *   where: {
+     *     // ... the filter for the AiApiSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends AiApiSettingsCountArgs>(
+      args?: Subset<T, AiApiSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AiApiSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AiApiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiApiSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AiApiSettingsAggregateArgs>(args: Subset<T, AiApiSettingsAggregateArgs>): Prisma.PrismaPromise<GetAiApiSettingsAggregateType<T>>
+
+    /**
+     * Group by AiApiSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiApiSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AiApiSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AiApiSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: AiApiSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AiApiSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAiApiSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AiApiSettings model
+   */
+  readonly fields: AiApiSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AiApiSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AiApiSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AiApiSettings model
+   */
+  interface AiApiSettingsFieldRefs {
+    readonly id: FieldRef<"AiApiSettings", 'Int'>
+    readonly openaiApiKey: FieldRef<"AiApiSettings", 'String'>
+    readonly openaiModel: FieldRef<"AiApiSettings", 'String'>
+    readonly openaiConnectionStatus: FieldRef<"AiApiSettings", 'String'>
+    readonly openaiLastTestedAt: FieldRef<"AiApiSettings", 'DateTime'>
+    readonly freepikApiKey: FieldRef<"AiApiSettings", 'String'>
+    readonly freepikConnectionStatus: FieldRef<"AiApiSettings", 'String'>
+    readonly freepikLastTestedAt: FieldRef<"AiApiSettings", 'DateTime'>
+    readonly basicPlanModel: FieldRef<"AiApiSettings", 'String'>
+    readonly proPlanModel: FieldRef<"AiApiSettings", 'String'>
+    readonly enableAiAnalysis: FieldRef<"AiApiSettings", 'Boolean'>
+    readonly enableAiThumbnailGeneration: FieldRef<"AiApiSettings", 'Boolean'>
+    readonly enableAiImproveThumbnail: FieldRef<"AiApiSettings", 'Boolean'>
+    readonly enableAutoCategoryDetection: FieldRef<"AiApiSettings", 'Boolean'>
+    readonly enableThumbnailScoring: FieldRef<"AiApiSettings", 'Boolean'>
+    readonly enableAutoLayoutDetection: FieldRef<"AiApiSettings", 'Boolean'>
+    readonly updatedAt: FieldRef<"AiApiSettings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AiApiSettings findUnique
+   */
+  export type AiApiSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which AiApiSettings to fetch.
+     */
+    where: AiApiSettingsWhereUniqueInput
+  }
+
+  /**
+   * AiApiSettings findUniqueOrThrow
+   */
+  export type AiApiSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which AiApiSettings to fetch.
+     */
+    where: AiApiSettingsWhereUniqueInput
+  }
+
+  /**
+   * AiApiSettings findFirst
+   */
+  export type AiApiSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which AiApiSettings to fetch.
+     */
+    where?: AiApiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiApiSettings to fetch.
+     */
+    orderBy?: AiApiSettingsOrderByWithRelationInput | AiApiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiApiSettings.
+     */
+    cursor?: AiApiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiApiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiApiSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiApiSettings.
+     */
+    distinct?: AiApiSettingsScalarFieldEnum | AiApiSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AiApiSettings findFirstOrThrow
+   */
+  export type AiApiSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which AiApiSettings to fetch.
+     */
+    where?: AiApiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiApiSettings to fetch.
+     */
+    orderBy?: AiApiSettingsOrderByWithRelationInput | AiApiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiApiSettings.
+     */
+    cursor?: AiApiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiApiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiApiSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiApiSettings.
+     */
+    distinct?: AiApiSettingsScalarFieldEnum | AiApiSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AiApiSettings findMany
+   */
+  export type AiApiSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which AiApiSettings to fetch.
+     */
+    where?: AiApiSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiApiSettings to fetch.
+     */
+    orderBy?: AiApiSettingsOrderByWithRelationInput | AiApiSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AiApiSettings.
+     */
+    cursor?: AiApiSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiApiSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiApiSettings.
+     */
+    skip?: number
+    distinct?: AiApiSettingsScalarFieldEnum | AiApiSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AiApiSettings create
+   */
+  export type AiApiSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AiApiSettings.
+     */
+    data: XOR<AiApiSettingsCreateInput, AiApiSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * AiApiSettings createMany
+   */
+  export type AiApiSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AiApiSettings.
+     */
+    data: AiApiSettingsCreateManyInput | AiApiSettingsCreateManyInput[]
+  }
+
+  /**
+   * AiApiSettings createManyAndReturn
+   */
+  export type AiApiSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to create many AiApiSettings.
+     */
+    data: AiApiSettingsCreateManyInput | AiApiSettingsCreateManyInput[]
+  }
+
+  /**
+   * AiApiSettings update
+   */
+  export type AiApiSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AiApiSettings.
+     */
+    data: XOR<AiApiSettingsUpdateInput, AiApiSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which AiApiSettings to update.
+     */
+    where: AiApiSettingsWhereUniqueInput
+  }
+
+  /**
+   * AiApiSettings updateMany
+   */
+  export type AiApiSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AiApiSettings.
+     */
+    data: XOR<AiApiSettingsUpdateManyMutationInput, AiApiSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which AiApiSettings to update
+     */
+    where?: AiApiSettingsWhereInput
+    /**
+     * Limit how many AiApiSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiApiSettings updateManyAndReturn
+   */
+  export type AiApiSettingsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to update AiApiSettings.
+     */
+    data: XOR<AiApiSettingsUpdateManyMutationInput, AiApiSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which AiApiSettings to update
+     */
+    where?: AiApiSettingsWhereInput
+    /**
+     * Limit how many AiApiSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiApiSettings upsert
+   */
+  export type AiApiSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AiApiSettings to update in case it exists.
+     */
+    where: AiApiSettingsWhereUniqueInput
+    /**
+     * In case the AiApiSettings found by the `where` argument doesn't exist, create a new AiApiSettings with this data.
+     */
+    create: XOR<AiApiSettingsCreateInput, AiApiSettingsUncheckedCreateInput>
+    /**
+     * In case the AiApiSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AiApiSettingsUpdateInput, AiApiSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * AiApiSettings delete
+   */
+  export type AiApiSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+    /**
+     * Filter which AiApiSettings to delete.
+     */
+    where: AiApiSettingsWhereUniqueInput
+  }
+
+  /**
+   * AiApiSettings deleteMany
+   */
+  export type AiApiSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiApiSettings to delete
+     */
+    where?: AiApiSettingsWhereInput
+    /**
+     * Limit how many AiApiSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiApiSettings without action
+   */
+  export type AiApiSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiApiSettings
+     */
+    select?: AiApiSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiApiSettings
+     */
+    omit?: AiApiSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -12789,6 +18529,75 @@ export namespace Prisma {
   export type AnalyticsScalarFieldEnum = (typeof AnalyticsScalarFieldEnum)[keyof typeof AnalyticsScalarFieldEnum]
 
 
+  export const PaymentProviderConfigScalarFieldEnum: {
+    provider: 'provider',
+    enabled: 'enabled',
+    mode: 'mode',
+    amount: 'amount',
+    currency: 'currency',
+    secrets: 'secrets',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PaymentProviderConfigScalarFieldEnum = (typeof PaymentProviderConfigScalarFieldEnum)[keyof typeof PaymentProviderConfigScalarFieldEnum]
+
+
+  export const ContentPageScalarFieldEnum: {
+    slug: 'slug',
+    title: 'title',
+    sections: 'sections',
+    published: 'published',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ContentPageScalarFieldEnum = (typeof ContentPageScalarFieldEnum)[keyof typeof ContentPageScalarFieldEnum]
+
+
+  export const AiImageProviderConfigScalarFieldEnum: {
+    provider: 'provider',
+    enabled: 'enabled',
+    priority: 'priority',
+    modelId: 'modelId',
+    secrets: 'secrets',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AiImageProviderConfigScalarFieldEnum = (typeof AiImageProviderConfigScalarFieldEnum)[keyof typeof AiImageProviderConfigScalarFieldEnum]
+
+
+  export const ThumbnailAiSettingsScalarFieldEnum: {
+    id: 'id',
+    globalPrompt: 'globalPrompt',
+    enableFallback: 'enableFallback',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ThumbnailAiSettingsScalarFieldEnum = (typeof ThumbnailAiSettingsScalarFieldEnum)[keyof typeof ThumbnailAiSettingsScalarFieldEnum]
+
+
+  export const AiApiSettingsScalarFieldEnum: {
+    id: 'id',
+    openaiApiKey: 'openaiApiKey',
+    openaiModel: 'openaiModel',
+    openaiConnectionStatus: 'openaiConnectionStatus',
+    openaiLastTestedAt: 'openaiLastTestedAt',
+    freepikApiKey: 'freepikApiKey',
+    freepikConnectionStatus: 'freepikConnectionStatus',
+    freepikLastTestedAt: 'freepikLastTestedAt',
+    basicPlanModel: 'basicPlanModel',
+    proPlanModel: 'proPlanModel',
+    enableAiAnalysis: 'enableAiAnalysis',
+    enableAiThumbnailGeneration: 'enableAiThumbnailGeneration',
+    enableAiImproveThumbnail: 'enableAiImproveThumbnail',
+    enableAutoCategoryDetection: 'enableAutoCategoryDetection',
+    enableThumbnailScoring: 'enableThumbnailScoring',
+    enableAutoLayoutDetection: 'enableAutoLayoutDetection',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AiApiSettingsScalarFieldEnum = (typeof AiApiSettingsScalarFieldEnum)[keyof typeof AiApiSettingsScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -12951,6 +18760,13 @@ export namespace Prisma {
    * Reference to a field of type 'PaymentStatus'
    */
   export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'AiImageProvider'
+   */
+  export type EnumAiImageProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiImageProvider'>
     
   /**
    * Deep Input Types
@@ -13781,6 +19597,344 @@ export namespace Prisma {
     ip?: StringNullableWithAggregatesFilter<"Analytics"> | string | null
     userAgent?: StringNullableWithAggregatesFilter<"Analytics"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Analytics"> | Date | string
+  }
+
+  export type PaymentProviderConfigWhereInput = {
+    AND?: PaymentProviderConfigWhereInput | PaymentProviderConfigWhereInput[]
+    OR?: PaymentProviderConfigWhereInput[]
+    NOT?: PaymentProviderConfigWhereInput | PaymentProviderConfigWhereInput[]
+    provider?: EnumPaymentProviderFilter<"PaymentProviderConfig"> | $Enums.PaymentProvider
+    enabled?: BoolFilter<"PaymentProviderConfig"> | boolean
+    mode?: StringFilter<"PaymentProviderConfig"> | string
+    amount?: FloatFilter<"PaymentProviderConfig"> | number
+    currency?: StringFilter<"PaymentProviderConfig"> | string
+    secrets?: JsonNullableFilter<"PaymentProviderConfig">
+    updatedAt?: DateTimeFilter<"PaymentProviderConfig"> | Date | string
+  }
+
+  export type PaymentProviderConfigOrderByWithRelationInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    mode?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    secrets?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PaymentProviderConfigWhereUniqueInput = Prisma.AtLeast<{
+    provider?: $Enums.PaymentProvider
+    AND?: PaymentProviderConfigWhereInput | PaymentProviderConfigWhereInput[]
+    OR?: PaymentProviderConfigWhereInput[]
+    NOT?: PaymentProviderConfigWhereInput | PaymentProviderConfigWhereInput[]
+    enabled?: BoolFilter<"PaymentProviderConfig"> | boolean
+    mode?: StringFilter<"PaymentProviderConfig"> | string
+    amount?: FloatFilter<"PaymentProviderConfig"> | number
+    currency?: StringFilter<"PaymentProviderConfig"> | string
+    secrets?: JsonNullableFilter<"PaymentProviderConfig">
+    updatedAt?: DateTimeFilter<"PaymentProviderConfig"> | Date | string
+  }, "provider">
+
+  export type PaymentProviderConfigOrderByWithAggregationInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    mode?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    secrets?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    _count?: PaymentProviderConfigCountOrderByAggregateInput
+    _avg?: PaymentProviderConfigAvgOrderByAggregateInput
+    _max?: PaymentProviderConfigMaxOrderByAggregateInput
+    _min?: PaymentProviderConfigMinOrderByAggregateInput
+    _sum?: PaymentProviderConfigSumOrderByAggregateInput
+  }
+
+  export type PaymentProviderConfigScalarWhereWithAggregatesInput = {
+    AND?: PaymentProviderConfigScalarWhereWithAggregatesInput | PaymentProviderConfigScalarWhereWithAggregatesInput[]
+    OR?: PaymentProviderConfigScalarWhereWithAggregatesInput[]
+    NOT?: PaymentProviderConfigScalarWhereWithAggregatesInput | PaymentProviderConfigScalarWhereWithAggregatesInput[]
+    provider?: EnumPaymentProviderWithAggregatesFilter<"PaymentProviderConfig"> | $Enums.PaymentProvider
+    enabled?: BoolWithAggregatesFilter<"PaymentProviderConfig"> | boolean
+    mode?: StringWithAggregatesFilter<"PaymentProviderConfig"> | string
+    amount?: FloatWithAggregatesFilter<"PaymentProviderConfig"> | number
+    currency?: StringWithAggregatesFilter<"PaymentProviderConfig"> | string
+    secrets?: JsonNullableWithAggregatesFilter<"PaymentProviderConfig">
+    updatedAt?: DateTimeWithAggregatesFilter<"PaymentProviderConfig"> | Date | string
+  }
+
+  export type ContentPageWhereInput = {
+    AND?: ContentPageWhereInput | ContentPageWhereInput[]
+    OR?: ContentPageWhereInput[]
+    NOT?: ContentPageWhereInput | ContentPageWhereInput[]
+    slug?: StringFilter<"ContentPage"> | string
+    title?: StringFilter<"ContentPage"> | string
+    sections?: JsonNullableFilter<"ContentPage">
+    published?: BoolFilter<"ContentPage"> | boolean
+    updatedAt?: DateTimeFilter<"ContentPage"> | Date | string
+  }
+
+  export type ContentPageOrderByWithRelationInput = {
+    slug?: SortOrder
+    title?: SortOrder
+    sections?: SortOrderInput | SortOrder
+    published?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ContentPageWhereUniqueInput = Prisma.AtLeast<{
+    slug?: string
+    AND?: ContentPageWhereInput | ContentPageWhereInput[]
+    OR?: ContentPageWhereInput[]
+    NOT?: ContentPageWhereInput | ContentPageWhereInput[]
+    title?: StringFilter<"ContentPage"> | string
+    sections?: JsonNullableFilter<"ContentPage">
+    published?: BoolFilter<"ContentPage"> | boolean
+    updatedAt?: DateTimeFilter<"ContentPage"> | Date | string
+  }, "slug">
+
+  export type ContentPageOrderByWithAggregationInput = {
+    slug?: SortOrder
+    title?: SortOrder
+    sections?: SortOrderInput | SortOrder
+    published?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ContentPageCountOrderByAggregateInput
+    _max?: ContentPageMaxOrderByAggregateInput
+    _min?: ContentPageMinOrderByAggregateInput
+  }
+
+  export type ContentPageScalarWhereWithAggregatesInput = {
+    AND?: ContentPageScalarWhereWithAggregatesInput | ContentPageScalarWhereWithAggregatesInput[]
+    OR?: ContentPageScalarWhereWithAggregatesInput[]
+    NOT?: ContentPageScalarWhereWithAggregatesInput | ContentPageScalarWhereWithAggregatesInput[]
+    slug?: StringWithAggregatesFilter<"ContentPage"> | string
+    title?: StringWithAggregatesFilter<"ContentPage"> | string
+    sections?: JsonNullableWithAggregatesFilter<"ContentPage">
+    published?: BoolWithAggregatesFilter<"ContentPage"> | boolean
+    updatedAt?: DateTimeWithAggregatesFilter<"ContentPage"> | Date | string
+  }
+
+  export type AiImageProviderConfigWhereInput = {
+    AND?: AiImageProviderConfigWhereInput | AiImageProviderConfigWhereInput[]
+    OR?: AiImageProviderConfigWhereInput[]
+    NOT?: AiImageProviderConfigWhereInput | AiImageProviderConfigWhereInput[]
+    provider?: EnumAiImageProviderFilter<"AiImageProviderConfig"> | $Enums.AiImageProvider
+    enabled?: BoolFilter<"AiImageProviderConfig"> | boolean
+    priority?: IntFilter<"AiImageProviderConfig"> | number
+    modelId?: StringFilter<"AiImageProviderConfig"> | string
+    secrets?: JsonNullableFilter<"AiImageProviderConfig">
+    updatedAt?: DateTimeFilter<"AiImageProviderConfig"> | Date | string
+  }
+
+  export type AiImageProviderConfigOrderByWithRelationInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    priority?: SortOrder
+    modelId?: SortOrder
+    secrets?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiImageProviderConfigWhereUniqueInput = Prisma.AtLeast<{
+    provider?: $Enums.AiImageProvider
+    AND?: AiImageProviderConfigWhereInput | AiImageProviderConfigWhereInput[]
+    OR?: AiImageProviderConfigWhereInput[]
+    NOT?: AiImageProviderConfigWhereInput | AiImageProviderConfigWhereInput[]
+    enabled?: BoolFilter<"AiImageProviderConfig"> | boolean
+    priority?: IntFilter<"AiImageProviderConfig"> | number
+    modelId?: StringFilter<"AiImageProviderConfig"> | string
+    secrets?: JsonNullableFilter<"AiImageProviderConfig">
+    updatedAt?: DateTimeFilter<"AiImageProviderConfig"> | Date | string
+  }, "provider">
+
+  export type AiImageProviderConfigOrderByWithAggregationInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    priority?: SortOrder
+    modelId?: SortOrder
+    secrets?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    _count?: AiImageProviderConfigCountOrderByAggregateInput
+    _avg?: AiImageProviderConfigAvgOrderByAggregateInput
+    _max?: AiImageProviderConfigMaxOrderByAggregateInput
+    _min?: AiImageProviderConfigMinOrderByAggregateInput
+    _sum?: AiImageProviderConfigSumOrderByAggregateInput
+  }
+
+  export type AiImageProviderConfigScalarWhereWithAggregatesInput = {
+    AND?: AiImageProviderConfigScalarWhereWithAggregatesInput | AiImageProviderConfigScalarWhereWithAggregatesInput[]
+    OR?: AiImageProviderConfigScalarWhereWithAggregatesInput[]
+    NOT?: AiImageProviderConfigScalarWhereWithAggregatesInput | AiImageProviderConfigScalarWhereWithAggregatesInput[]
+    provider?: EnumAiImageProviderWithAggregatesFilter<"AiImageProviderConfig"> | $Enums.AiImageProvider
+    enabled?: BoolWithAggregatesFilter<"AiImageProviderConfig"> | boolean
+    priority?: IntWithAggregatesFilter<"AiImageProviderConfig"> | number
+    modelId?: StringWithAggregatesFilter<"AiImageProviderConfig"> | string
+    secrets?: JsonNullableWithAggregatesFilter<"AiImageProviderConfig">
+    updatedAt?: DateTimeWithAggregatesFilter<"AiImageProviderConfig"> | Date | string
+  }
+
+  export type ThumbnailAiSettingsWhereInput = {
+    AND?: ThumbnailAiSettingsWhereInput | ThumbnailAiSettingsWhereInput[]
+    OR?: ThumbnailAiSettingsWhereInput[]
+    NOT?: ThumbnailAiSettingsWhereInput | ThumbnailAiSettingsWhereInput[]
+    id?: IntFilter<"ThumbnailAiSettings"> | number
+    globalPrompt?: StringFilter<"ThumbnailAiSettings"> | string
+    enableFallback?: BoolFilter<"ThumbnailAiSettings"> | boolean
+    updatedAt?: DateTimeFilter<"ThumbnailAiSettings"> | Date | string
+  }
+
+  export type ThumbnailAiSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    globalPrompt?: SortOrder
+    enableFallback?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ThumbnailAiSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: ThumbnailAiSettingsWhereInput | ThumbnailAiSettingsWhereInput[]
+    OR?: ThumbnailAiSettingsWhereInput[]
+    NOT?: ThumbnailAiSettingsWhereInput | ThumbnailAiSettingsWhereInput[]
+    globalPrompt?: StringFilter<"ThumbnailAiSettings"> | string
+    enableFallback?: BoolFilter<"ThumbnailAiSettings"> | boolean
+    updatedAt?: DateTimeFilter<"ThumbnailAiSettings"> | Date | string
+  }, "id">
+
+  export type ThumbnailAiSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    globalPrompt?: SortOrder
+    enableFallback?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ThumbnailAiSettingsCountOrderByAggregateInput
+    _avg?: ThumbnailAiSettingsAvgOrderByAggregateInput
+    _max?: ThumbnailAiSettingsMaxOrderByAggregateInput
+    _min?: ThumbnailAiSettingsMinOrderByAggregateInput
+    _sum?: ThumbnailAiSettingsSumOrderByAggregateInput
+  }
+
+  export type ThumbnailAiSettingsScalarWhereWithAggregatesInput = {
+    AND?: ThumbnailAiSettingsScalarWhereWithAggregatesInput | ThumbnailAiSettingsScalarWhereWithAggregatesInput[]
+    OR?: ThumbnailAiSettingsScalarWhereWithAggregatesInput[]
+    NOT?: ThumbnailAiSettingsScalarWhereWithAggregatesInput | ThumbnailAiSettingsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ThumbnailAiSettings"> | number
+    globalPrompt?: StringWithAggregatesFilter<"ThumbnailAiSettings"> | string
+    enableFallback?: BoolWithAggregatesFilter<"ThumbnailAiSettings"> | boolean
+    updatedAt?: DateTimeWithAggregatesFilter<"ThumbnailAiSettings"> | Date | string
+  }
+
+  export type AiApiSettingsWhereInput = {
+    AND?: AiApiSettingsWhereInput | AiApiSettingsWhereInput[]
+    OR?: AiApiSettingsWhereInput[]
+    NOT?: AiApiSettingsWhereInput | AiApiSettingsWhereInput[]
+    id?: IntFilter<"AiApiSettings"> | number
+    openaiApiKey?: StringFilter<"AiApiSettings"> | string
+    openaiModel?: StringFilter<"AiApiSettings"> | string
+    openaiConnectionStatus?: StringFilter<"AiApiSettings"> | string
+    openaiLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
+    freepikApiKey?: StringFilter<"AiApiSettings"> | string
+    freepikConnectionStatus?: StringFilter<"AiApiSettings"> | string
+    freepikLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
+    basicPlanModel?: StringFilter<"AiApiSettings"> | string
+    proPlanModel?: StringFilter<"AiApiSettings"> | string
+    enableAiAnalysis?: BoolFilter<"AiApiSettings"> | boolean
+    enableAiThumbnailGeneration?: BoolFilter<"AiApiSettings"> | boolean
+    enableAiImproveThumbnail?: BoolFilter<"AiApiSettings"> | boolean
+    enableAutoCategoryDetection?: BoolFilter<"AiApiSettings"> | boolean
+    enableThumbnailScoring?: BoolFilter<"AiApiSettings"> | boolean
+    enableAutoLayoutDetection?: BoolFilter<"AiApiSettings"> | boolean
+    updatedAt?: DateTimeFilter<"AiApiSettings"> | Date | string
+  }
+
+  export type AiApiSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    openaiApiKey?: SortOrder
+    openaiModel?: SortOrder
+    openaiConnectionStatus?: SortOrder
+    openaiLastTestedAt?: SortOrderInput | SortOrder
+    freepikApiKey?: SortOrder
+    freepikConnectionStatus?: SortOrder
+    freepikLastTestedAt?: SortOrderInput | SortOrder
+    basicPlanModel?: SortOrder
+    proPlanModel?: SortOrder
+    enableAiAnalysis?: SortOrder
+    enableAiThumbnailGeneration?: SortOrder
+    enableAiImproveThumbnail?: SortOrder
+    enableAutoCategoryDetection?: SortOrder
+    enableThumbnailScoring?: SortOrder
+    enableAutoLayoutDetection?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiApiSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: AiApiSettingsWhereInput | AiApiSettingsWhereInput[]
+    OR?: AiApiSettingsWhereInput[]
+    NOT?: AiApiSettingsWhereInput | AiApiSettingsWhereInput[]
+    openaiApiKey?: StringFilter<"AiApiSettings"> | string
+    openaiModel?: StringFilter<"AiApiSettings"> | string
+    openaiConnectionStatus?: StringFilter<"AiApiSettings"> | string
+    openaiLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
+    freepikApiKey?: StringFilter<"AiApiSettings"> | string
+    freepikConnectionStatus?: StringFilter<"AiApiSettings"> | string
+    freepikLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
+    basicPlanModel?: StringFilter<"AiApiSettings"> | string
+    proPlanModel?: StringFilter<"AiApiSettings"> | string
+    enableAiAnalysis?: BoolFilter<"AiApiSettings"> | boolean
+    enableAiThumbnailGeneration?: BoolFilter<"AiApiSettings"> | boolean
+    enableAiImproveThumbnail?: BoolFilter<"AiApiSettings"> | boolean
+    enableAutoCategoryDetection?: BoolFilter<"AiApiSettings"> | boolean
+    enableThumbnailScoring?: BoolFilter<"AiApiSettings"> | boolean
+    enableAutoLayoutDetection?: BoolFilter<"AiApiSettings"> | boolean
+    updatedAt?: DateTimeFilter<"AiApiSettings"> | Date | string
+  }, "id">
+
+  export type AiApiSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    openaiApiKey?: SortOrder
+    openaiModel?: SortOrder
+    openaiConnectionStatus?: SortOrder
+    openaiLastTestedAt?: SortOrderInput | SortOrder
+    freepikApiKey?: SortOrder
+    freepikConnectionStatus?: SortOrder
+    freepikLastTestedAt?: SortOrderInput | SortOrder
+    basicPlanModel?: SortOrder
+    proPlanModel?: SortOrder
+    enableAiAnalysis?: SortOrder
+    enableAiThumbnailGeneration?: SortOrder
+    enableAiImproveThumbnail?: SortOrder
+    enableAutoCategoryDetection?: SortOrder
+    enableThumbnailScoring?: SortOrder
+    enableAutoLayoutDetection?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AiApiSettingsCountOrderByAggregateInput
+    _avg?: AiApiSettingsAvgOrderByAggregateInput
+    _max?: AiApiSettingsMaxOrderByAggregateInput
+    _min?: AiApiSettingsMinOrderByAggregateInput
+    _sum?: AiApiSettingsSumOrderByAggregateInput
+  }
+
+  export type AiApiSettingsScalarWhereWithAggregatesInput = {
+    AND?: AiApiSettingsScalarWhereWithAggregatesInput | AiApiSettingsScalarWhereWithAggregatesInput[]
+    OR?: AiApiSettingsScalarWhereWithAggregatesInput[]
+    NOT?: AiApiSettingsScalarWhereWithAggregatesInput | AiApiSettingsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"AiApiSettings"> | number
+    openaiApiKey?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    openaiModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    openaiConnectionStatus?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    openaiLastTestedAt?: DateTimeNullableWithAggregatesFilter<"AiApiSettings"> | Date | string | null
+    freepikApiKey?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    freepikConnectionStatus?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    freepikLastTestedAt?: DateTimeNullableWithAggregatesFilter<"AiApiSettings"> | Date | string | null
+    basicPlanModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    proPlanModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    enableAiAnalysis?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
+    enableAiThumbnailGeneration?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
+    enableAiImproveThumbnail?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
+    enableAutoCategoryDetection?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
+    enableThumbnailScoring?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
+    enableAutoLayoutDetection?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
+    updatedAt?: DateTimeWithAggregatesFilter<"AiApiSettings"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -14718,6 +20872,384 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentProviderConfigCreateInput = {
+    provider: $Enums.PaymentProvider
+    enabled?: boolean
+    mode?: string
+    amount: number
+    currency: string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type PaymentProviderConfigUncheckedCreateInput = {
+    provider: $Enums.PaymentProvider
+    enabled?: boolean
+    mode?: string
+    amount: number
+    currency: string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type PaymentProviderConfigUpdateInput = {
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    mode?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentProviderConfigUncheckedUpdateInput = {
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    mode?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentProviderConfigCreateManyInput = {
+    provider: $Enums.PaymentProvider
+    enabled?: boolean
+    mode?: string
+    amount: number
+    currency: string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type PaymentProviderConfigUpdateManyMutationInput = {
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    mode?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentProviderConfigUncheckedUpdateManyInput = {
+    provider?: EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    mode?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContentPageCreateInput = {
+    slug: string
+    title: string
+    sections?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type ContentPageUncheckedCreateInput = {
+    slug: string
+    title: string
+    sections?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type ContentPageUpdateInput = {
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    sections?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContentPageUncheckedUpdateInput = {
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    sections?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContentPageCreateManyInput = {
+    slug: string
+    title: string
+    sections?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type ContentPageUpdateManyMutationInput = {
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    sections?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContentPageUncheckedUpdateManyInput = {
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    sections?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiImageProviderConfigCreateInput = {
+    provider: $Enums.AiImageProvider
+    enabled?: boolean
+    priority?: number
+    modelId?: string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type AiImageProviderConfigUncheckedCreateInput = {
+    provider: $Enums.AiImageProvider
+    enabled?: boolean
+    priority?: number
+    modelId?: string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type AiImageProviderConfigUpdateInput = {
+    provider?: EnumAiImageProviderFieldUpdateOperationsInput | $Enums.AiImageProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    priority?: IntFieldUpdateOperationsInput | number
+    modelId?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiImageProviderConfigUncheckedUpdateInput = {
+    provider?: EnumAiImageProviderFieldUpdateOperationsInput | $Enums.AiImageProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    priority?: IntFieldUpdateOperationsInput | number
+    modelId?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiImageProviderConfigCreateManyInput = {
+    provider: $Enums.AiImageProvider
+    enabled?: boolean
+    priority?: number
+    modelId?: string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type AiImageProviderConfigUpdateManyMutationInput = {
+    provider?: EnumAiImageProviderFieldUpdateOperationsInput | $Enums.AiImageProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    priority?: IntFieldUpdateOperationsInput | number
+    modelId?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiImageProviderConfigUncheckedUpdateManyInput = {
+    provider?: EnumAiImageProviderFieldUpdateOperationsInput | $Enums.AiImageProvider
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    priority?: IntFieldUpdateOperationsInput | number
+    modelId?: StringFieldUpdateOperationsInput | string
+    secrets?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailAiSettingsCreateInput = {
+    id?: number
+    globalPrompt?: string
+    enableFallback?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type ThumbnailAiSettingsUncheckedCreateInput = {
+    id?: number
+    globalPrompt?: string
+    enableFallback?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type ThumbnailAiSettingsUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    globalPrompt?: StringFieldUpdateOperationsInput | string
+    enableFallback?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailAiSettingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    globalPrompt?: StringFieldUpdateOperationsInput | string
+    enableFallback?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailAiSettingsCreateManyInput = {
+    id?: number
+    globalPrompt?: string
+    enableFallback?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type ThumbnailAiSettingsUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    globalPrompt?: StringFieldUpdateOperationsInput | string
+    enableFallback?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailAiSettingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    globalPrompt?: StringFieldUpdateOperationsInput | string
+    enableFallback?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiApiSettingsCreateInput = {
+    id?: number
+    openaiApiKey?: string
+    openaiModel?: string
+    openaiConnectionStatus?: string
+    openaiLastTestedAt?: Date | string | null
+    freepikApiKey?: string
+    freepikConnectionStatus?: string
+    freepikLastTestedAt?: Date | string | null
+    basicPlanModel?: string
+    proPlanModel?: string
+    enableAiAnalysis?: boolean
+    enableAiThumbnailGeneration?: boolean
+    enableAiImproveThumbnail?: boolean
+    enableAutoCategoryDetection?: boolean
+    enableThumbnailScoring?: boolean
+    enableAutoLayoutDetection?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type AiApiSettingsUncheckedCreateInput = {
+    id?: number
+    openaiApiKey?: string
+    openaiModel?: string
+    openaiConnectionStatus?: string
+    openaiLastTestedAt?: Date | string | null
+    freepikApiKey?: string
+    freepikConnectionStatus?: string
+    freepikLastTestedAt?: Date | string | null
+    basicPlanModel?: string
+    proPlanModel?: string
+    enableAiAnalysis?: boolean
+    enableAiThumbnailGeneration?: boolean
+    enableAiImproveThumbnail?: boolean
+    enableAutoCategoryDetection?: boolean
+    enableThumbnailScoring?: boolean
+    enableAutoLayoutDetection?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type AiApiSettingsUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    openaiApiKey?: StringFieldUpdateOperationsInput | string
+    openaiModel?: StringFieldUpdateOperationsInput | string
+    openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
+    openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    freepikApiKey?: StringFieldUpdateOperationsInput | string
+    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
+    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    basicPlanModel?: StringFieldUpdateOperationsInput | string
+    proPlanModel?: StringFieldUpdateOperationsInput | string
+    enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
+    enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
+    enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoCategoryDetection?: BoolFieldUpdateOperationsInput | boolean
+    enableThumbnailScoring?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoLayoutDetection?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiApiSettingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    openaiApiKey?: StringFieldUpdateOperationsInput | string
+    openaiModel?: StringFieldUpdateOperationsInput | string
+    openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
+    openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    freepikApiKey?: StringFieldUpdateOperationsInput | string
+    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
+    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    basicPlanModel?: StringFieldUpdateOperationsInput | string
+    proPlanModel?: StringFieldUpdateOperationsInput | string
+    enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
+    enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
+    enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoCategoryDetection?: BoolFieldUpdateOperationsInput | boolean
+    enableThumbnailScoring?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoLayoutDetection?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiApiSettingsCreateManyInput = {
+    id?: number
+    openaiApiKey?: string
+    openaiModel?: string
+    openaiConnectionStatus?: string
+    openaiLastTestedAt?: Date | string | null
+    freepikApiKey?: string
+    freepikConnectionStatus?: string
+    freepikLastTestedAt?: Date | string | null
+    basicPlanModel?: string
+    proPlanModel?: string
+    enableAiAnalysis?: boolean
+    enableAiThumbnailGeneration?: boolean
+    enableAiImproveThumbnail?: boolean
+    enableAutoCategoryDetection?: boolean
+    enableThumbnailScoring?: boolean
+    enableAutoLayoutDetection?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type AiApiSettingsUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    openaiApiKey?: StringFieldUpdateOperationsInput | string
+    openaiModel?: StringFieldUpdateOperationsInput | string
+    openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
+    openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    freepikApiKey?: StringFieldUpdateOperationsInput | string
+    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
+    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    basicPlanModel?: StringFieldUpdateOperationsInput | string
+    proPlanModel?: StringFieldUpdateOperationsInput | string
+    enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
+    enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
+    enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoCategoryDetection?: BoolFieldUpdateOperationsInput | boolean
+    enableThumbnailScoring?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoLayoutDetection?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiApiSettingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    openaiApiKey?: StringFieldUpdateOperationsInput | string
+    openaiModel?: StringFieldUpdateOperationsInput | string
+    openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
+    openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    freepikApiKey?: StringFieldUpdateOperationsInput | string
+    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
+    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    basicPlanModel?: StringFieldUpdateOperationsInput | string
+    proPlanModel?: StringFieldUpdateOperationsInput | string
+    enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
+    enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
+    enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoCategoryDetection?: BoolFieldUpdateOperationsInput | boolean
+    enableThumbnailScoring?: BoolFieldUpdateOperationsInput | boolean
+    enableAutoLayoutDetection?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -15689,6 +22221,211 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type PaymentProviderConfigCountOrderByAggregateInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    mode?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    secrets?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PaymentProviderConfigAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type PaymentProviderConfigMaxOrderByAggregateInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    mode?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PaymentProviderConfigMinOrderByAggregateInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    mode?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PaymentProviderConfigSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type ContentPageCountOrderByAggregateInput = {
+    slug?: SortOrder
+    title?: SortOrder
+    sections?: SortOrder
+    published?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ContentPageMaxOrderByAggregateInput = {
+    slug?: SortOrder
+    title?: SortOrder
+    published?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ContentPageMinOrderByAggregateInput = {
+    slug?: SortOrder
+    title?: SortOrder
+    published?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumAiImageProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.AiImageProvider | EnumAiImageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AiImageProvider[]
+    notIn?: $Enums.AiImageProvider[]
+    not?: NestedEnumAiImageProviderFilter<$PrismaModel> | $Enums.AiImageProvider
+  }
+
+  export type AiImageProviderConfigCountOrderByAggregateInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    priority?: SortOrder
+    modelId?: SortOrder
+    secrets?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiImageProviderConfigAvgOrderByAggregateInput = {
+    priority?: SortOrder
+  }
+
+  export type AiImageProviderConfigMaxOrderByAggregateInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    priority?: SortOrder
+    modelId?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiImageProviderConfigMinOrderByAggregateInput = {
+    provider?: SortOrder
+    enabled?: SortOrder
+    priority?: SortOrder
+    modelId?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiImageProviderConfigSumOrderByAggregateInput = {
+    priority?: SortOrder
+  }
+
+  export type EnumAiImageProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AiImageProvider | EnumAiImageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AiImageProvider[]
+    notIn?: $Enums.AiImageProvider[]
+    not?: NestedEnumAiImageProviderWithAggregatesFilter<$PrismaModel> | $Enums.AiImageProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAiImageProviderFilter<$PrismaModel>
+    _max?: NestedEnumAiImageProviderFilter<$PrismaModel>
+  }
+
+  export type ThumbnailAiSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    globalPrompt?: SortOrder
+    enableFallback?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ThumbnailAiSettingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type ThumbnailAiSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    globalPrompt?: SortOrder
+    enableFallback?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ThumbnailAiSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    globalPrompt?: SortOrder
+    enableFallback?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ThumbnailAiSettingsSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type AiApiSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    openaiApiKey?: SortOrder
+    openaiModel?: SortOrder
+    openaiConnectionStatus?: SortOrder
+    openaiLastTestedAt?: SortOrder
+    freepikApiKey?: SortOrder
+    freepikConnectionStatus?: SortOrder
+    freepikLastTestedAt?: SortOrder
+    basicPlanModel?: SortOrder
+    proPlanModel?: SortOrder
+    enableAiAnalysis?: SortOrder
+    enableAiThumbnailGeneration?: SortOrder
+    enableAiImproveThumbnail?: SortOrder
+    enableAutoCategoryDetection?: SortOrder
+    enableThumbnailScoring?: SortOrder
+    enableAutoLayoutDetection?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiApiSettingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type AiApiSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    openaiApiKey?: SortOrder
+    openaiModel?: SortOrder
+    openaiConnectionStatus?: SortOrder
+    openaiLastTestedAt?: SortOrder
+    freepikApiKey?: SortOrder
+    freepikConnectionStatus?: SortOrder
+    freepikLastTestedAt?: SortOrder
+    basicPlanModel?: SortOrder
+    proPlanModel?: SortOrder
+    enableAiAnalysis?: SortOrder
+    enableAiThumbnailGeneration?: SortOrder
+    enableAiImproveThumbnail?: SortOrder
+    enableAutoCategoryDetection?: SortOrder
+    enableThumbnailScoring?: SortOrder
+    enableAutoLayoutDetection?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiApiSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    openaiApiKey?: SortOrder
+    openaiModel?: SortOrder
+    openaiConnectionStatus?: SortOrder
+    openaiLastTestedAt?: SortOrder
+    freepikApiKey?: SortOrder
+    freepikConnectionStatus?: SortOrder
+    freepikLastTestedAt?: SortOrder
+    basicPlanModel?: SortOrder
+    proPlanModel?: SortOrder
+    enableAiAnalysis?: SortOrder
+    enableAiThumbnailGeneration?: SortOrder
+    enableAiImproveThumbnail?: SortOrder
+    enableAutoCategoryDetection?: SortOrder
+    enableThumbnailScoring?: SortOrder
+    enableAutoLayoutDetection?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AiApiSettingsSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
   export type DownloadCreateNestedManyWithoutUserInput = {
     create?: XOR<DownloadCreateWithoutUserInput, DownloadUncheckedCreateWithoutUserInput> | DownloadCreateWithoutUserInput[] | DownloadUncheckedCreateWithoutUserInput[]
     connectOrCreate?: DownloadCreateOrConnectWithoutUserInput | DownloadCreateOrConnectWithoutUserInput[]
@@ -16285,6 +23022,10 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAnalyticsInput, UserUpdateWithoutAnalyticsInput>, UserUncheckedUpdateWithoutAnalyticsInput>
   }
 
+  export type EnumAiImageProviderFieldUpdateOperationsInput = {
+    set?: $Enums.AiImageProvider
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -16698,6 +23439,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
     _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAiImageProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.AiImageProvider | EnumAiImageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AiImageProvider[]
+    notIn?: $Enums.AiImageProvider[]
+    not?: NestedEnumAiImageProviderFilter<$PrismaModel> | $Enums.AiImageProvider
+  }
+
+  export type NestedEnumAiImageProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AiImageProvider | EnumAiImageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AiImageProvider[]
+    notIn?: $Enums.AiImageProvider[]
+    not?: NestedEnumAiImageProviderWithAggregatesFilter<$PrismaModel> | $Enums.AiImageProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAiImageProviderFilter<$PrismaModel>
+    _max?: NestedEnumAiImageProviderFilter<$PrismaModel>
   }
 
   export type DownloadCreateWithoutUserInput = {

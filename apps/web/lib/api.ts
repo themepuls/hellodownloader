@@ -45,10 +45,25 @@ export async function api<T>(
     if (res.status === 401) {
       throw new Error('Please log in to continue, or try again as a guest.');
     }
+    if (res.status === 403) {
+      throw new Error('Admin access required.');
+    }
+    if (res.status === 404) {
+      throw new Error('API route not found. Restart the API server (pnpm --filter @hellodownloader/api dev).');
+    }
     throw new Error(message);
   }
 
   return res.json();
+}
+
+function adminQs(params: Record<string, string | number | undefined | null>): string {
+  const q = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v != null && v !== '') q.set(k, String(v));
+  }
+  const s = q.toString();
+  return s ? `?${s}` : '';
 }
 
 export const apiClient = {
@@ -93,6 +108,84 @@ export const apiClient = {
   },
   admin: {
     stats: () => api('/admin/stats'),
+    listUsers: (p: { page?: number; limit?: number; search?: string; plan?: string; role?: string } = {}) =>
+      api(`/admin/users${adminQs(p)}`),
+    getUser: (id: string) => api(`/admin/users/${id}`),
+    updateUser: (id: string, data: Record<string, unknown>) =>
+      api(`/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    resetPassword: (id: string, password: string) =>
+      api(`/admin/users/${id}/reset-password`, { method: 'POST', body: JSON.stringify({ password }) }),
+    listDownloads: (p: Record<string, string | number | undefined> = {}) =>
+      api(`/admin/downloads${adminQs(p)}`),
+    listPlaylists: (p: Record<string, string | number | undefined> = {}) =>
+      api(`/admin/playlists${adminQs(p)}`),
+    cancelDownload: (id: string) => api(`/admin/downloads/${id}/cancel`, { method: 'POST' }),
+    retryDownload: (id: string) => api(`/admin/downloads/${id}/retry`, { method: 'POST' }),
+    deleteDownloadFile: (id: string) => api(`/admin/downloads/${id}/file`, { method: 'DELETE' }),
+    listThumbnails: (p: Record<string, string | number | undefined> = {}) =>
+      api(`/admin/thumbnails${adminQs(p)}`),
+    getApiSettings: () => api('/admin/api-settings'),
+    testOpenAiApi: (data: { apiKey: string; openaiModel: string }) =>
+      api('/admin/api-settings/openai/test', { method: 'POST', body: JSON.stringify(data) }),
+    saveOpenAiApi: (data: Record<string, unknown>) =>
+      api('/admin/api-settings/openai', { method: 'POST', body: JSON.stringify(data) }),
+    testFreepikApi: (data: { apiKey: string }) =>
+      api('/admin/api-settings/freepik/test', { method: 'POST', body: JSON.stringify(data) }),
+    saveFreepikApi: (data: Record<string, unknown>) =>
+      api('/admin/api-settings/freepik', { method: 'POST', body: JSON.stringify(data) }),
+    savePlanModels: (data: Record<string, unknown>) =>
+      api('/admin/api-settings/plan-models', { method: 'PATCH', body: JSON.stringify(data) }),
+    saveAiFeatures: (data: Record<string, unknown>) =>
+      api('/admin/api-settings/features', { method: 'PATCH', body: JSON.stringify(data) }),
+    listPayments: (p: Record<string, string | number | undefined> = {}) =>
+      api(`/admin/payments${adminQs(p)}`),
+    paymentsOverview: () => api('/admin/payments/overview'),
+    paymentConfigs: () => api('/admin/payments/config'),
+    updatePaymentConfig: (
+      provider: string,
+      data: Record<string, unknown>,
+    ) =>
+      api(`/admin/payments/config/${provider}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+    listSubscriptions: (p: Record<string, string | number | undefined> = {}) =>
+      api(`/admin/subscriptions${adminQs(p)}`),
+    listCredits: (p: Record<string, string | number | undefined> = {}) =>
+      api(`/admin/credits${adminQs(p)}`),
+    storage: () => api('/admin/storage'),
+    cleanup: (hours?: number) =>
+      api('/admin/storage/cleanup', { method: 'POST', body: JSON.stringify({ hours }) }),
+    analytics: () => api('/admin/analytics'),
+    system: () => api('/admin/system'),
+    settings: () => api('/admin/settings'),
+    updateSettings: (data: Record<string, unknown>) =>
+      api('/admin/settings', { method: 'PATCH', body: JSON.stringify(data) }),
+    listContentPages: () => api('/admin/content/pages'),
+    getContentPage: (slug: string) => api(`/admin/content/pages/${slug}`),
+    updateContentPage: (slug: string, data: Record<string, unknown>) =>
+      api(`/admin/content/pages/${slug}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    createContentPage: (data: { slug: string; title: string }) =>
+      api('/admin/content/pages', { method: 'POST', body: JSON.stringify(data) }),
+    uploadBranding: async (file: File) => {
+      const token = getAccessToken();
+      const body = new FormData();
+      body.append('file', file);
+      const res = await fetch(`${API_URL}/admin/branding/upload`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        const message =
+          (Array.isArray(err.message) ? err.message.join(', ') : err.message) ??
+          err.error ??
+          res.statusText;
+        throw new Error(message);
+      }
+      return res.json();
+    },
   },
   playlists: {
     create: (data: { url: string; quality?: number }) =>
@@ -102,5 +195,8 @@ export const apiClient = {
   },
   ads: {
     config: () => api('/ads/config'),
+  },
+  content: {
+    page: (slug: string) => api(`/content/pages/${slug}`),
   },
 };

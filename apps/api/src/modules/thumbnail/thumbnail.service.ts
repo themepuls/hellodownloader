@@ -3,6 +3,7 @@ import { PrismaService } from '../../database/prisma.service';
 import { ThumbnailQueueService } from '../../queues/thumbnail.queue';
 import { CreditsService } from '../credits/credits.service';
 import { YtDlpService } from '../../services/yt-dlp.service';
+import { AiApiSettingsService } from '../ai-api-settings/ai-api-settings.service';
 import { CREDIT_COSTS, PLAN_LIMITS } from '@hellodownloader/shared-types';
 import type { PlanType } from '@hellodownloader/shared-types';
 import { ThumbnailRatio } from '@hellodownloader/shared-types';
@@ -16,6 +17,7 @@ export class ThumbnailService {
     private thumbnailQueue: ThumbnailQueueService,
     private creditsService: CreditsService,
     private ytDlp: YtDlpService,
+    private aiApiSettings: AiApiSettingsService,
   ) {}
 
   async getOriginalThumbnail(url: string) {
@@ -46,11 +48,22 @@ export class ThumbnailService {
 
     await this.creditsService.deduct(userId, creditCost, `thumbnail_ai_${mode}`);
 
-    const globalPrompt = process.env.THUMBNAIL_AI_GLOBAL_PROMPT?.trim() ?? '';
-    const combinedPrompt =
-      mode === 'generate'
-        ? [globalPrompt, userPrompt?.trim()].filter(Boolean).join('\n\n')
-        : undefined;
+    const aiConfig = await this.aiApiSettings.getCredentials();
+    const planModel = plan === 'PRO' ? aiConfig.proPlanModel : aiConfig.basicPlanModel;
+
+    if (mode === 'generate') {
+      if (!aiConfig.features.enableAiThumbnailGeneration) {
+        throw new BadRequestException('AI thumbnail generation is disabled in Admin → API Settings.');
+      }
+      const hasProvider = Boolean(aiConfig.openaiApiKey?.trim() || aiConfig.freepikApiKey?.trim());
+      if (!hasProvider) {
+        throw new BadRequestException(
+          'Configure OpenAI or Freepik in Admin → API Settings before generating thumbnails.',
+        );
+      }
+    }
+
+    const combinedPrompt = mode === 'generate' ? userPrompt?.trim() : undefined;
 
     const thumbnail = await this.prisma.thumbnail.create({
       data: {
@@ -61,7 +74,13 @@ export class ThumbnailService {
         creditsUsed: creditCost,
         ocrData:
           mode === 'generate'
-            ? { mode, userPrompt: userPrompt ?? '', globalPrompt, combinedPrompt }
+            ? {
+                mode,
+                userPrompt: userPrompt ?? '',
+                combinedPrompt,
+                planModel,
+                openaiModel: aiConfig.openaiModel,
+              }
             : { mode: 'adjust' },
       },
     });

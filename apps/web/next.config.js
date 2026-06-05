@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const apiOrigin = process.env.API_PUBLIC_URL ?? 'http://localhost:4000';
+const apiOrigin = process.env.API_PUBLIC_URL ?? 'http://127.0.0.1:4001';
 
 const nextConfig = {
   reactStrictMode: true,

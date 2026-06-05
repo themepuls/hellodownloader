@@ -3,15 +3,19 @@
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DownloadWorkspace } from '@/components/downloader/DownloadWorkspace';
+import { usePageContent } from '@/hooks/usePageContent';
+import { DEFAULT_DOWNLOAD_CONTENT } from '@hellodownloader/shared-types';
 
 function DownloadPageContent() {
   const searchParams = useSearchParams();
   const urlParam = searchParams.get('url') ?? '';
+  const content = usePageContent('download', DEFAULT_DOWNLOAD_CONTENT);
 
   return (
     <DownloadWorkspace
       initialUrl={urlParam}
       autoAnalyze={Boolean(urlParam)}
+      content={content}
     />
   );
 }

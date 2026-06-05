@@ -4,15 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Ban, Download, Shield, Zap } from 'lucide-react';
 import { VideoUrlBar } from '@/components/downloader/VideoUrlBar';
+import { DEFAULT_HOME_CONTENT, type HomeHeroContent } from '@hellodownloader/shared-types';
 
-const perks = [
-  { icon: Download, label: 'Free 720p downloads' },
-  { icon: Ban, label: 'No ads on Pro' },
-  { icon: Zap, label: 'Blazing Fast' },
-  { icon: Shield, label: 'Secure & Safe' },
-];
+const PERK_ICONS = [Download, Ban, Zap, Shield];
 
-export function HomeHero() {
+type HomeHeroProps = {
+  hero?: Partial<HomeHeroContent>;
+};
+
+export function HomeHero({ hero: heroProp }: HomeHeroProps) {
+  const hero = { ...DEFAULT_HOME_CONTENT.hero, ...heroProp };
   const router = useRouter();
   const [url, setUrl] = useState('');
 
@@ -29,18 +30,15 @@ export function HomeHero() {
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="text-center lg:text-left">
             <span className="mb-6 inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-              #1 All-in-One Video Downloader
+              {hero.badge}
             </span>
             <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-              Download Videos.{' '}
+              {hero.title}{' '}
               <span className="bg-gradient-to-r from-blue-400 via-primary to-purple-400 bg-clip-text text-transparent">
-                Fast. Easy. Free.
+                {hero.titleHighlight}
               </span>
             </h1>
-            <p className="mb-8 max-w-xl text-lg text-muted-foreground lg:mx-0 mx-auto">
-              Download videos, playlists, shorts, and reels. Convert to MP3, grab subtitles,
-              and create upload-ready thumbnails — all in one place.
-            </p>
+            <p className="mb-8 max-w-xl text-lg text-muted-foreground lg:mx-0 mx-auto">{hero.subtitle}</p>
 
             <VideoUrlBar
               value={url}
@@ -51,12 +49,15 @@ export function HomeHero() {
             />
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-6 lg:justify-start">
-              {perks.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Icon className="h-4 w-4 text-primary" />
-                  {label}
-                </div>
-              ))}
+              {hero.perks.map((label, i) => {
+                const Icon = PERK_ICONS[i] ?? Download;
+                return (
+                  <div key={`${label}-${i}`} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Icon className="h-4 w-4 text-primary" />
+                    {label}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -78,7 +79,7 @@ export function HomeHero() {
                 f
               </div>
               <div className="mt-4 space-y-2 rounded-xl border border-white/10 bg-black/40 p-3">
-                {['1080p MP4', '720p MP4', 'MP3', 'Subtitles'].map((opt) => (
+                {hero.mockOptions.map((opt) => (
                   <div
                     key={opt}
                     className="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-white/5"

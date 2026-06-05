@@ -248,6 +248,60 @@ exports.Prisma.AnalyticsScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.PaymentProviderConfigScalarFieldEnum = {
+  provider: 'provider',
+  enabled: 'enabled',
+  mode: 'mode',
+  amount: 'amount',
+  currency: 'currency',
+  secrets: 'secrets',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ContentPageScalarFieldEnum = {
+  slug: 'slug',
+  title: 'title',
+  sections: 'sections',
+  published: 'published',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiImageProviderConfigScalarFieldEnum = {
+  provider: 'provider',
+  enabled: 'enabled',
+  priority: 'priority',
+  modelId: 'modelId',
+  secrets: 'secrets',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ThumbnailAiSettingsScalarFieldEnum = {
+  id: 'id',
+  globalPrompt: 'globalPrompt',
+  enableFallback: 'enableFallback',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AiApiSettingsScalarFieldEnum = {
+  id: 'id',
+  openaiApiKey: 'openaiApiKey',
+  openaiModel: 'openaiModel',
+  openaiConnectionStatus: 'openaiConnectionStatus',
+  openaiLastTestedAt: 'openaiLastTestedAt',
+  freepikApiKey: 'freepikApiKey',
+  freepikConnectionStatus: 'freepikConnectionStatus',
+  freepikLastTestedAt: 'freepikLastTestedAt',
+  basicPlanModel: 'basicPlanModel',
+  proPlanModel: 'proPlanModel',
+  enableAiAnalysis: 'enableAiAnalysis',
+  enableAiThumbnailGeneration: 'enableAiThumbnailGeneration',
+  enableAiImproveThumbnail: 'enableAiImproveThumbnail',
+  enableAutoCategoryDetection: 'enableAutoCategoryDetection',
+  enableThumbnailScoring: 'enableThumbnailScoring',
+  enableAutoLayoutDetection: 'enableAutoLayoutDetection',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -337,6 +391,13 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   REFUNDED: 'REFUNDED'
 };
 
+exports.AiImageProvider = exports.$Enums.AiImageProvider = {
+  FAL: 'FAL',
+  OPENAI: 'OPENAI',
+  REPLICATE: 'REPLICATE',
+  IDEOGRAM: 'IDEOGRAM'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Download: 'Download',
@@ -346,7 +407,12 @@ exports.Prisma.ModelName = {
   Transaction: 'Transaction',
   Payment: 'Payment',
   CreditLog: 'CreditLog',
-  Analytics: 'Analytics'
+  Analytics: 'Analytics',
+  PaymentProviderConfig: 'PaymentProviderConfig',
+  ContentPage: 'ContentPage',
+  AiImageProviderConfig: 'AiImageProviderConfig',
+  ThumbnailAiSettings: 'ThumbnailAiSettings',
+  AiApiSettings: 'AiApiSettings'
 };
 
 /**

@@ -1,66 +1,84 @@
+'use client';
+
 import Link from 'next/link';
-import { Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { usePageContent } from '@/hooks/usePageContent';
+import {
+  DEFAULT_FOOTER_CONTENT,
+  mergeContent,
+  type FooterContent,
+} from '@hellodownloader/shared-types';
+
+function normalizeFooter(raw: FooterContent): FooterContent {
+  const base = mergeContent(DEFAULT_FOOTER_CONTENT, raw as unknown as Record<string, unknown>);
+  return {
+    brand: { ...DEFAULT_FOOTER_CONTENT.brand, ...base.brand },
+    columns: (base.columns ?? DEFAULT_FOOTER_CONTENT.columns).map((col) => ({
+      title: col.title,
+      links: (col.links ?? []).filter((l) => l.label?.trim() && l.href?.trim()),
+    })),
+    copyright: base.copyright || DEFAULT_FOOTER_CONTENT.copyright,
+  };
+}
+
+function formatCopyright(text: string) {
+  return text.replace(/\{year\}/g, String(new Date().getFullYear()));
+}
 
 export function Footer() {
+  const raw = usePageContent(
+    'footer',
+    DEFAULT_FOOTER_CONTENT as unknown as Record<string, unknown>,
+  );
+  const footer = normalizeFooter(raw as unknown as FooterContent);
+  const brandName = footer.brand.text?.trim() || 'HelloDownloader';
+  const logoUrl = footer.brand.imageUrl?.trim();
+  const logoAlt = footer.brand.imageAlt?.trim() || brandName;
+  const showBrandName = footer.brand.showBrandName !== false;
+
   return (
     <footer className="border-t border-white/5 bg-[#0b0e14] py-16">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-5xl px-4">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <Link href="/" className="mb-4 flex items-center gap-2 font-bold">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Download className="h-4 w-4 text-primary-foreground" />
-              </div>
-              HelloDownloader
+            <Link href={footer.brand.link || '/'} className="mb-4 flex items-center gap-2 font-bold" aria-label={brandName}>
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={logoAlt}
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 rounded-lg object-contain"
+                  unoptimized
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xs font-bold">
+                  {brandName.charAt(0).toUpperCase()}
+                </div>
+              )}
+              {showBrandName && brandName}
             </Link>
-            <p className="mb-4 max-w-xs text-sm text-muted-foreground">
-              The all-in-one video downloader for creators. Fast, free, and secure.
-            </p>
+            <p className="max-w-xs text-sm text-muted-foreground">{footer.brand.description}</p>
           </div>
 
-          <div>
-            <h4 className="mb-4 font-semibold">Product</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/download" className="hover:text-foreground">Downloader</Link></li>
-              <li><Link href="/thumbnail" className="hover:text-foreground">Thumbnails</Link></li>
-              <li><Link href="/playlist" className="hover:text-foreground">Playlist</Link></li>
-              <li><Link href="/pricing" className="hover:text-foreground">Pricing</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-4 font-semibold">Company</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/blog" className="hover:text-foreground">Blog</Link></li>
-              <li><Link href="/faq" className="hover:text-foreground">FAQ</Link></li>
-              <li><Link href="/dashboard" className="hover:text-foreground">Dashboard</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-4 font-semibold">Legal</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/terms" className="hover:text-foreground">Terms</Link></li>
-              <li><Link href="/privacy" className="hover:text-foreground">Privacy</Link></li>
-              <li><Link href="/dmca" className="hover:text-foreground">DMCA</Link></li>
-            </ul>
-          </div>
+          {footer.columns.map((col, i) => (
+            <div key={`${col.title}-${i}`}>
+              <h4 className="mb-4 font-semibold">{col.title}</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                {col.links.map((link) => (
+                  <li key={`${link.label}-${link.href}`}>
+                    <Link href={link.href} className="hover:text-foreground">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 md:flex-row">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} HelloDownloader. All rights reserved.
-          </p>
-          <div className="flex gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="rounded-lg border border-white/10 bg-[#12151c] px-4 py-2 text-sm outline-none focus:border-primary"
-              readOnly
-            />
-            <Button size="sm">Subscribe</Button>
-          </div>
+        <div className="mt-12 border-t border-white/5 pt-8 text-center">
+          <p className="text-sm text-muted-foreground">{formatCopyright(footer.copyright)}</p>
         </div>
       </div>
     </footer>

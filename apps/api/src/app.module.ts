@@ -15,6 +15,9 @@ import { BillingModule } from './modules/billing/billing.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { AdsModule } from './modules/ads/ads.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { ContentModule } from './modules/content/content.module';
+import { PaymentConfigModule } from './payment/payment-config.module';
+import { AiApiSettingsModule } from './modules/ai-api-settings/ai-api-settings.module';
 import { QueueModule } from './queues/queue.module';
 import { LoggerService } from './utils/logger';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
@@ -36,6 +39,8 @@ import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
     ]),
     ScheduleModule.forRoot(),
     PrismaModule,
+    PaymentConfigModule,
+    AiApiSettingsModule,
     QueueModule,
     AuthModule,
     UsersModule,
@@ -46,6 +51,7 @@ import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
     BillingModule,
     AnalyticsModule,
     AdsModule,
+    ContentModule,
     AdminModule,
   ],
   providers: [

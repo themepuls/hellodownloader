@@ -12,7 +12,7 @@ export class SslcommerzWebhookController {
   @Post('success')
   @HttpCode(200)
   async handleSuccess(@Body() payload: Record<string, string>) {
-    if (!this.sslcommerz.verifyHash(payload)) {
+    if (!(await this.sslcommerz.verifyHashAsync(payload))) {
       this.logger.warn('SSLCommerz hash verification failed');
       return { status: 'FAILED' };
     }
@@ -28,16 +28,22 @@ export class SslcommerzWebhookController {
   @Public()
   @Post('fail')
   @HttpCode(200)
-  handleFail(@Body() payload: Record<string, string>) {
+  async handleFail(@Body() payload: Record<string, string>) {
     this.logger.warn(`SSLCommerz payment failed: tran_id=${payload['tran_id']}`);
+    if (payload['tran_id']) {
+      await this.sslcommerz.markFailed(payload['tran_id'], 'FAILED');
+    }
     return { status: 'NOTED' };
   }
 
   @Public()
   @Post('cancel')
   @HttpCode(200)
-  handleCancel(@Body() payload: Record<string, string>) {
+  async handleCancel(@Body() payload: Record<string, string>) {
     this.logger.log(`SSLCommerz payment cancelled: tran_id=${payload['tran_id']}`);
+    if (payload['tran_id']) {
+      await this.sslcommerz.markFailed(payload['tran_id'], 'FAILED');
+    }
     return { status: 'NOTED' };
   }
 
@@ -45,7 +51,7 @@ export class SslcommerzWebhookController {
   @Post('ipn')
   @HttpCode(200)
   async handleIpn(@Body() payload: Record<string, string>) {
-    if (!this.sslcommerz.verifyHash(payload)) return { status: 'INVALID' };
+    if (!(await this.sslcommerz.verifyHashAsync(payload))) return { status: 'INVALID' };
     try {
       await this.sslcommerz.handleSuccess(payload);
       return { status: 'OK' };

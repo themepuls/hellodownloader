@@ -6,33 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient } from '@/lib/api';
 import { useUserStore } from '@/store/userStore';
-
-const proFeatures = [
-  '1080p, 4K & 8K video downloads',
-  'AI thumbnail adjust (text + image, OCR)',
-  'Multiple thumbnail ratios (16:9, 9:16, 4:5, 1:1)',
-  'Full AI thumbnail generation with prompts',
-  'Global + custom user prompts',
-  'No ads',
-  'Unlimited download history',
-  '100 credits/month',
-];
-
-const freeFeatures = [
-  'Unlimited downloads up to 720p',
-  'Playlist ZIP export (720p)',
-  'Original thumbnail download',
-  'MP3 / audio download',
-  'Subtitle download (SRT, VTT)',
-  '7-day download history (with signup)',
-  'Ads supported',
-  'YouTube, Facebook, Instagram, TikTok, Twitter/X',
-];
+import { usePageContent } from '@/hooks/usePageContent';
+import { DEFAULT_PRICING_CONTENT, type PricingPageContent } from '@hellodownloader/shared-types';
 
 type PaymentGateway = 'stripe' | 'binance' | 'sslcommerz';
 
 export default function PricingPage() {
   const user = useUserStore((s) => s.user);
+  const content = usePageContent<PricingPageContent>('pricing', DEFAULT_PRICING_CONTENT);
   const [loading, setLoading] = useState<PaymentGateway | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,28 +43,29 @@ export default function PricingPage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Simple Pricing</h1>
-        <p className="text-muted-foreground text-lg">
-          Downloads, playlists, audio, and subtitles are free. Pro unlocks AI thumbnails and HD/4K.
-        </p>
+        <h1 className="text-4xl font-bold mb-4">{content.header.title}</h1>
+        <p className="text-muted-foreground text-lg">{content.header.subtitle}</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Free</CardTitle>
-            <CardDescription className="text-3xl font-bold text-foreground">$0 / forever</CardDescription>
+            <CardTitle>{content.free.title}</CardTitle>
+            <CardDescription className="text-3xl font-bold text-foreground">
+              {content.free.price} {content.free.priceSuffix}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3 mb-6">
-              {freeFeatures.map((f) => (
+              {content.free.features.map((f) => (
                 <li key={f} className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-muted-foreground shrink-0" />{f}
+                  <Check className="h-4 w-4 text-muted-foreground shrink-0" />
+                  {f}
                 </li>
               ))}
             </ul>
             <Button variant="outline" className="w-full" disabled={!user || isPro}>
-              {!user ? 'Sign up free' : isPro ? 'Included in Pro' : 'Current Plan'}
+              {!user ? content.free.buttonText : isPro ? 'Included in Pro' : 'Current Plan'}
             </Button>
           </CardContent>
         </Card>
@@ -91,16 +73,23 @@ export default function PricingPage() {
         <Card className="border-primary shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Pro
-              {isPro && <span className="text-xs font-normal bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Active</span>}
+              {content.pro.title}
+              {isPro && (
+                <span className="text-xs font-normal bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                  Active
+                </span>
+              )}
             </CardTitle>
-            <CardDescription className="text-3xl font-bold text-foreground">$9.99 / month</CardDescription>
+            <CardDescription className="text-3xl font-bold text-foreground">
+              {content.pro.price} {content.pro.priceSuffix}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3 mb-6">
-              {proFeatures.map((f) => (
+              {content.pro.features.map((f) => (
                 <li key={f} className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-primary shrink-0" />{f}
+                  <Check className="h-4 w-4 text-primary shrink-0" />
+                  {f}
                 </li>
               ))}
             </ul>
@@ -119,7 +108,7 @@ export default function PricingPage() {
                 </Button>
                 <Button variant="outline" className="w-full" onClick={() => handleUpgrade('sslcommerz')} disabled={loading !== null}>
                   {loading === 'sslcommerz' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Pay with SSLCommerz (BDT ৳1,099)
+                  Pay with SSLCommerz (BDT)
                 </Button>
               </div>
             )}
@@ -129,8 +118,8 @@ export default function PricingPage() {
       </div>
 
       <div className="text-center mt-10 text-sm text-muted-foreground space-y-1">
-        <p>Pro credits: AI adjust = 1 · AI generate = 3 · 4K export = 3</p>
-        <p>Payments secured by Stripe, Binance Pay, and SSLCommerz.</p>
+        <p>{content.footer.line1}</p>
+        <p>{content.footer.line2}</p>
       </div>
     </div>
   );

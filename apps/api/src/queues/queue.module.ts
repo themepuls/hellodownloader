@@ -15,6 +15,7 @@ import { StorageService } from '../services/storage.service';
     CleanupQueueService,
   ],
   exports: [
+    StorageService,
     DownloadQueueService,
     ThumbnailQueueService,
     VideoQueueService,

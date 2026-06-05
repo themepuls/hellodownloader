@@ -35,6 +35,8 @@ storage/playlists/**/*
 # Uploads
 apps/api/uploads/*
 !apps/api/uploads/.gitkeep
+apps/web/public/uploads/*
+!apps/web/public/uploads/.gitkeep
 
 # IDE
 .idea

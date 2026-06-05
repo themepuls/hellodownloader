@@ -26,6 +26,10 @@ import {
   getVideoQualityOptions,
   type VideoMetadata,
 } from '@/lib/video-formats';
+import {
+  DEFAULT_DOWNLOAD_CONTENT,
+  type DownloadPageContent,
+} from '@hellodownloader/shared-types';
 
 type Tab = 'video' | 'audio' | 'subtitles';
 
@@ -39,9 +43,15 @@ const statusLabel: Record<string, string> = {
 interface DownloadWorkspaceProps {
   initialUrl?: string;
   autoAnalyze?: boolean;
+  content?: DownloadPageContent;
 }
 
-export function DownloadWorkspace({ initialUrl = '', autoAnalyze = false }: DownloadWorkspaceProps) {
+export function DownloadWorkspace({
+  initialUrl = '',
+  autoAnalyze = false,
+  content: contentProp,
+}: DownloadWorkspaceProps) {
+  const content = { ...DEFAULT_DOWNLOAD_CONTENT, ...contentProp };
   const user = useUserStore((s) => s.user);
   const maxQuality = user?.plan === 'PRO' ? 4320 : 720;
   const [tab, setTab] = useState<Tab>('video');
@@ -100,7 +110,7 @@ export function DownloadWorkspace({ initialUrl = '', autoAnalyze = false }: Down
             onSubmit={handleAnalyze}
             loading={loading && !metadata}
             variant="compact"
-            submitLabel="Analyze"
+            submitLabel={content.analyzeButton}
           />
           {error && (
             <p className="mt-3 text-sm text-destructive">{error}</p>
@@ -108,7 +118,7 @@ export function DownloadWorkspace({ initialUrl = '', autoAnalyze = false }: Down
           {meta && !error && (
             <p className="mt-3 flex items-center gap-2 text-sm text-green-400">
               <CheckCircle2 className="h-4 w-4" />
-              Video found successfully!
+              {content.successText}
             </p>
           )}
         </div>
@@ -118,17 +128,15 @@ export function DownloadWorkspace({ initialUrl = '', autoAnalyze = false }: Down
         {!meta && !loading && (
           <div className="rounded-2xl border border-dashed border-white/10 bg-[#12151c]/50 py-24 text-center">
             <Video className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <h2 className="mb-2 text-xl font-semibold">Paste a video link to get started</h2>
-            <p className="text-muted-foreground">
-              Works with YouTube, Facebook, Instagram, TikTok, Twitter/X, and more.
-            </p>
+            <h2 className="mb-2 text-xl font-semibold">{content.emptyTitle}</h2>
+            <p className="text-muted-foreground">{content.emptySubtitle}</p>
           </div>
         )}
 
         {loading && !meta && (
           <div className="rounded-2xl border border-white/10 bg-[#12151c] py-24 text-center">
             <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            <p className="text-muted-foreground">Analyzing video…</p>
+            <p className="text-muted-foreground">{content.loadingText}</p>
           </div>
         )}
 
@@ -443,35 +451,29 @@ export function DownloadWorkspace({ initialUrl = '', autoAnalyze = false }: Down
             <div className="rounded-2xl border border-white/10 bg-[#12151c] p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Headphones className="h-5 w-5 text-primary" />
-                <h3 className="font-semibold">Need Help?</h3>
+                <h3 className="font-semibold">{content.helpTitle}</h3>
               </div>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="/faq" className="flex items-center gap-2 hover:text-foreground">
-                    <HelpCircle className="h-3.5 w-3.5" />
-                    How to download videos?
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/faq" className="flex items-center gap-2 hover:text-foreground">
-                    <HelpCircle className="h-3.5 w-3.5" />
-                    Video not working?
-                  </Link>
-                </li>
+                {content.helpLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="flex items-center gap-2 hover:text-foreground">
+                      <HelpCircle className="h-3.5 w-3.5" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         )}
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-white/5 pt-8 text-sm text-muted-foreground">
-          {['Unlimited Downloads', 'Blazing Fast', '100% Safe', 'Works Everywhere', 'Regular Updates'].map(
-            (label) => (
-              <span key={label} className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                {label}
-              </span>
-            ),
-          )}
+          {content.trustBadges.map((label) => (
+            <span key={label} className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-primary" />
+              {label}
+            </span>
+          ))}
         </div>
       </div>
     </div>

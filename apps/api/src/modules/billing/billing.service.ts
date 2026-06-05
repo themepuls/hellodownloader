@@ -1,11 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { StripeService } from '../../payment/stripe/stripe.service';
 import { BinanceService } from '../../payment/binance/binance.service';
 import { SslcommerzService } from '../../payment/sslcommerz/sslcommerz.service';
-
-const PRO_PRICE_USD = 9.99;
-const PRO_PRICE_BDT = 1099;
 
 @Injectable()
 export class BillingService {
@@ -36,10 +33,15 @@ export class BillingService {
   }
 
   async createBinanceOrder(userId: string) {
-    return this.binance.createOrder(userId, PRO_PRICE_USD, 'HelloDownloader Pro Plan');
+    return this.binance.createOrder(userId);
   }
 
   async createSslcommerzSession(userId: string) {
-    return this.sslcommerz.initSession(userId, PRO_PRICE_BDT);
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true, name: true },
+    });
+    if (!user) throw new BadRequestException('User not found');
+    return this.sslcommerz.initSession(userId, user);
   }
 }

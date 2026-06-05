@@ -1,100 +1,63 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Download, Shield, Users, Wallet } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api';
-import { useUserStore } from '@/store/userStore';
+import { AdminPageHeader, StatCard } from '@/components/admin/AdminShell';
 
-type AdminStats = {
+type Overview = {
   users: number;
+  newUsersToday: number;
   downloads: number;
-  revenue: number | null;
+  downloadsToday: number;
+  failedToday: number;
+  playlists: number;
+  thumbnails: number;
+  proUsers: number;
+  activeSubscriptions: number;
+  revenue: number;
+  revenueWeek: number;
+  failedDownloadsWeek: number;
+  guestDownloads: number;
+  storage: { totalMb: number; totalFiles: number };
 };
 
-export default function AdminPage() {
-  const router = useRouter();
-  const user = useUserStore((s) => s.user);
-  const [stats, setStats] = useState<AdminStats | null>(null);
+export default function AdminOverviewPage() {
+  const [data, setData] = useState<Overview | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) return;
-    if (user.role !== 'ADMIN') {
-      router.replace('/dashboard');
-      return;
-    }
     apiClient.admin
       .stats()
-      .then((data) => setStats(data as AdminStats))
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load admin stats'));
-  }, [user, router]);
-
-  if (!user) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <p>
-          Please <Link href="/login" className="text-primary underline">login</Link> as admin.
-        </p>
-      </div>
-    );
-  }
-
-  if (user.role !== 'ADMIN') {
-    return null;
-  }
+      .then((d) => setData(d as Overview))
+      .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load'));
+  }, []);
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Shield className="h-8 w-8 text-primary" />
-            Admin
-          </h1>
-          <p className="text-muted-foreground mt-1">Signed in as {user.email}</p>
-        </div>
-        <Link href="/dashboard">
-          <Button variant="outline">User dashboard</Button>
-        </Link>
+    <>
+      <AdminPageHeader title="Overview" description="Platform stats at a glance" />
+      {error && <p className="text-destructive mb-4">{error}</p>}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <StatCard label="Total users" value={data?.users ?? '—'} sub={`+${data?.newUsersToday ?? 0} today`} />
+        <StatCard label="Downloads today" value={data?.downloadsToday ?? '—'} sub={`${data?.failedToday ?? 0} failed today`} />
+        <StatCard label="Pro users" value={data?.proUsers ?? '—'} sub={`${data?.activeSubscriptions ?? 0} active subs`} />
+        <StatCard
+          label="Revenue"
+          value={data ? `$${data.revenue.toFixed(2)}` : '—'}
+          sub={data ? `$${data.revenueWeek.toFixed(2)} this week` : undefined}
+        />
       </div>
-
-      {error && <p className="text-destructive mb-6">{error}</p>}
-
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.users ?? '—'}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total downloads</CardTitle>
-            <Download className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.downloads ?? '—'}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats?.revenue != null ? `$${(stats.revenue / 100).toFixed(2)}` : '—'}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Total downloads" value={data?.downloads ?? '—'} />
+        <StatCard label="Playlists" value={data?.playlists ?? '—'} />
+        <StatCard label="Thumbnails" value={data?.thumbnails ?? '—'} />
+        <StatCard
+          label="Storage"
+          value={data ? `${data.storage.totalMb} MB` : '—'}
+          sub={data ? `${data.storage.totalFiles} files on disk` : undefined}
+        />
+        <StatCard label="Guest downloads" value={data?.guestDownloads ?? '—'} sub="Not tied to logged-in users" />
+        <StatCard label="Failed (7d)" value={data?.failedDownloadsWeek ?? '—'} />
       </div>
-    </div>
+    </>
   );
 }

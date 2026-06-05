@@ -10,6 +10,8 @@ import { UrlInput } from '@/components/downloader/UrlInput';
 import { apiClient } from '@/lib/api';
 import { getThumbnailSrc } from '@/lib/thumbnail';
 import { useUserStore } from '@/store/userStore';
+import { usePageContent } from '@/hooks/usePageContent';
+import { DEFAULT_TOOLS_CONTENT } from '@hellodownloader/shared-types';
 
 const proRatios = [
   { value: 'YOUTUBE_16_9', label: 'YouTube 16:9' },
@@ -20,6 +22,7 @@ const proRatios = [
 
 export default function ThumbnailPage() {
   const user = useUserStore((s) => s.user);
+  const content = usePageContent('tools', DEFAULT_TOOLS_CONTENT);
   const isPro = user?.plan === 'PRO';
   const [url, setUrl] = useState('');
   const [preview, setPreview] = useState<{ thumbnail: string; title: string } | null>(null);
@@ -85,18 +88,16 @@ export default function ThumbnailPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl space-y-8">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Thumbnails</h1>
-        <p className="text-muted-foreground">
-          Free: download the original thumbnail. Pro: AI adjust text/image or generate a new thumbnail with prompts.
-        </p>
+        <h1 className="text-3xl font-bold mb-2">{content.title}</h1>
+        <p className="text-muted-foreground">{content.subtitle}</p>
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Video URL</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{content.videoUrlCardTitle}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <UrlInput value={url} onChange={setUrl} placeholder="YouTube or social video URL" />
           <Button onClick={loadOriginal} disabled={!url || loading} className="w-full">
-            {loading ? 'Loading…' : 'Load thumbnail'}
+            {loading ? 'Loading…' : content.loadButton}
           </Button>
           {error && <p className="text-destructive text-sm">{error}</p>}
           {preview && (
@@ -124,17 +125,15 @@ export default function ThumbnailPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            Pro — AI Thumbnail Tools
+            {content.proCardTitle}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {!isPro ? (
             <div className="text-center py-6">
               <Crown className="h-8 w-8 text-amber-400 mx-auto mb-3" />
-              <p className="text-muted-foreground mb-4">
-                AI adjust (text + image) and full AI generation with custom prompts are Pro features.
-              </p>
-              <Link href="/pricing"><Button>Upgrade to Pro</Button></Link>
+              <p className="text-muted-foreground mb-4">{content.proLockedText}</p>
+              <Link href="/pricing"><Button>{content.proUpgradeButton}</Button></Link>
             </div>
           ) : (
             <>

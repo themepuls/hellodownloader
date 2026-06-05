@@ -1,4 +1,6 @@
 export * from './platforms';
+export * from './site-content';
+export * from './ai-api-settings';
 
 export enum UserRole {
   USER = 'USER',
