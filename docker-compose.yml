@@ -1,0 +1,110 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: hellodownloader
+      POSTGRES_PASSWORD: hellodownloader
+      POSTGRES_DB: hellodownloader
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U hellodownloader']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    ports:
+      - '4000:4000'
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./storage:/app/storage
+      - ./apps/api/uploads:/app/uploads
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+    depends_on:
+      - api
+
+  worker-download:
+    build:
+      context: .
+      dockerfile: docker/workers/Dockerfile
+      args:
+        WORKER: download
+    env_file: .env
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ./storage:/app/storage
+
+  worker-thumbnail:
+    build:
+      context: .
+      dockerfile: docker/workers/Dockerfile
+      args:
+        WORKER: thumbnail
+    env_file: .env
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ./storage:/app/storage
+
+  worker-cleanup:
+    build:
+      context: .
+      dockerfile: docker/workers/Dockerfile
+      args:
+        WORKER: cleanup
+    env_file: .env
+    depends_on:
+      - redis
+    volumes:
+      - ./storage:/app/storage
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - web
+      - api
+
+volumes:
+  postgres_data:

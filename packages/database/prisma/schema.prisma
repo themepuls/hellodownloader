@@ -1,0 +1,258 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum PlanType {
+  FREE
+  PRO
+}
+
+enum DownloadStatus {
+  PENDING
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum DownloadType {
+  VIDEO
+  PLAYLIST
+  SHORTS
+  REEL_FACEBOOK
+  REEL_INSTAGRAM
+  MP3
+  SUBTITLE
+  ZIP
+}
+
+enum ThumbnailStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ThumbnailRatio {
+  YOUTUBE_16_9
+  SHORTS_9_16
+  INSTAGRAM_4_5
+  FACEBOOK_1_1
+}
+
+enum PaymentProvider {
+  STRIPE
+  BINANCE
+  SSLCOMMERZ
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAST_DUE
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  name          String?
+  role          UserRole  @default(USER)
+  plan          PlanType  @default(FREE)
+  credits       Int       @default(0)
+  emailVerified Boolean   @default(false) @map("email_verified")
+  avatarUrl     String?   @map("avatar_url")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  downloads      Download[]
+  playlists      Playlist[]
+  thumbnails     Thumbnail[]
+  subscriptions  Subscription[]
+  transactions   Transaction[]
+  creditLogs     CreditLog[]
+  payments       Payment[]
+  analytics      Analytics[]
+
+  @@map("users")
+}
+
+model Download {
+  id          String         @id @default(cuid())
+  userId      String         @map("user_id")
+  url         String
+  type        DownloadType
+  status      DownloadStatus @default(PENDING)
+  title       String?
+  thumbnail   String?
+  format      String?
+  quality     Int?
+  filePath    String?        @map("file_path")
+  fileUrl     String?        @map("file_url")
+  fileSize    BigInt?        @map("file_size")
+  duration    Int?
+  metadata    Json?
+  error       String?
+  progress    Int            @default(0)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  completedAt DateTime?      @map("completed_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlist Playlist? @relation(fields: [playlistId], references: [id])
+  playlistId String? @map("playlist_id")
+
+  @@index([userId])
+  @@index([status])
+  @@map("downloads")
+}
+
+model Playlist {
+  id          String         @id @default(cuid())
+  userId      String         @map("user_id")
+  url         String
+  title       String?
+  status      DownloadStatus @default(PENDING)
+  itemCount   Int            @default(0) @map("item_count")
+  zipPath     String?        @map("zip_path")
+  zipUrl      String?        @map("zip_url")
+  progress    Int            @default(0)
+  error       String?
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  completedAt DateTime?      @map("completed_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  downloads Download[]
+
+  @@index([userId])
+  @@map("playlists")
+}
+
+model Thumbnail {
+  id           String          @id @default(cuid())
+  userId       String          @map("user_id")
+  videoUrl     String          @map("video_url")
+  ratio        ThumbnailRatio
+  status       ThumbnailStatus @default(PENDING)
+  originalPath String?         @map("original_path")
+  resizedPath  String?         @map("resized_path")
+  exportPath   String?         @map("export_path")
+  exportUrl    String?         @map("export_url")
+  creditsUsed  Int             @default(0) @map("credits_used")
+  ocrData      Json?           @map("ocr_data")
+  error        String?
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("thumbnails")
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @map("user_id")
+  plan                 PlanType           @default(PRO)
+  status               SubscriptionStatus @default(ACTIVE)
+  provider             PaymentProvider
+  providerSubId        String?            @map("provider_sub_id")
+  currentPeriodStart   DateTime?          @map("current_period_start")
+  currentPeriodEnd     DateTime?          @map("current_period_end")
+  cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("subscriptions")
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  userId      String          @map("user_id")
+  provider    PaymentProvider
+  amount      Float
+  currency    String          @default("USD")
+  status      PaymentStatus   @default(PENDING)
+  providerId  String?         @map("provider_id")
+  metadata    Json?
+  createdAt   DateTime        @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("transactions")
+}
+
+model Payment {
+  id          String          @id @default(cuid())
+  userId      String          @map("user_id")
+  provider    PaymentProvider
+  amount      Float
+  currency    String          @default("USD")
+  status      PaymentStatus   @default(PENDING)
+  providerRef String?         @map("provider_ref")
+  invoiceUrl  String?         @map("invoice_url")
+  metadata    Json?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("payments")
+}
+
+model CreditLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  amount    Int
+  reason    String
+  balance   Int
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("credit_logs")
+}
+
+model Analytics {
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  event     String
+  metadata  Json?
+  ip        String?
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([event])
+  @@index([userId])
+  @@map("analytics")
+}

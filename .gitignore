@@ -1,0 +1,54 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build
+dist
+.next
+out
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Storage (runtime)
+storage/youtube-cookies.txt
+storage/temp/*
+!storage/temp/.gitkeep
+storage/downloads/**/*
+!storage/downloads/**/.gitkeep
+storage/thumbnails/**/*
+!storage/thumbnails/**/.gitkeep
+storage/cache/*
+!storage/cache/.gitkeep
+storage/playlists/**/*
+!storage/playlists/.gitkeep
+!storage/playlists/sample-playlist.zip
+
+# Uploads
+apps/api/uploads/*
+!apps/api/uploads/.gitkeep
+
+# IDE
+.idea
+.vscode
+*.swp
+.DS_Store
+
+# Test
+coverage
+
+# Prisma / SQLite (local dev databases — never commit)
+**/*.db
+**/*.db-journal
+packages/database/prisma/migrations/**/migration_lock.toml
+
+# Docker
+.docker
