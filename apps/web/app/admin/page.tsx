@@ -19,6 +19,7 @@ type Overview = {
   failedDownloadsWeek: number;
   guestDownloads: number;
   storage: { totalMb: number; totalFiles: number };
+  fourKInterest?: { yes: number; no: number; total: number };
 };
 
 export default function AdminOverviewPage() {
@@ -45,6 +46,17 @@ export default function AdminOverviewPage() {
           value={data ? `$${data.revenue.toFixed(2)}` : '—'}
           sub={data ? `$${data.revenueWeek.toFixed(2)} this week` : undefined}
         />
+      </div>
+      <div className="rounded-xl border border-border bg-card/50 p-5 mb-8">
+        <h2 className="text-sm font-semibold mb-1">4K download interest survey</h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          Responses from logged-in users and guests on the download page.
+        </p>
+        <div className="grid sm:grid-cols-3 gap-4">
+          <StatCard label="Yes — need 4K" value={data?.fourKInterest?.yes ?? '—'} />
+          <StatCard label="No — not needed" value={data?.fourKInterest?.no ?? '—'} />
+          <StatCard label="Total responses" value={data?.fourKInterest?.total ?? '—'} />
+        </div>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Total downloads" value={data?.downloads ?? '—'} />

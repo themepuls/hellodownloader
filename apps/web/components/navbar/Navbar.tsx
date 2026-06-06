@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { Moon, Sun, Zap } from 'lucide-react';
+import { Menu, Moon, Sun, X, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/userStore';
 import { usePageContent } from '@/hooks/usePageContent';
@@ -13,7 +13,12 @@ import {
   mergeContent,
   type HeaderContent,
 } from '@hellodownloader/shared-types';
-import { AccountDropdown, HeaderLogo, NavMenuDropdown } from './NavDropdowns';
+import {
+  AccountDropdown,
+  HeaderLogo,
+  MobileNavMenu,
+  NavMenuDropdown,
+} from './NavDropdowns';
 
 function normalizeHeader(raw: HeaderContent): HeaderContent {
   const base = mergeContent(DEFAULT_HEADER_CONTENT, raw as unknown as Record<string, unknown>);
@@ -36,6 +41,7 @@ export function Navbar() {
   const { user, logout } = useUserStore();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const rawHeader = usePageContent(
     'header',
     DEFAULT_HEADER_CONTENT as unknown as Record<string, unknown>,
@@ -46,83 +52,111 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   const { logo, menu, auth } = header;
+  // Avoid hydration mismatch: persisted auth is client-only until mount.
+  const sessionUser = mounted ? user : null;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0b0e14]/90 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
-        <HeaderLogo
-          imageUrl={logo.imageUrl}
-          imageAlt={logo.imageAlt ?? ''}
-          text={logo.text}
-          link={logo.link}
-          showBrandName={logo.showBrandName !== false}
-        />
+    <>
+      <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md">
+        <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6">
+          <div className="flex min-w-0 shrink-0 items-center">
+            <HeaderLogo
+              imageUrl={logo.imageUrl}
+              imageAlt={logo.imageAlt ?? ''}
+              text={logo.text}
+              link={logo.link}
+              showBrandName={logo.showBrandName !== false}
+              compactBrandOnMobile
+            />
+          </div>
 
-        <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
-          {menu.map((item, i) => (
-            <NavMenuDropdown key={`${item.label}-${i}`} item={item} pathname={pathname} />
-          ))}
-        </nav>
+          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex">
+            {menu.map((item, i) => (
+              <NavMenuDropdown key={`${item.label}-${i}`} item={item} pathname={pathname} />
+            ))}
+          </nav>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          >
-            {mounted ? (
-              theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />
-            ) : (
-              <span className="inline-block h-4 w-4" aria-hidden />
-            )}
-          </Button>
-
-          {user ? (
-            <>
-              {user.plan === 'PRO' && (
-                <span className="hidden md:flex items-center gap-1 text-xs text-primary font-medium">
-                  <Zap className="h-3 w-3" /> Pro
-                </span>
+          <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 lg:ml-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+              suppressHydrationWarning
+            >
+              {mounted ? (
+                theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" aria-hidden />
               )}
-              <span className="hidden md:inline text-xs text-muted-foreground">
-                {user.credits ?? 0} credits
-              </span>
-              <AccountDropdown
-                accountLabel={auth.accountLabel}
-                dashboardText={auth.dashboardText}
-                dashboardLink={auth.dashboardLink}
-                adminText={auth.adminText}
-                adminLink={auth.adminLink}
-                logoutText={auth.logoutText}
-                isAdmin={user.role === 'ADMIN'}
-                onLogout={logout}
-                userLabel={user.name ?? user.email.split('@')[0]}
-              />
-            </>
-          ) : (
-            <>
-              <Link href={auth.loginLink}>
-                <Button variant="ghost" size="sm" className="text-muted-foreground">
-                  {auth.loginText}
-                </Button>
-              </Link>
-              <Link href={auth.signupLink}>
-                <Button size="sm" className="rounded-lg font-semibold">
-                  {auth.signupText}
-                </Button>
-              </Link>
-            </>
-          )}
-        </div>
-      </div>
+            </Button>
 
-      <nav className="lg:hidden flex gap-1 overflow-x-auto px-4 pb-2 border-t border-white/5 pt-2 scrollbar-none">
-        {menu.map((item, i) => (
-          <NavMenuDropdown key={`m-${item.label}-${i}`} item={item} pathname={pathname} />
-        ))}
-      </nav>
-    </header>
+            <div className="hidden items-center gap-2 lg:flex">
+              {sessionUser ? (
+                <>
+                  {sessionUser.plan === 'PRO' && (
+                    <span className="flex items-center gap-1 text-xs font-medium text-primary">
+                      <Zap className="h-3 w-3" /> Pro
+                    </span>
+                  )}
+                  <AccountDropdown
+                    accountLabel={auth.accountLabel}
+                    dashboardText={auth.dashboardText}
+                    dashboardLink={auth.dashboardLink}
+                    adminText={auth.adminText}
+                    adminLink={auth.adminLink}
+                    logoutText={auth.logoutText}
+                    isAdmin={sessionUser.role === 'ADMIN'}
+                    onLogout={logout}
+                    userLabel={sessionUser.name ?? sessionUser.email.split('@')[0]}
+                  />
+                </>
+              ) : (
+                <>
+                  <Link href={auth.loginLink}>
+                    <Button variant="ghost" size="sm" className="text-muted-foreground">
+                      {auth.loginText}
+                    </Button>
+                  </Link>
+                  <Link href={auth.signupLink}>
+                    <Button size="sm" className="rounded-lg font-semibold">
+                      {auth.signupText}
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground lg:hidden"
+              onClick={() => setMobileOpen((v) => !v)}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <MobileNavMenu
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        menu={menu}
+        pathname={pathname}
+        auth={auth}
+        user={sessionUser}
+        onLogout={logout}
+      />
+    </>
   );
 }

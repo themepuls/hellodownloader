@@ -1,12 +1,24 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
-import { LoginDto, RefreshDto, RegisterDto } from './auth.dto';
+import { GoogleAuthDto, LoginDto, RefreshDto, RegisterDto } from './auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Public()
+  @Get('google/config')
+  googleConfig() {
+    return this.authService.getGoogleAuthConfig();
+  }
+
+  @Public()
+  @Post('google')
+  google(@Body() dto: GoogleAuthDto) {
+    return this.authService.googleAuth(dto.idToken);
+  }
 
   @Public()
   @Post('register')

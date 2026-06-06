@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PlaylistController } from './playlist.controller';
 import { PlaylistService } from './playlist.service';
+import { AuthModule } from '../auth/auth.module';
 import { YtDlpService } from '../../services/yt-dlp.service';
 import { StorageService } from '../../services/storage.service';
 import { ZipService } from '../../services/zip.service';
@@ -9,6 +10,7 @@ import { PlaylistDownloader } from '../../download-engine/playlists/playlist-dow
 import { DownloadQueueService } from '../../queues/download.queue';
 
 @Module({
+  imports: [AuthModule],
   controllers: [PlaylistController],
   providers: [
     PlaylistService,

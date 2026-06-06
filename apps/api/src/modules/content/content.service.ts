@@ -55,6 +55,25 @@ export class ContentService implements OnModuleInit {
     }));
   }
 
+  /** Published pages for sitemap.xml — slug, updatedAt, noIndex only. */
+  async listPublicSitemapPages() {
+    const rows = await this.prisma.contentPage.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true, sections: true },
+      orderBy: { slug: 'asc' },
+    });
+
+    return rows.map((row) => {
+      const sections = this.mergeWithDefaults(row.slug, row.sections as Record<string, unknown> | null);
+      const seo = sections.seo as { noIndex?: boolean } | undefined;
+      return {
+        slug: row.slug,
+        updatedAt: row.updatedAt.toISOString(),
+        noIndex: Boolean(seo?.noIndex),
+      };
+    });
+  }
+
   async updatePage(
     slug: string,
     data: {

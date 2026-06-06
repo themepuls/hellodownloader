@@ -10,10 +10,11 @@ import { DownloadProcessorService } from '../../services/download-processor.serv
 import { DownloadQueueService } from '../../queues/download.queue';
 import { StorageService } from '../../services/storage.service';
 import { hashPassword } from '@hellodownloader/auth-utils';
-import { PLAN_LIMITS, CREDIT_COSTS, PlanType, type DownloadType, type BasicPlanModel, type ProPlanModel } from '@hellodownloader/shared-types';
+import { PLAN_LIMITS, CREDIT_COSTS, PlanType, type DownloadType, type HdQualityAccessConfig } from '@hellodownloader/shared-types';
 import { deleteLocalFile } from '../../utils/file-delivery';
 import { PaymentConfigService } from '../../payment/payment-config.service';
 import { AiApiSettingsService } from '../ai-api-settings/ai-api-settings.service';
+import { FourKInterestService } from '../survey/four-k-interest.service';
 import { getWebOrigin } from '../../payment/payment-config';
 import { PaymentProvider, AiImageProvider } from '@hellodownloader/database';
 import * as fs from 'fs';
@@ -31,6 +32,7 @@ export class AdminService {
     private storage: StorageService,
     private paymentConfig: PaymentConfigService,
     private aiApiSettings: AiApiSettingsService,
+    private fourKInterest: FourKInterestService,
   ) {}
 
   async getOverview() {
@@ -79,6 +81,7 @@ export class AdminService {
       : 0;
 
     const storage = this.getStorageStats();
+    const fourKInterest = await this.fourKInterest.getCounts();
 
     return {
       users: totalUsers,
@@ -96,6 +99,7 @@ export class AdminService {
       failedDownloadsWeek: failedDownloads,
       guestDownloads,
       storage,
+      fourKInterest,
     };
   }
 
@@ -477,31 +481,25 @@ export class AdminService {
     return this.aiApiSettings.getSettings();
   }
 
-  testOpenAiApi(data: { apiKey: string; openaiModel: 'gpt-5-mini' | 'gpt-5' }) {
-    return this.aiApiSettings.testOpenAi(data.apiKey, data.openaiModel);
+  testOpenAiApi(data: { apiKey?: string; textModel: 'gpt-5-mini' | 'gpt-5' }) {
+    return this.aiApiSettings.testOpenAi(data.apiKey, data.textModel);
   }
 
-  testFreepikApi(data: { apiKey: string }) {
-    return this.aiApiSettings.testFreepik(data.apiKey);
+  testFalApi(data: { apiKey?: string }) {
+    return this.aiApiSettings.testFal(data.apiKey);
   }
 
-  saveOpenAiApi(data: {
-    apiKey?: string;
-    openaiModel: 'gpt-5-mini' | 'gpt-5';
-    verificationToken?: string;
+  saveAiProviders(data: {
+    textModel: 'gpt-5-mini' | 'gpt-5';
+    imageProvider: 'fal' | 'openai';
+    basicImageModel: string;
+    proImageModel: string;
+    openaiApiKey?: string;
+    openaiVerificationToken?: string;
+    falApiKey?: string;
+    falVerificationToken?: string;
   }) {
-    return this.aiApiSettings.saveOpenAi(data);
-  }
-
-  saveFreepikApi(data: { apiKey?: string; verificationToken?: string }) {
-    return this.aiApiSettings.saveFreepik(data);
-  }
-
-  savePlanModels(data: {
-    basicPlanModel: BasicPlanModel;
-    proPlanModel: ProPlanModel;
-  }) {
-    return this.aiApiSettings.savePlanModels(data);
+    return this.aiApiSettings.saveProviders(data as Parameters<AiApiSettingsService['saveProviders']>[0]);
   }
 
   saveAiFeatures(data: {
@@ -658,38 +656,23 @@ export class AdminService {
   }
 
   getSettings() {
-    const ads = adminRuntimeConfig.getAds();
     return {
       planLimits: PLAN_LIMITS,
       creditCosts: CREDIT_COSTS,
-      ads: {
-        bannerSlot: process.env.AD_BANNER_SLOT ?? 'banner-1',
-        popupSlot: process.env.AD_POPUP_SLOT ?? 'popup-1',
-        rewardedSlot: process.env.AD_REWARDED_SLOT ?? 'rewarded-1',
-        bannerEnabled: ads.bannerEnabled,
-        popupEnabled: ads.popupEnabled,
-        rewardedEnabled: ads.rewardedEnabled,
-        creditsReward: ads.creditsReward,
-        popupDelayMs: 30000,
-      },
       retentionHours: adminRuntimeConfig.getRetentionHours(parseInt(process.env.FILE_RETENTION_HOURS ?? '1', 10)),
+      downloadQualityAccess: adminRuntimeConfig.getDownloadQualityAccess(),
     };
   }
 
   updateSettings(patch: {
     retentionHours?: number;
-    ads?: Partial<{
-      bannerEnabled: boolean;
-      popupEnabled: boolean;
-      rewardedEnabled: boolean;
-      creditsReward: number;
-    }>;
+    downloadQualityAccess?: Partial<HdQualityAccessConfig>;
   }) {
     if (patch.retentionHours != null) {
       adminRuntimeConfig.setRetentionHours(Math.max(1, Math.min(168, patch.retentionHours)));
     }
-    if (patch.ads) {
-      adminRuntimeConfig.setAds(patch.ads);
+    if (patch.downloadQualityAccess) {
+      adminRuntimeConfig.setDownloadQualityAccess(patch.downloadQualityAccess);
     }
     return this.getSettings();
   }
@@ -747,16 +730,27 @@ export class AdminService {
   }
 
   uploadBranding(file: { buffer: Buffer; originalname: string; mimetype: string }) {
+    return this.uploadPublicImage(file, 'logo');
+  }
+
+  uploadAdImage(file: { buffer: Buffer; originalname: string; mimetype: string }) {
+    return this.uploadPublicImage(file, 'ad');
+  }
+
+  private uploadPublicImage(
+    file: { buffer: Buffer; originalname: string; mimetype: string },
+    prefix: string,
+  ) {
     if (!file?.buffer?.length) {
       throw new BadRequestException('No image file provided');
     }
 
     const ext = path.extname(file.originalname).toLowerCase() || '.png';
-    const allowed = new Set(['.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif']);
+    const allowed = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico']);
     if (!allowed.has(ext)) {
-      throw new BadRequestException('Use PNG, JPG, WebP, SVG, or GIF');
+      throw new BadRequestException('Use PNG, JPG, WebP, GIF, or ICO');
     }
-    if (!file.mimetype.startsWith('image/')) {
+    if (!file.mimetype.startsWith('image/') && ext !== '.ico') {
       throw new BadRequestException('File must be an image');
     }
 
@@ -764,7 +758,7 @@ export class AdminService {
     const uploadDir = path.join(monorepoRoot, 'apps/web/public/uploads');
     fs.mkdirSync(uploadDir, { recursive: true });
 
-    const safeName = `logo-${Date.now()}${ext}`;
+    const safeName = `${prefix}-${Date.now()}${ext}`;
     const dest = path.join(uploadDir, safeName);
     fs.writeFileSync(dest, file.buffer);
 

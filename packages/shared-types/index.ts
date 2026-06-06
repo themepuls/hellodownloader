@@ -1,6 +1,16 @@
 export * from './platforms';
 export * from './site-content';
+export * from './site-settings';
 export * from './ai-api-settings';
+export * from './thumbnail-prompts';
+export * from './thumbnail-prompt-admin';
+export * from './thumbnail-image';
+export * from './thumbnail-adjust-vision';
+export * from './thumbnail-categories';
+export * from './plan-access';
+export * from './download-quality-access';
+export * from './ads-config';
+export * from './custom-ads';
 
 export enum UserRole {
   USER = 'USER',
@@ -37,6 +47,31 @@ export enum ThumbnailRatio {
   SHORTS_9_16 = 'SHORTS_9_16',
   INSTAGRAM_4_5 = 'INSTAGRAM_4_5',
   FACEBOOK_1_1 = 'FACEBOOK_1_1',
+}
+
+export enum ThumbnailStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
+
+export interface ThumbnailRecord {
+  id: string;
+  userId: string;
+  videoUrl: string;
+  ratio: ThumbnailRatio;
+  status: ThumbnailStatus;
+  originalPath: string | null;
+  resizedPath: string | null;
+  exportPath: string | null;
+  exportUrl: string | null;
+  creditsUsed: number;
+  ocrData: unknown;
+  error: string | null;
+  createdAt: string;
+  updatedAt: string;
+  message?: string;
 }
 
 export enum PaymentProvider {
@@ -126,6 +161,10 @@ export interface ThumbnailJobData {
   upscale?: boolean;
   mode?: 'adjust' | 'generate';
   prompt?: string;
+  adjustPrompt?: string;
+  planModel?: string;
+  imageProvider?: string;
+  plan?: PlanType;
 }
 
 export interface ApiResponse<T = unknown> {

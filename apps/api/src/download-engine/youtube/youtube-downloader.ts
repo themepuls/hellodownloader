@@ -41,7 +41,9 @@ export class YouTubeDownloader {
       }
 
       case 'PLAYLIST': {
-        const filePaths = await this.ytDlp.downloadPlaylist(url, options.outputDir, options.quality);
+        const filePaths = await this.ytDlp.downloadPlaylist(url, options.outputDir, {
+          maxHeight: options.quality,
+        });
         if (!filePaths.length) throw new Error('Playlist download produced no files.');
         return { filePaths, primary: filePaths[0] };
       }

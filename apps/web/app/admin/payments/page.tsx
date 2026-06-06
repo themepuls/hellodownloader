@@ -162,7 +162,7 @@ function ConfigModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-white/10 bg-card p-6 shadow-xl">
+      <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Configure {cfg.title}</h2>
           <button type="button" onClick={onClose} className="text-muted-foreground hover:text-foreground">
@@ -221,7 +221,7 @@ function ConfigModal({
               </div>
             </div>
 
-            <div className="space-y-3 border-t border-white/10 pt-4">
+            <div className="space-y-3 border-t border-border pt-4">
               <p className="text-sm font-medium">Test credentials</p>
               {cfg.test.map((key) => (
                 <div key={key}>
@@ -236,7 +236,7 @@ function ConfigModal({
               ))}
             </div>
 
-            <div className="space-y-3 border-t border-white/10 pt-4">
+            <div className="space-y-3 border-t border-border pt-4">
               <p className="text-sm font-medium">Live credentials</p>
               {cfg.live.map((key) => (
                 <div key={key}>
@@ -343,7 +343,7 @@ export default function AdminPaymentsPage() {
               return (
                 <div
                   key={method.id}
-                  className="rounded-xl border border-white/10 bg-card p-5 flex flex-col gap-4"
+                  className="rounded-xl border border-border bg-card p-5 flex flex-col gap-4"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-3">
@@ -378,21 +378,21 @@ export default function AdminPaymentsPage() {
                   </p>
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="rounded-lg bg-white/5 p-2">
+                    <div className="rounded-lg bg-accent/50 p-2">
                       <div className="font-semibold">{method.stats.completedCount}</div>
                       <div className="text-muted-foreground">Done</div>
                     </div>
-                    <div className="rounded-lg bg-white/5 p-2">
+                    <div className="rounded-lg bg-accent/50 p-2">
                       <div className="font-semibold">{method.stats.pendingCount}</div>
                       <div className="text-muted-foreground">Pending</div>
                     </div>
-                    <div className="rounded-lg bg-white/5 p-2">
+                    <div className="rounded-lg bg-accent/50 p-2">
                       <div className="font-semibold">{method.stats.failedCount}</div>
                       <div className="text-muted-foreground">Failed</div>
                     </div>
                   </div>
 
-                  <div className="text-xs text-muted-foreground space-y-1 mt-auto border-t border-white/10 pt-3">
+                  <div className="text-xs text-muted-foreground space-y-1 mt-auto border-t border-border pt-3">
                     <p className="flex items-center gap-1">
                       <ExternalLink className="h-3 w-3" />
                       Webhook: <code className="text-[10px]">{method.webhookUrl}</code>
@@ -437,7 +437,7 @@ export default function AdminPaymentsPage() {
         <>
           <div className="flex flex-wrap gap-2 mb-4">
             <select
-              className="rounded-md border border-white/10 bg-background px-3 py-2 text-sm"
+              className="rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={provider}
               onChange={(e) => {
                 setProvider(e.target.value);
@@ -450,7 +450,7 @@ export default function AdminPaymentsPage() {
               <option value="SSLCOMMERZ">SSLCommerz</option>
             </select>
             <select
-              className="rounded-md border border-white/10 bg-background px-3 py-2 text-sm"
+              className="rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={status}
               onChange={(e) => {
                 setStatus(e.target.value);
@@ -465,9 +465,9 @@ export default function AdminPaymentsPage() {
             </select>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-white/10">
+          <div className="overflow-x-auto rounded-xl border border-border">
             <table className="w-full text-sm">
-              <thead className="bg-white/5 text-left text-muted-foreground">
+              <thead className="bg-accent/50 text-left text-muted-foreground">
                 <tr>
                   <th className="p-3">User</th>
                   <th className="p-3">Provider</th>
@@ -494,7 +494,7 @@ export default function AdminPaymentsPage() {
                         ? 'Binance Pay'
                         : 'SSLCommerz';
                   return (
-                    <tr key={String(p.id)} className="border-t border-white/5">
+                    <tr key={String(p.id)} className="border-t border-border/60">
                       <td className="p-3 text-xs">{user?.email ?? '—'}</td>
                       <td className="p-3">{providerLabel}</td>
                       <td className="p-3">
@@ -521,9 +521,9 @@ export default function AdminPaymentsPage() {
 
       {tab === 'subscriptions' && (
         <>
-          <div className="overflow-x-auto rounded-xl border border-white/10">
+          <div className="overflow-x-auto rounded-xl border border-border">
             <table className="w-full text-sm">
-              <thead className="bg-white/5 text-left text-muted-foreground">
+              <thead className="bg-accent/50 text-left text-muted-foreground">
                 <tr>
                   <th className="p-3">User</th>
                   <th className="p-3">Plan</th>
@@ -549,7 +549,7 @@ export default function AdminPaymentsPage() {
                         ? 'Binance Pay'
                         : 'SSLCommerz';
                   return (
-                    <tr key={String(s.id)} className="border-t border-white/5">
+                    <tr key={String(s.id)} className="border-t border-border/60">
                       <td className="p-3 text-xs">{user?.email}</td>
                       <td className="p-3">{String(s.plan)}</td>
                       <td className="p-3">{providerLabel}</td>

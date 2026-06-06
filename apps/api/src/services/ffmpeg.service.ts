@@ -5,7 +5,17 @@ import * as fs from 'fs';
 
 @Injectable()
 export class FfmpegService {
-  private readonly binary = process.env.FFMPEG_PATH ?? 'ffmpeg';
+  private readonly binary = FfmpegService.resolveBinary();
+
+  private static resolveBinary(): string {
+    const configured = process.env.FFMPEG_PATH?.trim();
+    const fallbacks = ['/opt/homebrew/bin/ffmpeg', '/usr/local/bin/ffmpeg'];
+    const candidates = [configured, ...fallbacks].filter(Boolean) as string[];
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) return candidate;
+    }
+    return configured ?? 'ffmpeg';
+  }
 
   async convertToMp3(inputPath: string, outputPath: string): Promise<string> {
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });

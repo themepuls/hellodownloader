@@ -122,6 +122,7 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   passwordHash: 'passwordHash',
+  googleId: 'googleId',
   name: 'name',
   role: 'role',
   plan: 'plan',
@@ -284,21 +285,67 @@ exports.Prisma.ThumbnailAiSettingsScalarFieldEnum = {
 
 exports.Prisma.AiApiSettingsScalarFieldEnum = {
   id: 'id',
+  textProvider: 'textProvider',
+  textModel: 'textModel',
   openaiApiKey: 'openaiApiKey',
-  openaiModel: 'openaiModel',
   openaiConnectionStatus: 'openaiConnectionStatus',
   openaiLastTestedAt: 'openaiLastTestedAt',
-  freepikApiKey: 'freepikApiKey',
-  freepikConnectionStatus: 'freepikConnectionStatus',
-  freepikLastTestedAt: 'freepikLastTestedAt',
-  basicPlanModel: 'basicPlanModel',
-  proPlanModel: 'proPlanModel',
+  imageProvider: 'imageProvider',
+  basicImageModel: 'basicImageModel',
+  proImageModel: 'proImageModel',
+  falApiKey: 'falApiKey',
+  falConnectionStatus: 'falConnectionStatus',
+  falLastTestedAt: 'falLastTestedAt',
   enableAiAnalysis: 'enableAiAnalysis',
   enableAiThumbnailGeneration: 'enableAiThumbnailGeneration',
   enableAiImproveThumbnail: 'enableAiImproveThumbnail',
   enableAutoCategoryDetection: 'enableAutoCategoryDetection',
   enableThumbnailScoring: 'enableThumbnailScoring',
   enableAutoLayoutDetection: 'enableAutoLayoutDetection',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ThumbnailPromptScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  type: 'type',
+  content: 'content',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SiteSettingsScalarFieldEnum = {
+  id: 'id',
+  siteName: 'siteName',
+  siteUrl: 'siteUrl',
+  titleTemplate: 'titleTemplate',
+  defaultMetaTitle: 'defaultMetaTitle',
+  defaultMetaDescription: 'defaultMetaDescription',
+  defaultKeywords: 'defaultKeywords',
+  defaultOgImage: 'defaultOgImage',
+  faviconUrl: 'faviconUrl',
+  globalHeadHtml: 'globalHeadHtml',
+  globalHeadJs: 'globalHeadJs',
+  globalCss: 'globalCss',
+  globalBodyJs: 'globalBodyJs',
+  googleSiteVerification: 'googleSiteVerification',
+  bingSiteVerification: 'bingSiteVerification',
+  customHeadSnippet: 'customHeadSnippet',
+  verificationFiles: 'verificationFiles',
+  routeSeo: 'routeSeo',
+  googleAuthEnabled: 'googleAuthEnabled',
+  googleClientId: 'googleClientId',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FourKInterestSurveyScalarFieldEnum = {
+  id: 'id',
+  interested: 'interested',
+  userId: 'userId',
+  visitorId: 'visitorId',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
@@ -398,6 +445,17 @@ exports.AiImageProvider = exports.$Enums.AiImageProvider = {
   IDEOGRAM: 'IDEOGRAM'
 };
 
+exports.ThumbnailPromptType = exports.$Enums.ThumbnailPromptType = {
+  GLOBAL: 'GLOBAL',
+  CATEGORY: 'CATEGORY',
+  ADJUST: 'ADJUST'
+};
+
+exports.ThumbnailPromptStatus = exports.$Enums.ThumbnailPromptStatus = {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Download: 'Download',
@@ -412,7 +470,10 @@ exports.Prisma.ModelName = {
   ContentPage: 'ContentPage',
   AiImageProviderConfig: 'AiImageProviderConfig',
   ThumbnailAiSettings: 'ThumbnailAiSettings',
-  AiApiSettings: 'AiApiSettings'
+  AiApiSettings: 'AiApiSettings',
+  ThumbnailPrompt: 'ThumbnailPrompt',
+  SiteSettings: 'SiteSettings',
+  FourKInterestSurvey: 'FourKInterestSurvey'
 };
 
 /**

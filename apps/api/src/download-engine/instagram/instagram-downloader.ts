@@ -5,6 +5,7 @@ import { YtDlpService } from '../../services/yt-dlp.service';
 export interface InstagramDownloadOptions {
   type: 'REEL_INSTAGRAM' | 'VIDEO';
   quality?: number;
+  format?: string;
   outputDir: string;
 }
 
@@ -22,6 +23,8 @@ export class InstagramDownloader {
     this.logger.log(`Instagram download: type=${options.type} url=${url}`);
     return this.ytDlp.downloadVideo(url, options.outputDir, {
       maxHeight: options.quality ?? 1080,
+      format: options.format,
+      url,
     });
   }
 }

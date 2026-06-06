@@ -40,7 +40,7 @@ export function TextArea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
-        className="w-full rounded-md border border-white/10 bg-background px-3 py-2 text-sm"
+        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
       />
     </div>
   );
@@ -82,7 +82,7 @@ export function StringListEditor({
 
 export function SectionBlock({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-4 border-t border-white/10 pt-6 first:border-0 first:pt-0">
+    <div className="space-y-4 border-t border-border pt-6 first:border-0 first:pt-0">
       <h3 className="text-sm font-semibold text-primary">{title}</h3>
       {children}
     </div>

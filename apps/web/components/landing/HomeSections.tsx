@@ -68,24 +68,24 @@ export function HomeSections({ content: contentProp }: HomeSectionsProps = {}) {
 
   return (
     <>
-      <section className="px-4 py-20">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">{features.title}</h2>
-          <p className="mx-auto mb-12 max-w-2xl text-muted-foreground">{features.subtitle}</p>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="overflow-x-hidden px-4 py-14 sm:px-6 sm:py-20">
+        <div className="container mx-auto max-w-6xl min-w-0 text-center">
+          <h2 className="mb-3 text-2xl font-bold sm:mb-4 sm:text-3xl md:text-4xl">{features.title}</h2>
+          <p className="mx-auto mb-8 max-w-2xl text-sm text-muted-foreground sm:mb-12 sm:text-base">{features.subtitle}</p>
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {features.items.map((f, i) => {
               const Icon = FEATURE_ICONS[f.icon] ?? Download;
               const color = FEATURE_COLORS[i % FEATURE_COLORS.length];
               return (
                 <div
                   key={`${f.title}-${i}`}
-                  className={`rounded-2xl border border-white/10 bg-gradient-to-br ${color} p-6 text-left transition hover:border-primary/30`}
+                  className={`rounded-2xl border border-border bg-gradient-to-br ${color} p-5 text-left transition hover:border-primary/30 sm:p-6`}
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20">
-                    <Icon className="h-6 w-6 text-primary" />
+                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/20 sm:mb-4 sm:h-12 sm:w-12">
+                    <Icon className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold">{f.title}</h3>
-                  <p className="text-sm text-muted-foreground">{f.desc}</p>
+                  <h3 className="mb-1.5 text-base font-semibold sm:mb-2 sm:text-lg">{f.title}</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">{f.desc}</p>
                 </div>
               );
             })}
@@ -93,34 +93,34 @@ export function HomeSections({ content: contentProp }: HomeSectionsProps = {}) {
         </div>
       </section>
 
-      <section className="border-y border-white/5 bg-[#0d1017] px-4 py-20">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="mb-12 text-3xl font-bold">{steps.title}</h2>
-          <div className="grid gap-8 md:grid-cols-3">
+      <section className="overflow-x-hidden border-y border-border/60 bg-secondary px-4 py-14 sm:px-6 sm:py-20">
+        <div className="container mx-auto max-w-4xl min-w-0 text-center">
+          <h2 className="mb-8 text-2xl font-bold sm:mb-12 sm:text-3xl">{steps.title}</h2>
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-3">
             {steps.items.map((s, i) => (
               <div key={`${s.title}-${i}`} className="relative">
                 {i < steps.items.length - 1 && (
-                  <div className="absolute left-[calc(50%+2rem)] top-8 hidden h-px w-[calc(100%-4rem)] border-t border-dashed border-white/20 md:block" />
+                  <div className="absolute left-[calc(50%+2rem)] top-8 hidden h-px w-[calc(100%-4rem)] border-t border-dashed border-border md:block" />
                 )}
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/20 text-2xl font-bold text-primary">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/20 text-xl font-bold text-primary sm:mb-4 sm:h-16 sm:w-16 sm:text-2xl">
                   {i + 1}
                 </div>
-                <h3 className="mb-2 font-semibold">{s.title}</h3>
-                <p className="text-sm text-muted-foreground">{s.desc}</p>
+                <h3 className="mb-1.5 text-sm font-semibold sm:mb-2 sm:text-base">{s.title}</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="px-4 py-20">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h2 className="mb-12 text-3xl font-bold">{platforms.title}</h2>
-          <div className="flex flex-wrap items-center justify-center gap-4">
+      <section className="overflow-x-hidden px-4 py-14 sm:px-6 sm:py-20">
+        <div className="container mx-auto max-w-6xl min-w-0 text-center">
+          <h2 className="mb-8 text-2xl font-bold sm:mb-12 sm:text-3xl">{platforms.title}</h2>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
             {platforms.items.map((p) => (
               <div
                 key={p}
-                className="flex h-16 w-28 items-center justify-center rounded-xl border border-white/10 bg-[#12151c] text-sm font-medium"
+                className="flex h-12 min-w-[5.5rem] flex-1 items-center justify-center rounded-xl border border-border bg-card px-3 text-xs font-medium sm:h-16 sm:min-w-[7rem] sm:flex-none sm:w-28 sm:text-sm"
               >
                 {p}
               </div>
@@ -129,37 +129,37 @@ export function HomeSections({ content: contentProp }: HomeSectionsProps = {}) {
         </div>
       </section>
 
-      <section className="px-4 py-20">
-        <div className="container mx-auto max-w-5xl">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-[#12151c] p-8">
-              <h3 className="mb-2 text-xl font-bold">{pricingTeaser.free.title}</h3>
-              <p className="mb-6 text-3xl font-bold">
+      <section className="overflow-x-hidden px-4 py-14 sm:px-6 sm:py-20">
+        <div className="container mx-auto max-w-5xl min-w-0">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+              <h3 className="mb-2 text-lg font-bold sm:text-xl">{pricingTeaser.free.title}</h3>
+              <p className="mb-4 text-2xl font-bold sm:mb-6 sm:text-3xl">
                 {pricingTeaser.free.price}{' '}
                 <span className="text-base font-normal text-muted-foreground">
                   {pricingTeaser.free.priceSuffix}
                 </span>
               </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-1.5 text-xs text-muted-foreground sm:space-y-2 sm:text-sm">
                 {pricingTeaser.free.features.map((line) => (
                   <li key={line}>✓ {line}</li>
                 ))}
               </ul>
             </div>
-            <div className="relative rounded-2xl border-2 border-primary bg-[#12151c] p-8 shadow-lg shadow-primary/10">
+            <div className="relative rounded-2xl border-2 border-primary bg-card p-6 shadow-lg shadow-primary/10 sm:p-8">
               {pricingTeaser.pro.badge && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-xs font-semibold">
                   {pricingTeaser.pro.badge}
                 </span>
               )}
-              <h3 className="mb-2 text-xl font-bold">{pricingTeaser.pro.title}</h3>
-              <p className="mb-6 text-3xl font-bold">
+              <h3 className="mb-2 text-lg font-bold sm:text-xl">{pricingTeaser.pro.title}</h3>
+              <p className="mb-4 text-2xl font-bold sm:mb-6 sm:text-3xl">
                 {pricingTeaser.pro.price}{' '}
                 <span className="text-base font-normal text-muted-foreground">
                   {pricingTeaser.pro.priceSuffix}
                 </span>
               </p>
-              <ul className="mb-6 space-y-2 text-sm text-muted-foreground">
+              <ul className="mb-4 space-y-1.5 text-xs text-muted-foreground sm:mb-6 sm:space-y-2 sm:text-sm">
                 {pricingTeaser.pro.features.map((line) => (
                   <li key={line}>✓ {line}</li>
                 ))}
@@ -174,15 +174,15 @@ export function HomeSections({ content: contentProp }: HomeSectionsProps = {}) {
         </div>
       </section>
 
-      <section className="px-4 py-20">
-        <div className="container mx-auto max-w-5xl">
-          <div className="flex flex-col items-center justify-between gap-6 rounded-2xl bg-gradient-to-r from-primary to-blue-600 p-10 md:flex-row">
-            <div>
-              <h2 className="text-2xl font-bold text-white md:text-3xl">{cta.title}</h2>
-              <p className="mt-2 text-white/80">{cta.subtitle}</p>
+      <section className="overflow-x-hidden px-4 py-14 sm:px-6 sm:py-20">
+        <div className="container mx-auto max-w-5xl min-w-0">
+          <div className="flex flex-col items-center justify-between gap-5 rounded-2xl bg-gradient-to-r from-primary to-blue-600 p-6 text-center sm:gap-6 sm:p-8 md:flex-row md:p-10 md:text-left">
+            <div className="min-w-0">
+              <h2 className="text-xl font-bold text-white sm:text-2xl md:text-3xl">{cta.title}</h2>
+              <p className="mt-2 text-sm text-white/80 sm:text-base">{cta.subtitle}</p>
             </div>
-            <Link href={cta.buttonLink}>
-              <Button size="lg" variant="secondary" className="gap-2 bg-white text-primary hover:bg-white/90">
+            <Link href={cta.buttonLink} className="w-full shrink-0 sm:w-auto">
+              <Button size="lg" variant="secondary" className="w-full gap-2 bg-white text-primary hover:bg-white/90 sm:w-auto">
                 <Rocket className="h-4 w-4" />
                 {cta.buttonText}
               </Button>

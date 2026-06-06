@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { existsSync } from 'fs';
 import { PrismaService } from '../../database/prisma.service';
 import { getHistorySince, PLAN_LIMITS, type PlanType } from '@hellodownloader/shared-types';
 
@@ -89,7 +90,7 @@ export class UsersService {
         title: d.title ?? 'Untitled video',
         status: d.status,
         progress: d.status === 'COMPLETED' ? 100 : d.progress,
-        fileAvailable: d.status === 'COMPLETED' && !!d.filePath,
+        fileAvailable: d.status === 'COMPLETED' && !!d.filePath && existsSync(d.filePath),
         createdAt: d.createdAt.toISOString(),
       })),
       ...recentPlaylists.map((p) => ({
@@ -98,7 +99,7 @@ export class UsersService {
         title: p.title ?? 'Playlist',
         status: p.status,
         progress: p.status === 'COMPLETED' ? 100 : p.progress,
-        fileAvailable: p.status === 'COMPLETED' && !!p.zipPath,
+        fileAvailable: p.status === 'COMPLETED' && !!p.zipPath && existsSync(p.zipPath),
         createdAt: p.createdAt.toISOString(),
       })),
       ...recentThumbnails.map((t) => {

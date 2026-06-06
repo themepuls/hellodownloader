@@ -17,7 +17,7 @@ export default function FaqPage() {
         {content.items.map((item, i) => (
           <details
             key={`${item.question}-${i}`}
-            className="group rounded-xl border border-white/10 bg-card p-5 open:border-primary/30"
+            className="group rounded-xl border border-border bg-card p-5 open:border-primary/30"
           >
             <summary className="cursor-pointer font-medium list-none flex items-center justify-between gap-4">
               {item.question}

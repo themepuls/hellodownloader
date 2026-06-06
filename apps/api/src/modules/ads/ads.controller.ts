@@ -8,7 +8,7 @@ export class AdsController {
 
   @Public()
   @Get('config')
-  config(@Req() req: { user?: { plan: string } }) {
-    return this.adsService.getAdConfig(req.user?.plan ?? 'FREE');
+  config(@Req() req: { user?: { plan: string; role?: string } }) {
+    return this.adsService.getAdConfig(req.user?.plan ?? 'FREE', req.user?.role);
   }
 }

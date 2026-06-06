@@ -60,11 +60,11 @@ export default function AdminStoragePage() {
       </div>
 
       {storage && (
-        <div className="rounded-xl border border-white/10 p-4 mb-8">
+        <div className="rounded-xl border border-border p-4 mb-8">
           <h2 className="font-semibold mb-3">Breakdown</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
             {Object.entries(storage.breakdown).map(([dir, s]) => (
-              <div key={dir} className="rounded-lg bg-white/5 p-3">
+              <div key={dir} className="rounded-lg bg-accent/50 p-3">
                 <div className="font-medium capitalize">{dir}</div>
                 <div className="text-muted-foreground text-xs">
                   {s.files} files · {(s.bytes / 1024 / 1024).toFixed(2)} MB
@@ -76,7 +76,7 @@ export default function AdminStoragePage() {
         </div>
       )}
 
-      <div className="rounded-xl border border-white/10 p-4 mb-8">
+      <div className="rounded-xl border border-border p-4 mb-8">
         <h2 className="font-semibold mb-3">Run cleanup now</h2>
         <p className="text-sm text-muted-foreground mb-3">
           Delete files older than retention period from downloads, playlists, and temp folders.
@@ -89,7 +89,7 @@ export default function AdminStoragePage() {
       </div>
 
       {system && (
-        <div className="rounded-xl border border-white/10 p-4 text-sm space-y-2">
+        <div className="rounded-xl border border-border p-4 text-sm space-y-2">
           <h2 className="font-semibold mb-2">System</h2>
           <p>Node: {system.nodeVersion}</p>
           <p>Redis queue: {system.redisEnabled ? (system.redisConnected ? 'Connected' : 'Disabled/fallback') : 'Off (inline mode)'}</p>

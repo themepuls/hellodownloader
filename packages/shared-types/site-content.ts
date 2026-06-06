@@ -1,3 +1,5 @@
+import { mergePageSeo, type PageSeoContent } from './site-settings';
+
 export type HomeCtaContent = {
   title: string;
   subtitle: string;
@@ -102,6 +104,8 @@ export type ToolsPageContent = {
   proCardTitle: string;
   proLockedText: string;
   proUpgradeButton: string;
+  generateComingSoonTitle: string;
+  generateComingSoonText: string;
 };
 
 export type FaqItem = {
@@ -118,7 +122,11 @@ export type FaqPageContent = {
 export type SimplePageContent = {
   title: string;
   body: string;
+  seo?: import('./site-settings').PageSeoContent;
 };
+
+export type { PageSeoContent } from './site-settings';
+export { DEFAULT_PAGE_SEO } from './site-settings';
 
 export type NavLinkItem = {
   label: string;
@@ -302,11 +310,10 @@ export const DEFAULT_PRICING_CONTENT: PricingPageContent = {
       'Global + custom user prompts',
       'No ads',
       'Unlimited download history',
-      '100 credits/month',
     ],
   },
   footer: {
-    line1: 'Pro credits: AI adjust = 1 · AI generate = 3 · 4K export = 3',
+    line1: 'Pro features coming soon — HD/4K downloads, AI thumbnails, and more.',
     line2: 'Payments secured by Stripe, Binance Pay, and SSLCommerz.',
   },
 };
@@ -334,13 +341,16 @@ export const DEFAULT_DOWNLOAD_CONTENT: DownloadPageContent = {
 export const DEFAULT_TOOLS_CONTENT: ToolsPageContent = {
   title: 'Thumbnail Tools',
   subtitle:
-    'Free: download the original thumbnail. Pro: AI adjust text/image or generate a new thumbnail with prompts.',
+    'Free: download the original thumbnail. Pro: AI adjust for any ratio. AI generate is coming soon.',
   videoUrlCardTitle: 'Video URL',
   loadButton: 'Load thumbnail',
   proCardTitle: 'Pro — AI Thumbnail Tools',
   proLockedText:
-    'AI adjust (text + image) and full AI generation with custom prompts are Pro features.',
+    'AI Adjust redesigns your thumbnail text and layout for YouTube, Shorts, Instagram, and more.',
   proUpgradeButton: 'Upgrade to Pro',
+  generateComingSoonTitle: 'AI Thumbnail Generate',
+  generateComingSoonText:
+    'Full AI generation with custom prompts and CTR strategy — coming soon.',
 };
 
 export const DEFAULT_FAQ_CONTENT: FaqPageContent = {
@@ -370,7 +380,7 @@ export const DEFAULT_FAQ_CONTENT: FaqPageContent = {
     {
       question: 'What does Pro include?',
       answer:
-        'Pro adds 1080p–8K downloads, AI thumbnail tools, unlimited history, no ads, and monthly credits for AI features.',
+        'Pro adds 1080p–8K downloads, AI thumbnail tools, unlimited history, and no ads. Pro is coming in a future update.',
     },
   ],
 };
@@ -378,6 +388,33 @@ export const DEFAULT_FAQ_CONTENT: FaqPageContent = {
 export const DEFAULT_SIMPLE_PAGE: SimplePageContent = {
   title: 'Page title',
   body: 'Page content goes here.',
+};
+
+export const DEFAULT_TERMS_CONTENT: SimplePageContent = {
+  title: 'Terms of Service',
+  body: `Use HelloDownloader responsibly. Only download content you have rights to access.
+
+By using this service you agree not to infringe copyrights or violate the terms of third-party platforms.
+
+We may update these terms at any time. Continued use constitutes acceptance.`,
+};
+
+export const DEFAULT_PRIVACY_CONTENT: SimplePageContent = {
+  title: 'Privacy Policy',
+  body: `We collect account email, download history, and analytics to operate the service.
+
+We do not sell your personal data. Payment processing is handled by third-party providers (Stripe, Binance Pay, SSLCommerz).
+
+Contact us at privacy@hellodownloader.com with privacy questions.`,
+};
+
+export const DEFAULT_DMCA_CONTENT: SimplePageContent = {
+  title: 'DMCA',
+  body: `Report copyright concerns to dmca@hellodownloader.com with proof of ownership.
+
+Include your contact information, identification of the copyrighted work, the URL in question, and a statement of good faith.
+
+We respond to valid notices promptly.`,
 };
 
 export const DEFAULT_HEADER_CONTENT: HeaderContent = {
@@ -463,6 +500,9 @@ export const PAGE_DEFAULTS: Record<string, Record<string, unknown>> = {
   download: DEFAULT_DOWNLOAD_CONTENT as unknown as Record<string, unknown>,
   tools: DEFAULT_TOOLS_CONTENT as unknown as Record<string, unknown>,
   faq: DEFAULT_FAQ_CONTENT as unknown as Record<string, unknown>,
+  terms: DEFAULT_TERMS_CONTENT as unknown as Record<string, unknown>,
+  privacy: DEFAULT_PRIVACY_CONTENT as unknown as Record<string, unknown>,
+  dmca: DEFAULT_DMCA_CONTENT as unknown as Record<string, unknown>,
 };
 
 export const DEFAULT_CONTENT_PAGES: Array<{
@@ -477,6 +517,9 @@ export const DEFAULT_CONTENT_PAGES: Array<{
   { slug: 'download', title: 'Download page', sections: PAGE_DEFAULTS.download },
   { slug: 'tools', title: 'Thumbnail Tools', sections: PAGE_DEFAULTS.tools },
   { slug: 'faq', title: 'FAQ page', sections: PAGE_DEFAULTS.faq },
+  { slug: 'terms', title: 'Terms of Service', sections: PAGE_DEFAULTS.terms },
+  { slug: 'privacy', title: 'Privacy Policy', sections: PAGE_DEFAULTS.privacy },
+  { slug: 'dmca', title: 'DMCA', sections: PAGE_DEFAULTS.dmca },
 ];
 
 export function mergeContent<T extends Record<string, unknown>>(
@@ -507,8 +550,12 @@ export function mergePageSections(
   sections?: Record<string, unknown> | null,
 ): Record<string, unknown> {
   const defaults = PAGE_DEFAULTS[slug];
-  if (!defaults) {
-    return mergeContent(DEFAULT_SIMPLE_PAGE as unknown as Record<string, unknown>, sections ?? {});
-  }
-  return mergeContent(defaults, sections ?? {});
+  const merged = defaults
+    ? mergeContent(defaults, sections ?? {})
+    : mergeContent(DEFAULT_SIMPLE_PAGE as unknown as Record<string, unknown>, sections ?? {});
+
+  return {
+    ...merged,
+    seo: mergePageSeo(merged.seo as Partial<PageSeoContent> | undefined),
+  };
 }

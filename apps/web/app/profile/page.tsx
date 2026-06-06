@@ -10,7 +10,6 @@ export default function ProfilePage() {
       <h1 className="text-3xl font-bold mb-4">Profile</h1>
       <p>Email: {user.email}</p>
       <p>Plan: {user.plan}</p>
-      <p>Credits: {user.credits}</p>
     </div>
   );
 }

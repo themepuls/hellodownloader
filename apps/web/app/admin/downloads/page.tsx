@@ -73,7 +73,7 @@ export default function AdminDownloadsPage() {
           Playlists
         </Button>
         <select
-          className="rounded-md border border-white/10 bg-background px-3 py-2 text-sm ml-auto"
+          className="rounded-md border border-border bg-background px-3 py-2 text-sm ml-auto"
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
         >
@@ -88,9 +88,9 @@ export default function AdminDownloadsPage() {
 
       {tab === 'videos' && (
         <>
-          <div className="overflow-x-auto rounded-xl border border-white/10">
+          <div className="overflow-x-auto rounded-xl border border-border">
             <table className="w-full text-sm">
-              <thead className="bg-white/5 text-left text-muted-foreground">
+              <thead className="bg-accent/50 text-left text-muted-foreground">
                 <tr>
                   <th className="p-3">Title</th>
                   <th className="p-3">User</th>
@@ -102,7 +102,7 @@ export default function AdminDownloadsPage() {
               </thead>
               <tbody>
                 {downloads?.items.map((d) => (
-                  <tr key={d.id} className="border-t border-white/5">
+                  <tr key={d.id} className="border-t border-border/60">
                     <td className="p-3 max-w-[200px] truncate" title={d.title ?? d.url}>
                       {d.title ?? 'Untitled'}
                       {d.error && <div className="text-xs text-red-400 truncate">{d.error}</div>}
@@ -141,9 +141,9 @@ export default function AdminDownloadsPage() {
 
       {tab === 'playlists' && (
         <>
-          <div className="overflow-x-auto rounded-xl border border-white/10">
+          <div className="overflow-x-auto rounded-xl border border-border">
             <table className="w-full text-sm">
-              <thead className="bg-white/5 text-left text-muted-foreground">
+              <thead className="bg-accent/50 text-left text-muted-foreground">
                 <tr>
                   <th className="p-3">Title</th>
                   <th className="p-3">User</th>
@@ -154,7 +154,7 @@ export default function AdminDownloadsPage() {
               </thead>
               <tbody>
                 {playlists?.items.map((p) => (
-                  <tr key={p.id} className="border-t border-white/5">
+                  <tr key={p.id} className="border-t border-border/60">
                     <td className="p-3">{p.title ?? 'Playlist'}</td>
                     <td className="p-3 text-xs">{p.user.email}</td>
                     <td className="p-3">{p.itemCount}</td>

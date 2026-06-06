@@ -3,26 +3,27 @@ import {
   IsIn,
   IsOptional,
   IsString,
-  MinLength,
   registerDecorator,
   ValidationOptions,
 } from 'class-validator';
 import {
-  BASIC_PLAN_MODELS,
-  OPENAI_MODELS,
-  PRO_PLAN_MODELS,
-  type BasicPlanModel,
-  type ProPlanModel,
+  BASIC_IMAGE_MODELS,
+  IMAGE_PROVIDERS,
+  OPENAI_TEXT_MODELS,
+  PRO_IMAGE_MODELS,
+  type BasicImageModel,
+  type ImageProvider,
+  type ProImageModel,
 } from '@hellodownloader/shared-types';
 
-function IsPlanModel(
+function IsAllowedModel(
   allowed: readonly string[],
   label: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: object, propertyName: string) => {
     registerDecorator({
-      name: `is${label}PlanModel`,
+      name: `is${label}ImageModel`,
       target: object.constructor,
       propertyName,
       options: validationOptions,
@@ -31,7 +32,7 @@ function IsPlanModel(
           return typeof value === 'string' && allowed.includes(value);
         },
         defaultMessage() {
-          return `${propertyName} must be one of the following values: ${allowed.join(', ')}`;
+          return `${propertyName} must be one of: ${allowed.join(', ')}`;
         },
       },
     });
@@ -39,49 +40,48 @@ function IsPlanModel(
 }
 
 export class TestOpenAiDto {
-  @IsString()
-  @MinLength(1)
-  apiKey!: string;
-
-  @IsIn([...OPENAI_MODELS])
-  openaiModel!: (typeof OPENAI_MODELS)[number];
-}
-
-export class SaveOpenAiDto {
   @IsOptional()
   @IsString()
   apiKey?: string;
 
-  @IsIn([...OPENAI_MODELS])
-  openaiModel!: (typeof OPENAI_MODELS)[number];
-
-  @IsOptional()
-  @IsString()
-  verificationToken?: string;
+  @IsIn([...OPENAI_TEXT_MODELS])
+  textModel!: (typeof OPENAI_TEXT_MODELS)[number];
 }
 
-export class TestFreepikDto {
-  @IsString()
-  @MinLength(1)
-  apiKey!: string;
-}
-
-export class SaveFreepikDto {
+export class TestFalDto {
   @IsOptional()
   @IsString()
   apiKey?: string;
+}
+
+export class SaveAiProvidersDto {
+  @IsIn([...OPENAI_TEXT_MODELS])
+  textModel!: (typeof OPENAI_TEXT_MODELS)[number];
+
+  @IsIn([...IMAGE_PROVIDERS])
+  imageProvider!: ImageProvider;
+
+  @IsAllowedModel(BASIC_IMAGE_MODELS, 'Basic')
+  basicImageModel!: BasicImageModel;
+
+  @IsAllowedModel(PRO_IMAGE_MODELS, 'Pro')
+  proImageModel!: ProImageModel;
 
   @IsOptional()
   @IsString()
-  verificationToken?: string;
-}
+  openaiApiKey?: string;
 
-export class SavePlanModelsDto {
-  @IsPlanModel(BASIC_PLAN_MODELS, 'Basic')
-  basicPlanModel!: BasicPlanModel;
+  @IsOptional()
+  @IsString()
+  openaiVerificationToken?: string;
 
-  @IsPlanModel(PRO_PLAN_MODELS, 'Pro')
-  proPlanModel!: ProPlanModel;
+  @IsOptional()
+  @IsString()
+  falApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  falVerificationToken?: string;
 }
 
 export class SaveAiFeaturesDto {

@@ -3,6 +3,7 @@ import { PrismaService } from '../../database/prisma.service';
 import { StripeService } from '../../payment/stripe/stripe.service';
 import { BinanceService } from '../../payment/binance/binance.service';
 import { SslcommerzService } from '../../payment/sslcommerz/sslcommerz.service';
+import { PaymentConfigService } from '../../payment/payment-config.service';
 
 @Injectable()
 export class BillingService {
@@ -11,7 +12,12 @@ export class BillingService {
     private stripe: StripeService,
     private binance: BinanceService,
     private sslcommerz: SslcommerzService,
+    private paymentConfig: PaymentConfigService,
   ) {}
+
+  getPaymentMethods() {
+    return this.paymentConfig.getPublicMethods();
+  }
 
   async getSubscription(userId: string) {
     return this.prisma.subscription.findFirst({

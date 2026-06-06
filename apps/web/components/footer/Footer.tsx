@@ -37,9 +37,9 @@ export function Footer() {
   const showBrandName = footer.brand.showBrandName !== false;
 
   return (
-    <footer className="border-t border-white/5 bg-[#0b0e14] py-16">
-      <div className="mx-auto max-w-5xl px-4">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
+    <footer className="overflow-x-hidden border-t border-border/60 bg-background py-10 sm:py-16">
+      <div className="mx-auto max-w-6xl min-w-0 px-4 sm:px-6">
+        <div className="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <Link href={footer.brand.link || '/'} className="mb-4 flex items-center gap-2 font-bold" aria-label={brandName}>
               {logoUrl ? (
@@ -77,7 +77,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 border-t border-white/5 pt-8 text-center">
+        <div className="mt-12 border-t border-border/60 pt-8 text-center">
           <p className="text-sm text-muted-foreground">{formatCopyright(footer.copyright)}</p>
         </div>
       </div>

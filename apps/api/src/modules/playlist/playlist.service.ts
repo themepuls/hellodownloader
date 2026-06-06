@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../database/prisma.service';
 import { DownloadQueueService } from '../../queues/download.queue';
 import { PlaylistProcessorService } from '../../services/playlist-processor.service';
@@ -18,7 +19,23 @@ export class PlaylistService {
     private downloadQueue: DownloadQueueService,
     private playlistProcessor: PlaylistProcessorService,
     private ytDlp: YtDlpService,
+    private jwtService: JwtService,
   ) {}
+
+  resolveRequestUserId(
+    authenticatedUser: { id: string } | null | undefined,
+    accessToken?: string,
+  ): string {
+    if (authenticatedUser?.id) return authenticatedUser.id;
+    if (!accessToken) throw new UnauthorizedException();
+    try {
+      const payload = this.jwtService.verify<{ sub: string }>(accessToken);
+      if (!payload.sub) throw new UnauthorizedException();
+      return payload.sub;
+    } catch {
+      throw new UnauthorizedException();
+    }
+  }
 
   async create(userId: string, plan: PlanType, url: string, quality?: number) {
     if (!PLAN_LIMITS[plan].playlistZip) {

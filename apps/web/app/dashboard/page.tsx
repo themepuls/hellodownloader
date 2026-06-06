@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Download, Image, Coins, ListMusic, Loader2 } from 'lucide-react';
+import { Download, Image, ListMusic, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api';
@@ -32,6 +32,7 @@ export default function DashboardPage() {
   } | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   useEffect(() => {
     apiClient.users.dashboard().then((d) => setStats(d as NonNullable<typeof stats>)).catch(console.error);
@@ -40,14 +41,27 @@ export default function DashboardPage() {
   const handleSaveAgain = async (item: ActivityItem) => {
     setSavingId(item.id);
     setSaveError(null);
+    setSaveNotice(null);
     try {
       if (item.kind === 'PLAYLIST') {
-        await saveCompletedFile(`/playlists/${item.id}/file`, `playlist-${item.id}.zip`, true);
+        await saveCompletedFile(`/playlists/${item.id}/file`, `playlist-${item.id}.zip`, {
+          auth: true,
+          fileExtension: '.zip',
+        });
+        setSaveNotice('Download started — check your browser downloads.');
       } else if (item.kind === 'VIDEO') {
-        await saveCompletedFile(`/downloads/${item.id}/file`, item.title || `download-${item.id}`);
+        await saveCompletedFile(`/downloads/${item.id}/file`, item.title || `download-${item.id}`, {
+          downloadUrl: item.downloadUrl,
+          fileSizeBytes: item.fileSize,
+        });
+        setSaveNotice('Download started — check your browser downloads.');
       }
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : 'Save failed');
+      const message = err instanceof Error ? err.message : 'Save failed';
+      setSaveError(message);
+      if (message.includes('no longer on server') || message.includes('expired')) {
+        void apiClient.users.dashboard().then((d) => setStats(d as NonNullable<typeof stats>));
+      }
     } finally {
       setSavingId(null);
     }
@@ -70,7 +84,7 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-      <div className="grid md:grid-cols-4 gap-6 mb-8">
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Downloads</CardTitle>
@@ -92,13 +106,6 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Credits</CardTitle>
-            <Coins className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent><div className="text-2xl font-bold">{stats?.credits ?? user.credits}</div></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Plan</CardTitle>
             <ListMusic className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -115,6 +122,7 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           {saveError && <p className="text-sm text-destructive mb-3">{saveError}</p>}
+          {saveNotice && <p className="text-sm text-emerald-600 dark:text-green-400 mb-3">{saveNotice}</p>}
           {stats?.recentActivity?.length ? (
             <ul className="space-y-3">
               {stats.recentActivity.map((item) => {
@@ -142,7 +150,7 @@ export default function DashboardPage() {
                       {canSaveAgain ? (
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="default"
                           className="gap-1.5"
                           disabled={isSaving}
                           onClick={() => void handleSaveAgain(item)}
@@ -155,7 +163,16 @@ export default function DashboardPage() {
                           Save again
                         </Button>
                       ) : item.status === 'COMPLETED' && !item.fileAvailable ? (
-                        <span className="text-xs text-muted-foreground">Saved · file removed from server</span>
+                        <div className="text-right space-y-1">
+                          <span className="text-xs text-muted-foreground block">
+                            File removed from server
+                          </span>
+                          {item.kind === 'PLAYLIST' && (
+                            <Link href="/playlist">
+                              <Button size="sm" variant="outline">Download again</Button>
+                            </Link>
+                          )}
+                        </div>
                       ) : item.kind === 'THUMBNAIL' ? (
                         <Link href="/thumbnail">
                           <Button size="sm" variant="outline">Open thumbnails</Button>

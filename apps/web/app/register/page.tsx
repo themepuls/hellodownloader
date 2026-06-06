@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AuthDivider, GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
+import { useGoogleAuth } from '@/components/providers/GoogleAuthProvider';
 import { apiClient } from '@/lib/api';
 import { useUserStore } from '@/store/userStore';
 
@@ -17,10 +19,12 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { enabled: googleEnabled, loading: googleLoading } = useGoogleAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
       const res = await apiClient.auth.register({ email, password, name }) as {
         accessToken: string;
@@ -41,9 +45,15 @@ export default function RegisterPage() {
       <Card>
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
-          <CardDescription>Start with 10 free credits</CardDescription>
+          <CardDescription>Create a free account — all tools included</CardDescription>
         </CardHeader>
         <CardContent>
+          {googleEnabled && !googleLoading && (
+            <>
+              <GoogleSignInButton mode="register" onError={setError} />
+              <AuthDivider />
+            </>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
             <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />

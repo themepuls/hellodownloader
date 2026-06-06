@@ -6,7 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
   CheckCircle2,
-  Crown,
   Download,
   Headphones,
   HelpCircle,
@@ -15,6 +14,14 @@ import {
   Video,
 } from 'lucide-react';
 import { VideoUrlBar } from '@/components/downloader/VideoUrlBar';
+import { AnalyzingPanel } from '@/components/downloader/AnalyzingPanel';
+import { FourKInterestSurvey } from '@/components/downloader/FourKInterestSurvey';
+import { JobStatusPanel } from '@/components/downloader/JobStatusPanel';
+import {
+  ToolPageAdsBottom,
+  ToolPageAdsTop,
+  ToolPageWithSidebar,
+} from '@/components/ads/ToolPageAds';
 import { Button } from '@/components/ui/button';
 import { useDownloader } from '@/hooks/useDownloader';
 import { apiClient } from '@/lib/api';
@@ -28,17 +35,14 @@ import {
 } from '@/lib/video-formats';
 import {
   DEFAULT_DOWNLOAD_CONTENT,
+  DEFAULT_HD_QUALITY_ACCESS,
+  hasProAccess,
+  isQualityAccessible,
   type DownloadPageContent,
+  type HdQualityAccessConfig,
 } from '@hellodownloader/shared-types';
 
 type Tab = 'video' | 'audio' | 'subtitles';
-
-const statusLabel: Record<string, string> = {
-  QUEUED: 'Starting…',
-  PROCESSING: 'Downloading…',
-  COMPLETED: 'Ready',
-  FAILED: 'Failed',
-};
 
 interface DownloadWorkspaceProps {
   initialUrl?: string;
@@ -53,7 +57,10 @@ export function DownloadWorkspace({
 }: DownloadWorkspaceProps) {
   const content = { ...DEFAULT_DOWNLOAD_CONTENT, ...contentProp };
   const user = useUserStore((s) => s.user);
-  const maxQuality = user?.plan === 'PRO' ? 4320 : 720;
+  const isPro = hasProAccess(user?.plan, user?.role);
+  const [qualityAccess, setQualityAccess] = useState<HdQualityAccessConfig>(
+    DEFAULT_HD_QUALITY_ACCESS,
+  );
   const [tab, setTab] = useState<Tab>('video');
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
   const autoAnalyzed = useRef(false);
@@ -63,13 +70,25 @@ export function DownloadWorkspace({
     setUrl,
     metadata,
     loading,
+    analyzing,
+    saving,
+    saveStarted,
     error,
     download,
     fetchMetadata,
     startDownload,
     saveToPc,
     refreshStatus,
+    cancelAnalysis,
+    cancelDownload,
   } = useDownloader(initialUrl);
+
+  useEffect(() => {
+    void apiClient.downloads
+      .qualityAccess()
+      .then((data) => setQualityAccess({ ...DEFAULT_HD_QUALITY_ACCESS, ...(data as HdQualityAccessConfig) }))
+      .catch(() => setQualityAccess(DEFAULT_HD_QUALITY_ACCESS));
+  }, []);
 
   useEffect(() => {
     if (autoAnalyze && initialUrl && !autoAnalyzed.current) {
@@ -88,62 +107,163 @@ export function DownloadWorkspace({
   const qualities = meta
     ? getVideoQualityOptions(meta.formats, 4320, meta.duration)
     : [];
-  const isPro = user?.plan === 'PRO';
   const maxAvail = meta ? getMaxQuality(meta.formats) : 0;
+  const isQualityLocked = (height: number) => !isQualityAccessible(height, qualityAccess, isPro);
+  const hasLockedHd = qualities.some((q) => isQualityLocked(q.height));
+  const availableQualities = qualities.filter((q) => !isQualityLocked(q.height));
+  const lockedQualities = qualities.filter((q) => isQualityLocked(q.height));
 
   const handleAnalyze = () => {
     setThumbnailFailed(false);
     void fetchMetadata();
   };
 
-  const handleQualityDownload = (height: number, formatId: string) => {
+  const handleQualityDownload = (height: number, formatId?: string) => {
     void startDownload('VIDEO', height, formatId);
   };
 
+  const renderQualityRow = (
+    q: (typeof qualities)[number],
+    options: { locked?: boolean },
+  ) => (
+    <div
+      key={`${q.height}-${q.fps ?? 0}-${q.formatId}`}
+      className={`flex shrink-0 items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
+        options.locked
+          ? 'border-border bg-secondary/60 opacity-75'
+          : 'border-primary/30 bg-primary/10'
+      }`}
+    >
+      <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
+        <div
+          className={`h-4 w-4 shrink-0 rounded-full border-2 ${
+            options.locked
+              ? 'border-border bg-accent/50'
+              : 'border-primary bg-primary/30'
+          }`}
+        />
+        <span className="font-semibold">{q.label}</span>
+        <span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+          {q.badge}
+        </span>
+        <span className="text-xs text-muted-foreground">{q.ext}</span>
+        <span className="text-xs text-muted-foreground">{formatFileSize(q.filesize)}</span>
+      </div>
+      {options.locked ? (
+        <span className="shrink-0 text-xs text-muted-foreground">Soon</span>
+      ) : (
+        <Button
+          size="sm"
+          disabled={loading}
+          className="shrink-0 bg-primary shadow-md shadow-primary/20 hover:bg-primary/90"
+          onClick={() => handleQualityDownload(q.height, q.formatId)}
+        >
+          <Download className="h-3.5 w-3.5" />
+          Download
+        </Button>
+      )}
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-[#0b0e14]">
-      <div className="border-b border-white/5 bg-[#0d1017]/80 px-4 py-8">
-        <div className="container mx-auto max-w-5xl">
+    <div className="min-h-screen overflow-x-hidden bg-background">
+      <ToolPageAdsTop page="download" />
+      <div className="border-b border-border/60 bg-secondary/80 px-3 py-5 sm:px-4 sm:py-8">
+        <div className="container mx-auto max-w-5xl min-w-0">
           <VideoUrlBar
             value={url}
             onChange={setUrl}
             onSubmit={handleAnalyze}
-            loading={loading && !metadata}
+            loading={analyzing}
+            onCancel={cancelAnalysis}
             variant="compact"
             submitLabel={content.analyzeButton}
           />
-          {error && (
+          {error && !analyzing && (
             <p className="mt-3 text-sm text-destructive">{error}</p>
           )}
-          {meta && !error && (
-            <p className="mt-3 flex items-center gap-2 text-sm text-green-400">
+          {meta && !analyzing && !error && (
+            <p className="mt-3 flex items-center gap-2 text-sm text-emerald-600 dark:text-green-400">
               <CheckCircle2 className="h-4 w-4" />
               {content.successText}
             </p>
           )}
+          {meta && hasLockedHd && (
+            <div className="mt-4">
+              <FourKInterestSurvey />
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="container mx-auto max-w-5xl px-4 py-8">
-        {!meta && !loading && (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-[#12151c]/50 py-24 text-center">
+      <ToolPageWithSidebar page="download">
+        {!meta && !analyzing && !download && (
+          <div className="rounded-2xl border border-dashed border-border bg-card/50 py-24 text-center">
             <Video className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
             <h2 className="mb-2 text-xl font-semibold">{content.emptyTitle}</h2>
             <p className="text-muted-foreground">{content.emptySubtitle}</p>
           </div>
         )}
 
-        {loading && !meta && (
-          <div className="rounded-2xl border border-white/10 bg-[#12151c] py-24 text-center">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            <p className="text-muted-foreground">{content.loadingText}</p>
+        {analyzing && (
+          <AnalyzingPanel
+            title={content.loadingText ?? 'Analyzing video…'}
+            onCancel={cancelAnalysis}
+          />
+        )}
+
+        {!analyzing && download && !meta && (
+          <div className="mx-auto max-w-lg space-y-4">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Resumed download</p>
+                <h2 className="text-lg font-semibold">{download.title ?? 'Video download'}</h2>
+              </div>
+              <JobStatusPanel
+                status={download.status as 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'}
+                progress={download.progress ?? 10}
+                error={download.error}
+                processingHint="Download runs on the server — keep this tab open."
+                onCancel={
+                  download.status === 'QUEUED' || download.status === 'PROCESSING'
+                    ? cancelDownload
+                    : undefined
+                }
+              >
+                {download.status === 'COMPLETED' && (
+                  <div className="space-y-3 pt-1">
+                    {error && (
+                      <p className="text-sm text-red-700 dark:text-red-200">{error}</p>
+                    )}
+                    {saveStarted ? (
+                      <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                        Download started — check your browser&apos;s download panel.
+                      </p>
+                    ) : (
+                      <Button
+                        onClick={saveToPc}
+                        disabled={saving}
+                        className="w-full gap-2"
+                        size="lg"
+                      >
+                        <Download className="h-4 w-4" />
+                        {saving ? 'Starting download…' : 'Save to your computer'}
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </JobStatusPanel>
+              <Button variant="outline" className="w-full" onClick={fetchMetadata} disabled={analyzing}>
+                {analyzing ? 'Loading video info…' : 'Reload video info'}
+              </Button>
+            </div>
           </div>
         )}
 
-        {meta && (
+        {meta && !analyzing && (
           <div className="grid gap-8 lg:grid-cols-5">
             <div className="lg:col-span-2 space-y-4">
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#12151c]">
+              <div className="overflow-hidden rounded-2xl border border-border bg-card">
                 <div className="relative aspect-video bg-black">
                   {meta.thumbnail && !thumbnailFailed ? (
                     <Image
@@ -210,8 +330,8 @@ export function DownloadWorkspace({
             </div>
 
             <div className="lg:col-span-3 space-y-4">
-              <div className="rounded-2xl border border-white/10 bg-[#12151c] overflow-hidden">
-                <div className="flex border-b border-white/10">
+              <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                <div className="flex border-b border-border">
                   {(
                     [
                       { id: 'video' as Tab, label: 'Video', icon: Video },
@@ -235,97 +355,43 @@ export function DownloadWorkspace({
                   ))}
                 </div>
 
-                <div className="grid h-[400px] grid-rows-[auto_1fr] gap-y-0 overflow-hidden p-4">
+                <div className="flex h-[min(420px,70vh)] min-h-[280px] flex-col overflow-hidden p-4">
                   {tab === 'video' && (
                     <>
-                      <p className="my-[11px] shrink-0 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                        Download Video
-                      </p>
-                      <p className="mb-2 text-xs text-muted-foreground">
-                        Tip: lower quality (360p/480p) downloads faster on long videos.
-                      </p>
-                      <div className="quality-scroll grid min-h-0 auto-rows-min gap-y-2 overflow-y-auto overscroll-contain pr-1">
-                      {qualities.length > 0 ? (
-                        qualities.map((q) => {
-                          const isLocked = !isPro && q.height > maxQuality;
-                          return (
-                          <div
-                            key={`${q.height}-${q.fps ?? 0}-${q.formatId}`}
-                            className={`flex shrink-0 items-center justify-between rounded-xl border px-4 py-3 ${
-                              isLocked
-                                ? 'border-[#b0b2b5]/20 bg-[#0d1017]/80'
-                                : 'border-primary/30 bg-primary/10'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`h-4 w-4 rounded-full border-2 ${
-                                  isLocked
-                                    ? 'border-primary/40 bg-primary/10'
-                                    : 'border-primary bg-primary/30'
-                                }`}
-                              />
-                              <span className="font-semibold">{q.label}</span>
-                              <span className="rounded bg-white/10 px-2 py-0.5 text-xs text-muted-foreground">
-                                {q.badge}
-                              </span>
-                              <span className="text-xs text-muted-foreground">{q.ext}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {formatFileSize(q.filesize)}
-                              </span>
-                            </div>
-                            {isLocked ? (
-                              <Link href="/pricing">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="border-primary/40 text-primary hover:bg-primary/10"
-                                >
-                                  Unlock Pro
-                                </Button>
-                              </Link>
-                            ) : (
-                              <Button
-                                size="sm"
-                                disabled={loading}
-                                className="bg-primary shadow-md shadow-primary/20 hover:bg-primary/90"
-                                onClick={() => handleQualityDownload(q.height, q.formatId)}
-                              >
-                                <Download className="h-3.5 w-3.5" />
-                                Download
-                              </Button>
+                      <div className="shrink-0 space-y-1 pb-3">
+                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Download Video
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Tip: lower quality (360p/480p) downloads faster on long videos.
+                        </p>
+                      </div>
+                      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1">
+                        {qualities.length > 0 ? (
+                          <>
+                            {availableQualities.map((q) => renderQualityRow(q, { locked: false }))}
+                            {lockedQualities.length > 0 && (
+                              <p className="pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                                HD &amp; 4K — coming soon
+                              </p>
                             )}
-                          </div>
-                          );
-                        })
-                      ) : (
-                        <Button
-                          className="w-full"
-                          disabled={loading}
-                          onClick={() => handleQualityDownload(720)}
-                        >
-                          Download best available
-                        </Button>
-                      )}
-                      {user?.plan !== 'PRO' && maxAvail >= 2160 && (
-                        <div className="flex shrink-0 items-center justify-between rounded-xl border border-primary/30 bg-primary/5 px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <Crown className="h-4 w-4 text-amber-400" />
-                            <span className="text-sm font-medium">4K Ultra HD</span>
-                          </div>
-                          <Link href="/pricing">
-                            <Button size="sm" variant="outline">
-                              Unlock Pro
-                            </Button>
-                          </Link>
-                        </div>
-                      )}
+                            {lockedQualities.map((q) => renderQualityRow(q, { locked: true }))}
+                          </>
+                        ) : (
+                          <Button
+                            className="w-full"
+                            disabled={loading}
+                            onClick={() => handleQualityDownload(720)}
+                          >
+                            Download best available
+                          </Button>
+                        )}
                       </div>
                     </>
                   )}
 
                   {tab === 'audio' && (
-                    <div className="space-y-4">
+                    <div className="flex flex-1 flex-col justify-center space-y-4">
                       <p className="text-sm text-muted-foreground">
                         Extract audio as high-quality MP3 from this video.
                       </p>
@@ -341,7 +407,7 @@ export function DownloadWorkspace({
                   )}
 
                   {tab === 'subtitles' && (
-                    <div className="space-y-4">
+                    <div className="flex flex-1 flex-col justify-center space-y-4">
                       <p className="text-sm text-muted-foreground">
                         Download subtitles in SRT or VTT format.
                       </p>
@@ -359,29 +425,19 @@ export function DownloadWorkspace({
               </div>
 
               {download && (
-                <div className="rounded-2xl border border-white/10 bg-[#12151c] p-5 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Status</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">
-                        {statusLabel[download.status] ?? download.status}
-                      </span>
-                      {(download.status === 'QUEUED' || download.status === 'PROCESSING') && (
-                        <Button variant="outline" size="sm" onClick={refreshStatus}>
-                          Refresh
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  {(download.status === 'PROCESSING' || download.status === 'QUEUED') && (
-                    <div>
-                      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                        <div
-                          className="h-full bg-primary transition-all duration-500"
-                          style={{ width: `${download.progress ?? 10}%` }}
-                        />
-                      </div>
-                      <p className="mt-2 text-xs text-muted-foreground">
+                <JobStatusPanel
+                  status={download.status as 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'}
+                  progress={download.progress ?? 10}
+                  error={download.error}
+                  onRefresh={refreshStatus}
+                  onCancel={
+                    download.status === 'QUEUED' || download.status === 'PROCESSING'
+                      ? cancelDownload
+                      : undefined
+                  }
+                  processingDetail={
+                    (download.status === 'PROCESSING' || download.status === 'QUEUED') ? (
+                      <p className="text-xs text-muted-foreground">
                         {download.progress ?? 0}% —{' '}
                         {(download.progress ?? 0) < 30
                           ? 'preparing download on server'
@@ -390,38 +446,72 @@ export function DownloadWorkspace({
                           ? ' · long videos may take 10–30+ minutes'
                           : ''}
                       </p>
+                    ) : undefined
+                  }
+                >
+                  {download.status === 'COMPLETED' && (
+                    <div className="space-y-3 border-t border-border pt-3">
+                      {download.fileSize &&
+                        Number(download.fileSize) > 100 * 1024 * 1024 && (
+                          <p className="text-xs text-muted-foreground">
+                            Large file ({formatFileSize(Number(download.fileSize))}) — your browser
+                            will ask where to save it.
+                          </p>
+                        )}
+                      {error && <p className="text-sm text-red-700 dark:text-red-200">{error}</p>}
+                      {saveStarted ? (
+                        <div className="space-y-2">
+                          <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                            Download started — check your browser&apos;s download panel
+                            {download.fileSize
+                              ? ` (${formatFileSize(Number(download.fileSize))})`
+                              : ''}
+                            .
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Large files can take several minutes. Keep this tab open until the
+                            transfer finishes.
+                          </p>
+                          <Button
+                            variant="outline"
+                            className="w-full gap-2"
+                            size="lg"
+                            onClick={saveToPc}
+                            disabled={saving}
+                          >
+                            <Download className="h-4 w-4" />
+                            Download again
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={saveToPc}
+                          disabled={saving || loading}
+                          className="w-full gap-2"
+                          size="lg"
+                        >
+                          <Download className="h-4 w-4" />
+                          {saving ? 'Starting download…' : 'Save to your computer'}
+                        </Button>
+                      )}
                     </div>
                   )}
-                  {download.status === 'COMPLETED' && (
-                    <>
-                      <div className="flex items-center gap-2 text-sm text-green-400">
-                        <CheckCircle2 className="h-4 w-4" />
-                        100% complete — ready to save
-                      </div>
-                      <Button onClick={saveToPc} className="w-full gap-2" size="lg">
-                        <Download className="h-4 w-4" />
-                        Save to your computer
-                      </Button>
-                    </>
-                  )}
-                  {download.status === 'FAILED' && download.error && (
-                    <p className="text-sm text-destructive">{download.error}</p>
-                  )}
-                </div>
+                </JobStatusPanel>
               )}
             </div>
           </div>
         )}
 
-        {meta && (
+        {meta && !analyzing && (
+          <>
           <div className="mt-12 grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-[#12151c] p-6">
+            <div className="rounded-2xl border border-border bg-card p-6">
               <h3 className="mb-4 font-semibold">More Options</h3>
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { label: 'Download Audio', sub: 'MP3, M4A', href: '#', onClick: () => { setTab('audio'); } },
                   { label: 'Subtitles', sub: 'SRT, VTT', href: '#', onClick: () => { setTab('subtitles'); } },
-                  { label: 'Thumbnail', sub: isPro ? 'AI tools' : 'Original JPG', href: '/thumbnail' },
+                  { label: 'Thumbnail', sub: 'Original JPG', href: '/thumbnail' },
                   { label: 'Playlist', sub: 'Full playlist', href: '/playlist' },
                 ].map((item) => (
                   item.onClick ? (
@@ -429,7 +519,7 @@ export function DownloadWorkspace({
                       key={item.label}
                       type="button"
                       onClick={item.onClick}
-                      className="rounded-xl border border-white/5 bg-[#0b0e14] p-4 text-left hover:border-primary/30 transition"
+                      className="rounded-xl border border-border/60 bg-background p-4 text-left hover:border-primary/30 transition"
                     >
                       <p className="font-medium text-sm">{item.label}</p>
                       <p className="text-xs text-muted-foreground">{item.sub}</p>
@@ -438,7 +528,7 @@ export function DownloadWorkspace({
                     <Link
                       key={item.label}
                       href={item.href!}
-                      className="rounded-xl border border-white/5 bg-[#0b0e14] p-4 hover:border-primary/30 transition"
+                      className="rounded-xl border border-border/60 bg-background p-4 hover:border-primary/30 transition"
                     >
                       <p className="font-medium text-sm">{item.label}</p>
                       <p className="text-xs text-muted-foreground">{item.sub}</p>
@@ -448,7 +538,7 @@ export function DownloadWorkspace({
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-[#12151c] p-6">
+            <div className="rounded-2xl border border-border bg-card p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Headphones className="h-5 w-5 text-primary" />
                 <h3 className="font-semibold">{content.helpTitle}</h3>
@@ -465,9 +555,10 @@ export function DownloadWorkspace({
               </ul>
             </div>
           </div>
+          </>
         )}
 
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-white/5 pt-8 text-sm text-muted-foreground">
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-border/60 pt-8 text-sm text-muted-foreground">
           {content.trustBadges.map((label) => (
             <span key={label} className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
@@ -475,7 +566,8 @@ export function DownloadWorkspace({
             </span>
           ))}
         </div>
-      </div>
+      </ToolPageWithSidebar>
+      <ToolPageAdsBottom page="download" />
     </div>
   );
 }

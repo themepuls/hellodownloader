@@ -18,10 +18,25 @@ export default function BillingPage() {
   const [payments, setPayments] = useState<Array<Record<string, unknown>>>([]);
   const [loading, setLoading] = useState<PaymentGateway | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<{
+    stripe: boolean;
+    binance: boolean;
+    sslcommerz: boolean;
+    anyEnabled: boolean;
+  } | null>(null);
 
   const success = searchParams.get('success') === 'true';
   const sandbox = searchParams.get('sandbox') === 'true';
   const provider = searchParams.get('provider');
+
+  useEffect(() => {
+    apiClient.billing
+      .paymentMethods()
+      .then(setPaymentMethods)
+      .catch(() =>
+        setPaymentMethods({ stripe: false, binance: false, sslcommerz: false, anyEnabled: false }),
+      );
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -66,7 +81,7 @@ export default function BillingPage() {
       <h1 className="text-3xl font-bold mb-8">Billing</h1>
 
       {success && (
-        <div className="mb-6 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-300">
+        <div className="mb-6 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-800 dark:text-emerald-300">
           Payment received{sandbox ? ' (sandbox — configure live keys for real checkout)' : ''}.
           {provider && ` Provider: ${provider}.`}
           {isPro ? ' Your Pro plan is active.' : ' Pro activates after webhook confirmation.'}
@@ -89,7 +104,8 @@ export default function BillingPage() {
             <p className="text-muted-foreground text-sm">No active subscription.</p>
           )}
           <p className="text-sm">
-            Current account: <strong>{user.plan}</strong> · {user.credits} credits
+            Current account: <strong>{user.plan}</strong>
+            {isPro && user.credits > 0 ? ` · ${user.credits} credits` : null}
           </p>
         </CardContent>
       </Card>
@@ -101,18 +117,32 @@ export default function BillingPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button className="w-full gap-2" disabled={loading !== null} onClick={() => checkout('stripe')}>
-              {loading === 'stripe' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-              Pay with Stripe (USD)
-            </Button>
-            <Button variant="outline" className="w-full gap-2" disabled={loading !== null} onClick={() => checkout('binance')}>
-              {loading === 'binance' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bitcoin className="h-4 w-4" />}
-              Pay with Binance Pay (USDT)
-            </Button>
-            <Button variant="outline" className="w-full gap-2" disabled={loading !== null} onClick={() => checkout('sslcommerz')}>
-              {loading === 'sslcommerz' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Landmark className="h-4 w-4" />}
-              Pay with SSLCommerz (৳1,099 BDT)
-            </Button>
+            {!paymentMethods ? null : !paymentMethods.anyEnabled ? (
+              <Button className="w-full" disabled>
+                Coming soon
+              </Button>
+            ) : (
+              <>
+                {paymentMethods.stripe && (
+                  <Button className="w-full gap-2" disabled={loading !== null} onClick={() => checkout('stripe')}>
+                    {loading === 'stripe' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                    Pay with Stripe (USD)
+                  </Button>
+                )}
+                {paymentMethods.binance && (
+                  <Button variant="outline" className="w-full gap-2" disabled={loading !== null} onClick={() => checkout('binance')}>
+                    {loading === 'binance' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bitcoin className="h-4 w-4" />}
+                    Pay with Binance Pay (USDT)
+                  </Button>
+                )}
+                {paymentMethods.sslcommerz && (
+                  <Button variant="outline" className="w-full gap-2" disabled={loading !== null} onClick={() => checkout('sslcommerz')}>
+                    {loading === 'sslcommerz' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Landmark className="h-4 w-4" />}
+                    Pay with SSLCommerz (৳1,099 BDT)
+                  </Button>
+                )}
+              </>
+            )}
           </CardContent>
         </Card>
       )}
@@ -125,7 +155,7 @@ export default function BillingPage() {
           <CardContent>
             <ul className="space-y-2 text-sm">
               {payments.map((p) => (
-                <li key={String(p.id)} className="flex justify-between border-b border-white/5 pb-2">
+                <li key={String(p.id)} className="flex justify-between border-b border-border/60 pb-2">
                   <span>
                     {String(p.provider)} · {String(p.status)}
                   </span>

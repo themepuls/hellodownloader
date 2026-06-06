@@ -18,6 +18,8 @@ import { AdminModule } from './modules/admin/admin.module';
 import { ContentModule } from './modules/content/content.module';
 import { PaymentConfigModule } from './payment/payment-config.module';
 import { AiApiSettingsModule } from './modules/ai-api-settings/ai-api-settings.module';
+import { ThumbnailPromptsModule } from './modules/thumbnail-prompts/thumbnail-prompts.module';
+import { SurveyModule } from './modules/survey/survey.module';
 import { QueueModule } from './queues/queue.module';
 import { LoggerService } from './utils/logger';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
@@ -41,6 +43,8 @@ import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
     PrismaModule,
     PaymentConfigModule,
     AiApiSettingsModule,
+    ThumbnailPromptsModule,
+    SurveyModule,
     QueueModule,
     AuthModule,
     UsersModule,

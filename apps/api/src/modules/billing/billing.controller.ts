@@ -6,6 +6,12 @@ import { Public } from '../auth/public.decorator';
 export class BillingController {
   constructor(private billingService: BillingService) {}
 
+  @Public()
+  @Get('payment-methods')
+  paymentMethods() {
+    return this.billingService.getPaymentMethods();
+  }
+
   @Get('subscription')
   subscription(@Req() req: { user: { id: string } }) {
     return this.billingService.getSubscription(req.user.id);

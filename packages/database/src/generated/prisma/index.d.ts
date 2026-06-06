@@ -83,6 +83,21 @@ export type ThumbnailAiSettings = $Result.DefaultSelection<Prisma.$ThumbnailAiSe
  * 
  */
 export type AiApiSettings = $Result.DefaultSelection<Prisma.$AiApiSettingsPayload>
+/**
+ * Model ThumbnailPrompt
+ * 
+ */
+export type ThumbnailPrompt = $Result.DefaultSelection<Prisma.$ThumbnailPromptPayload>
+/**
+ * Model SiteSettings
+ * 
+ */
+export type SiteSettings = $Result.DefaultSelection<Prisma.$SiteSettingsPayload>
+/**
+ * Model FourKInterestSurvey
+ * 
+ */
+export type FourKInterestSurvey = $Result.DefaultSelection<Prisma.$FourKInterestSurveyPayload>
 
 /**
  * Enums
@@ -188,6 +203,23 @@ export const SubscriptionStatus: {
 
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
 
+
+export const ThumbnailPromptType: {
+  GLOBAL: 'GLOBAL',
+  CATEGORY: 'CATEGORY',
+  ADJUST: 'ADJUST'
+};
+
+export type ThumbnailPromptType = (typeof ThumbnailPromptType)[keyof typeof ThumbnailPromptType]
+
+
+export const ThumbnailPromptStatus: {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED'
+};
+
+export type ThumbnailPromptStatus = (typeof ThumbnailPromptStatus)[keyof typeof ThumbnailPromptStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -229,6 +261,14 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type SubscriptionStatus = $Enums.SubscriptionStatus
 
 export const SubscriptionStatus: typeof $Enums.SubscriptionStatus
+
+export type ThumbnailPromptType = $Enums.ThumbnailPromptType
+
+export const ThumbnailPromptType: typeof $Enums.ThumbnailPromptType
+
+export type ThumbnailPromptStatus = $Enums.ThumbnailPromptStatus
+
+export const ThumbnailPromptStatus: typeof $Enums.ThumbnailPromptStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -487,6 +527,36 @@ export class PrismaClient<
     * ```
     */
   get aiApiSettings(): Prisma.AiApiSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.thumbnailPrompt`: Exposes CRUD operations for the **ThumbnailPrompt** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ThumbnailPrompts
+    * const thumbnailPrompts = await prisma.thumbnailPrompt.findMany()
+    * ```
+    */
+  get thumbnailPrompt(): Prisma.ThumbnailPromptDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.siteSettings`: Exposes CRUD operations for the **SiteSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SiteSettings
+    * const siteSettings = await prisma.siteSettings.findMany()
+    * ```
+    */
+  get siteSettings(): Prisma.SiteSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.fourKInterestSurvey`: Exposes CRUD operations for the **FourKInterestSurvey** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FourKInterestSurveys
+    * const fourKInterestSurveys = await prisma.fourKInterestSurvey.findMany()
+    * ```
+    */
+  get fourKInterestSurvey(): Prisma.FourKInterestSurveyDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -941,7 +1011,10 @@ export namespace Prisma {
     ContentPage: 'ContentPage',
     AiImageProviderConfig: 'AiImageProviderConfig',
     ThumbnailAiSettings: 'ThumbnailAiSettings',
-    AiApiSettings: 'AiApiSettings'
+    AiApiSettings: 'AiApiSettings',
+    ThumbnailPrompt: 'ThumbnailPrompt',
+    SiteSettings: 'SiteSettings',
+    FourKInterestSurvey: 'FourKInterestSurvey'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -960,7 +1033,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "download" | "playlist" | "thumbnail" | "subscription" | "transaction" | "payment" | "creditLog" | "analytics" | "paymentProviderConfig" | "contentPage" | "aiImageProviderConfig" | "thumbnailAiSettings" | "aiApiSettings"
+      modelProps: "user" | "download" | "playlist" | "thumbnail" | "subscription" | "transaction" | "payment" | "creditLog" | "analytics" | "paymentProviderConfig" | "contentPage" | "aiImageProviderConfig" | "thumbnailAiSettings" | "aiApiSettings" | "thumbnailPrompt" | "siteSettings" | "fourKInterestSurvey"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2000,6 +2073,228 @@ export namespace Prisma {
           }
         }
       }
+      ThumbnailPrompt: {
+        payload: Prisma.$ThumbnailPromptPayload<ExtArgs>
+        fields: Prisma.ThumbnailPromptFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ThumbnailPromptFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ThumbnailPromptFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>
+          }
+          findFirst: {
+            args: Prisma.ThumbnailPromptFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ThumbnailPromptFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>
+          }
+          findMany: {
+            args: Prisma.ThumbnailPromptFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>[]
+          }
+          create: {
+            args: Prisma.ThumbnailPromptCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>
+          }
+          createMany: {
+            args: Prisma.ThumbnailPromptCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ThumbnailPromptCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>[]
+          }
+          delete: {
+            args: Prisma.ThumbnailPromptDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>
+          }
+          update: {
+            args: Prisma.ThumbnailPromptUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>
+          }
+          deleteMany: {
+            args: Prisma.ThumbnailPromptDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ThumbnailPromptUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ThumbnailPromptUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>[]
+          }
+          upsert: {
+            args: Prisma.ThumbnailPromptUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ThumbnailPromptPayload>
+          }
+          aggregate: {
+            args: Prisma.ThumbnailPromptAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateThumbnailPrompt>
+          }
+          groupBy: {
+            args: Prisma.ThumbnailPromptGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ThumbnailPromptGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ThumbnailPromptCountArgs<ExtArgs>
+            result: $Utils.Optional<ThumbnailPromptCountAggregateOutputType> | number
+          }
+        }
+      }
+      SiteSettings: {
+        payload: Prisma.$SiteSettingsPayload<ExtArgs>
+        fields: Prisma.SiteSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SiteSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SiteSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.SiteSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SiteSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.SiteSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.SiteSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.SiteSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SiteSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.SiteSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          update: {
+            args: Prisma.SiteSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.SiteSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SiteSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SiteSettingsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>[]
+          }
+          upsert: {
+            args: Prisma.SiteSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.SiteSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSiteSettings>
+          }
+          groupBy: {
+            args: Prisma.SiteSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SiteSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SiteSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<SiteSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
+      FourKInterestSurvey: {
+        payload: Prisma.$FourKInterestSurveyPayload<ExtArgs>
+        fields: Prisma.FourKInterestSurveyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FourKInterestSurveyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FourKInterestSurveyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>
+          }
+          findFirst: {
+            args: Prisma.FourKInterestSurveyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FourKInterestSurveyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>
+          }
+          findMany: {
+            args: Prisma.FourKInterestSurveyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>[]
+          }
+          create: {
+            args: Prisma.FourKInterestSurveyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>
+          }
+          createMany: {
+            args: Prisma.FourKInterestSurveyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FourKInterestSurveyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>[]
+          }
+          delete: {
+            args: Prisma.FourKInterestSurveyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>
+          }
+          update: {
+            args: Prisma.FourKInterestSurveyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>
+          }
+          deleteMany: {
+            args: Prisma.FourKInterestSurveyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FourKInterestSurveyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FourKInterestSurveyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>[]
+          }
+          upsert: {
+            args: Prisma.FourKInterestSurveyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FourKInterestSurveyPayload>
+          }
+          aggregate: {
+            args: Prisma.FourKInterestSurveyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFourKInterestSurvey>
+          }
+          groupBy: {
+            args: Prisma.FourKInterestSurveyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FourKInterestSurveyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FourKInterestSurveyCountArgs<ExtArgs>
+            result: $Utils.Optional<FourKInterestSurveyCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2110,6 +2405,9 @@ export namespace Prisma {
     aiImageProviderConfig?: AiImageProviderConfigOmit
     thumbnailAiSettings?: ThumbnailAiSettingsOmit
     aiApiSettings?: AiApiSettingsOmit
+    thumbnailPrompt?: ThumbnailPromptOmit
+    siteSettings?: SiteSettingsOmit
+    fourKInterestSurvey?: FourKInterestSurveyOmit
   }
 
   /* Types for Logging */
@@ -2338,6 +2636,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     passwordHash: string | null
+    googleId: string | null
     name: string | null
     role: $Enums.UserRole | null
     plan: $Enums.PlanType | null
@@ -2352,6 +2651,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     passwordHash: string | null
+    googleId: string | null
     name: string | null
     role: $Enums.UserRole | null
     plan: $Enums.PlanType | null
@@ -2366,6 +2666,7 @@ export namespace Prisma {
     id: number
     email: number
     passwordHash: number
+    googleId: number
     name: number
     role: number
     plan: number
@@ -2390,6 +2691,7 @@ export namespace Prisma {
     id?: true
     email?: true
     passwordHash?: true
+    googleId?: true
     name?: true
     role?: true
     plan?: true
@@ -2404,6 +2706,7 @@ export namespace Prisma {
     id?: true
     email?: true
     passwordHash?: true
+    googleId?: true
     name?: true
     role?: true
     plan?: true
@@ -2418,6 +2721,7 @@ export namespace Prisma {
     id?: true
     email?: true
     passwordHash?: true
+    googleId?: true
     name?: true
     role?: true
     plan?: true
@@ -2518,7 +2822,8 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: string
     email: string
-    passwordHash: string
+    passwordHash: string | null
+    googleId: string | null
     name: string | null
     role: $Enums.UserRole
     plan: $Enums.PlanType
@@ -2552,6 +2857,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     passwordHash?: boolean
+    googleId?: boolean
     name?: boolean
     role?: boolean
     plan?: boolean
@@ -2568,6 +2874,7 @@ export namespace Prisma {
     creditLogs?: boolean | User$creditLogsArgs<ExtArgs>
     payments?: boolean | User$paymentsArgs<ExtArgs>
     analytics?: boolean | User$analyticsArgs<ExtArgs>
+    fourKInterestSurvey?: boolean | User$fourKInterestSurveyArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2575,6 +2882,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     passwordHash?: boolean
+    googleId?: boolean
     name?: boolean
     role?: boolean
     plan?: boolean
@@ -2589,6 +2897,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     passwordHash?: boolean
+    googleId?: boolean
     name?: boolean
     role?: boolean
     plan?: boolean
@@ -2603,6 +2912,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     passwordHash?: boolean
+    googleId?: boolean
     name?: boolean
     role?: boolean
     plan?: boolean
@@ -2613,7 +2923,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "role" | "plan" | "credits" | "emailVerified" | "avatarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "passwordHash" | "googleId" | "name" | "role" | "plan" | "credits" | "emailVerified" | "avatarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     downloads?: boolean | User$downloadsArgs<ExtArgs>
     playlists?: boolean | User$playlistsArgs<ExtArgs>
@@ -2623,6 +2933,7 @@ export namespace Prisma {
     creditLogs?: boolean | User$creditLogsArgs<ExtArgs>
     payments?: boolean | User$paymentsArgs<ExtArgs>
     analytics?: boolean | User$analyticsArgs<ExtArgs>
+    fourKInterestSurvey?: boolean | User$fourKInterestSurveyArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2639,11 +2950,13 @@ export namespace Prisma {
       creditLogs: Prisma.$CreditLogPayload<ExtArgs>[]
       payments: Prisma.$PaymentPayload<ExtArgs>[]
       analytics: Prisma.$AnalyticsPayload<ExtArgs>[]
+      fourKInterestSurvey: Prisma.$FourKInterestSurveyPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       email: string
-      passwordHash: string
+      passwordHash: string | null
+      googleId: string | null
       name: string | null
       role: $Enums.UserRole
       plan: $Enums.PlanType
@@ -3054,6 +3367,7 @@ export namespace Prisma {
     creditLogs<T extends User$creditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$creditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payments<T extends User$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     analytics<T extends User$analyticsArgs<ExtArgs> = {}>(args?: Subset<T, User$analyticsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnalyticsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    fourKInterestSurvey<T extends User$fourKInterestSurveyArgs<ExtArgs> = {}>(args?: Subset<T, User$fourKInterestSurveyArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3086,6 +3400,7 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly passwordHash: FieldRef<"User", 'String'>
+    readonly googleId: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'UserRole'>
     readonly plan: FieldRef<"User", 'PlanType'>
@@ -3669,6 +3984,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AnalyticsScalarFieldEnum | AnalyticsScalarFieldEnum[]
+  }
+
+  /**
+   * User.fourKInterestSurvey
+   */
+  export type User$fourKInterestSurveyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    where?: FourKInterestSurveyWhereInput
   }
 
   /**
@@ -17200,15 +17534,17 @@ export namespace Prisma {
 
   export type AiApiSettingsMinAggregateOutputType = {
     id: number | null
+    textProvider: string | null
+    textModel: string | null
     openaiApiKey: string | null
-    openaiModel: string | null
     openaiConnectionStatus: string | null
     openaiLastTestedAt: Date | null
-    freepikApiKey: string | null
-    freepikConnectionStatus: string | null
-    freepikLastTestedAt: Date | null
-    basicPlanModel: string | null
-    proPlanModel: string | null
+    imageProvider: string | null
+    basicImageModel: string | null
+    proImageModel: string | null
+    falApiKey: string | null
+    falConnectionStatus: string | null
+    falLastTestedAt: Date | null
     enableAiAnalysis: boolean | null
     enableAiThumbnailGeneration: boolean | null
     enableAiImproveThumbnail: boolean | null
@@ -17220,15 +17556,17 @@ export namespace Prisma {
 
   export type AiApiSettingsMaxAggregateOutputType = {
     id: number | null
+    textProvider: string | null
+    textModel: string | null
     openaiApiKey: string | null
-    openaiModel: string | null
     openaiConnectionStatus: string | null
     openaiLastTestedAt: Date | null
-    freepikApiKey: string | null
-    freepikConnectionStatus: string | null
-    freepikLastTestedAt: Date | null
-    basicPlanModel: string | null
-    proPlanModel: string | null
+    imageProvider: string | null
+    basicImageModel: string | null
+    proImageModel: string | null
+    falApiKey: string | null
+    falConnectionStatus: string | null
+    falLastTestedAt: Date | null
     enableAiAnalysis: boolean | null
     enableAiThumbnailGeneration: boolean | null
     enableAiImproveThumbnail: boolean | null
@@ -17240,15 +17578,17 @@ export namespace Prisma {
 
   export type AiApiSettingsCountAggregateOutputType = {
     id: number
+    textProvider: number
+    textModel: number
     openaiApiKey: number
-    openaiModel: number
     openaiConnectionStatus: number
     openaiLastTestedAt: number
-    freepikApiKey: number
-    freepikConnectionStatus: number
-    freepikLastTestedAt: number
-    basicPlanModel: number
-    proPlanModel: number
+    imageProvider: number
+    basicImageModel: number
+    proImageModel: number
+    falApiKey: number
+    falConnectionStatus: number
+    falLastTestedAt: number
     enableAiAnalysis: number
     enableAiThumbnailGeneration: number
     enableAiImproveThumbnail: number
@@ -17270,15 +17610,17 @@ export namespace Prisma {
 
   export type AiApiSettingsMinAggregateInputType = {
     id?: true
+    textProvider?: true
+    textModel?: true
     openaiApiKey?: true
-    openaiModel?: true
     openaiConnectionStatus?: true
     openaiLastTestedAt?: true
-    freepikApiKey?: true
-    freepikConnectionStatus?: true
-    freepikLastTestedAt?: true
-    basicPlanModel?: true
-    proPlanModel?: true
+    imageProvider?: true
+    basicImageModel?: true
+    proImageModel?: true
+    falApiKey?: true
+    falConnectionStatus?: true
+    falLastTestedAt?: true
     enableAiAnalysis?: true
     enableAiThumbnailGeneration?: true
     enableAiImproveThumbnail?: true
@@ -17290,15 +17632,17 @@ export namespace Prisma {
 
   export type AiApiSettingsMaxAggregateInputType = {
     id?: true
+    textProvider?: true
+    textModel?: true
     openaiApiKey?: true
-    openaiModel?: true
     openaiConnectionStatus?: true
     openaiLastTestedAt?: true
-    freepikApiKey?: true
-    freepikConnectionStatus?: true
-    freepikLastTestedAt?: true
-    basicPlanModel?: true
-    proPlanModel?: true
+    imageProvider?: true
+    basicImageModel?: true
+    proImageModel?: true
+    falApiKey?: true
+    falConnectionStatus?: true
+    falLastTestedAt?: true
     enableAiAnalysis?: true
     enableAiThumbnailGeneration?: true
     enableAiImproveThumbnail?: true
@@ -17310,15 +17654,17 @@ export namespace Prisma {
 
   export type AiApiSettingsCountAggregateInputType = {
     id?: true
+    textProvider?: true
+    textModel?: true
     openaiApiKey?: true
-    openaiModel?: true
     openaiConnectionStatus?: true
     openaiLastTestedAt?: true
-    freepikApiKey?: true
-    freepikConnectionStatus?: true
-    freepikLastTestedAt?: true
-    basicPlanModel?: true
-    proPlanModel?: true
+    imageProvider?: true
+    basicImageModel?: true
+    proImageModel?: true
+    falApiKey?: true
+    falConnectionStatus?: true
+    falLastTestedAt?: true
     enableAiAnalysis?: true
     enableAiThumbnailGeneration?: true
     enableAiImproveThumbnail?: true
@@ -17417,15 +17763,17 @@ export namespace Prisma {
 
   export type AiApiSettingsGroupByOutputType = {
     id: number
+    textProvider: string
+    textModel: string
     openaiApiKey: string
-    openaiModel: string
     openaiConnectionStatus: string
     openaiLastTestedAt: Date | null
-    freepikApiKey: string
-    freepikConnectionStatus: string
-    freepikLastTestedAt: Date | null
-    basicPlanModel: string
-    proPlanModel: string
+    imageProvider: string
+    basicImageModel: string
+    proImageModel: string
+    falApiKey: string
+    falConnectionStatus: string
+    falLastTestedAt: Date | null
     enableAiAnalysis: boolean
     enableAiThumbnailGeneration: boolean
     enableAiImproveThumbnail: boolean
@@ -17456,15 +17804,17 @@ export namespace Prisma {
 
   export type AiApiSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    textProvider?: boolean
+    textModel?: boolean
     openaiApiKey?: boolean
-    openaiModel?: boolean
     openaiConnectionStatus?: boolean
     openaiLastTestedAt?: boolean
-    freepikApiKey?: boolean
-    freepikConnectionStatus?: boolean
-    freepikLastTestedAt?: boolean
-    basicPlanModel?: boolean
-    proPlanModel?: boolean
+    imageProvider?: boolean
+    basicImageModel?: boolean
+    proImageModel?: boolean
+    falApiKey?: boolean
+    falConnectionStatus?: boolean
+    falLastTestedAt?: boolean
     enableAiAnalysis?: boolean
     enableAiThumbnailGeneration?: boolean
     enableAiImproveThumbnail?: boolean
@@ -17476,15 +17826,17 @@ export namespace Prisma {
 
   export type AiApiSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    textProvider?: boolean
+    textModel?: boolean
     openaiApiKey?: boolean
-    openaiModel?: boolean
     openaiConnectionStatus?: boolean
     openaiLastTestedAt?: boolean
-    freepikApiKey?: boolean
-    freepikConnectionStatus?: boolean
-    freepikLastTestedAt?: boolean
-    basicPlanModel?: boolean
-    proPlanModel?: boolean
+    imageProvider?: boolean
+    basicImageModel?: boolean
+    proImageModel?: boolean
+    falApiKey?: boolean
+    falConnectionStatus?: boolean
+    falLastTestedAt?: boolean
     enableAiAnalysis?: boolean
     enableAiThumbnailGeneration?: boolean
     enableAiImproveThumbnail?: boolean
@@ -17496,15 +17848,17 @@ export namespace Prisma {
 
   export type AiApiSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    textProvider?: boolean
+    textModel?: boolean
     openaiApiKey?: boolean
-    openaiModel?: boolean
     openaiConnectionStatus?: boolean
     openaiLastTestedAt?: boolean
-    freepikApiKey?: boolean
-    freepikConnectionStatus?: boolean
-    freepikLastTestedAt?: boolean
-    basicPlanModel?: boolean
-    proPlanModel?: boolean
+    imageProvider?: boolean
+    basicImageModel?: boolean
+    proImageModel?: boolean
+    falApiKey?: boolean
+    falConnectionStatus?: boolean
+    falLastTestedAt?: boolean
     enableAiAnalysis?: boolean
     enableAiThumbnailGeneration?: boolean
     enableAiImproveThumbnail?: boolean
@@ -17516,15 +17870,17 @@ export namespace Prisma {
 
   export type AiApiSettingsSelectScalar = {
     id?: boolean
+    textProvider?: boolean
+    textModel?: boolean
     openaiApiKey?: boolean
-    openaiModel?: boolean
     openaiConnectionStatus?: boolean
     openaiLastTestedAt?: boolean
-    freepikApiKey?: boolean
-    freepikConnectionStatus?: boolean
-    freepikLastTestedAt?: boolean
-    basicPlanModel?: boolean
-    proPlanModel?: boolean
+    imageProvider?: boolean
+    basicImageModel?: boolean
+    proImageModel?: boolean
+    falApiKey?: boolean
+    falConnectionStatus?: boolean
+    falLastTestedAt?: boolean
     enableAiAnalysis?: boolean
     enableAiThumbnailGeneration?: boolean
     enableAiImproveThumbnail?: boolean
@@ -17534,22 +17890,24 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type AiApiSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "openaiApiKey" | "openaiModel" | "openaiConnectionStatus" | "openaiLastTestedAt" | "freepikApiKey" | "freepikConnectionStatus" | "freepikLastTestedAt" | "basicPlanModel" | "proPlanModel" | "enableAiAnalysis" | "enableAiThumbnailGeneration" | "enableAiImproveThumbnail" | "enableAutoCategoryDetection" | "enableThumbnailScoring" | "enableAutoLayoutDetection" | "updatedAt", ExtArgs["result"]["aiApiSettings"]>
+  export type AiApiSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "textProvider" | "textModel" | "openaiApiKey" | "openaiConnectionStatus" | "openaiLastTestedAt" | "imageProvider" | "basicImageModel" | "proImageModel" | "falApiKey" | "falConnectionStatus" | "falLastTestedAt" | "enableAiAnalysis" | "enableAiThumbnailGeneration" | "enableAiImproveThumbnail" | "enableAutoCategoryDetection" | "enableThumbnailScoring" | "enableAutoLayoutDetection" | "updatedAt", ExtArgs["result"]["aiApiSettings"]>
 
   export type $AiApiSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AiApiSettings"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: number
+      textProvider: string
+      textModel: string
       openaiApiKey: string
-      openaiModel: string
       openaiConnectionStatus: string
       openaiLastTestedAt: Date | null
-      freepikApiKey: string
-      freepikConnectionStatus: string
-      freepikLastTestedAt: Date | null
-      basicPlanModel: string
-      proPlanModel: string
+      imageProvider: string
+      basicImageModel: string
+      proImageModel: string
+      falApiKey: string
+      falConnectionStatus: string
+      falLastTestedAt: Date | null
       enableAiAnalysis: boolean
       enableAiThumbnailGeneration: boolean
       enableAiImproveThumbnail: boolean
@@ -17981,15 +18339,17 @@ export namespace Prisma {
    */
   interface AiApiSettingsFieldRefs {
     readonly id: FieldRef<"AiApiSettings", 'Int'>
+    readonly textProvider: FieldRef<"AiApiSettings", 'String'>
+    readonly textModel: FieldRef<"AiApiSettings", 'String'>
     readonly openaiApiKey: FieldRef<"AiApiSettings", 'String'>
-    readonly openaiModel: FieldRef<"AiApiSettings", 'String'>
     readonly openaiConnectionStatus: FieldRef<"AiApiSettings", 'String'>
     readonly openaiLastTestedAt: FieldRef<"AiApiSettings", 'DateTime'>
-    readonly freepikApiKey: FieldRef<"AiApiSettings", 'String'>
-    readonly freepikConnectionStatus: FieldRef<"AiApiSettings", 'String'>
-    readonly freepikLastTestedAt: FieldRef<"AiApiSettings", 'DateTime'>
-    readonly basicPlanModel: FieldRef<"AiApiSettings", 'String'>
-    readonly proPlanModel: FieldRef<"AiApiSettings", 'String'>
+    readonly imageProvider: FieldRef<"AiApiSettings", 'String'>
+    readonly basicImageModel: FieldRef<"AiApiSettings", 'String'>
+    readonly proImageModel: FieldRef<"AiApiSettings", 'String'>
+    readonly falApiKey: FieldRef<"AiApiSettings", 'String'>
+    readonly falConnectionStatus: FieldRef<"AiApiSettings", 'String'>
+    readonly falLastTestedAt: FieldRef<"AiApiSettings", 'DateTime'>
     readonly enableAiAnalysis: FieldRef<"AiApiSettings", 'Boolean'>
     readonly enableAiThumbnailGeneration: FieldRef<"AiApiSettings", 'Boolean'>
     readonly enableAiImproveThumbnail: FieldRef<"AiApiSettings", 'Boolean'>
@@ -18362,6 +18722,3353 @@ export namespace Prisma {
 
 
   /**
+   * Model ThumbnailPrompt
+   */
+
+  export type AggregateThumbnailPrompt = {
+    _count: ThumbnailPromptCountAggregateOutputType | null
+    _min: ThumbnailPromptMinAggregateOutputType | null
+    _max: ThumbnailPromptMaxAggregateOutputType | null
+  }
+
+  export type ThumbnailPromptMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    slug: string | null
+    type: $Enums.ThumbnailPromptType | null
+    content: string | null
+    status: $Enums.ThumbnailPromptStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ThumbnailPromptMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    slug: string | null
+    type: $Enums.ThumbnailPromptType | null
+    content: string | null
+    status: $Enums.ThumbnailPromptStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ThumbnailPromptCountAggregateOutputType = {
+    id: number
+    name: number
+    slug: number
+    type: number
+    content: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ThumbnailPromptMinAggregateInputType = {
+    id?: true
+    name?: true
+    slug?: true
+    type?: true
+    content?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ThumbnailPromptMaxAggregateInputType = {
+    id?: true
+    name?: true
+    slug?: true
+    type?: true
+    content?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ThumbnailPromptCountAggregateInputType = {
+    id?: true
+    name?: true
+    slug?: true
+    type?: true
+    content?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ThumbnailPromptAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ThumbnailPrompt to aggregate.
+     */
+    where?: ThumbnailPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailPrompts to fetch.
+     */
+    orderBy?: ThumbnailPromptOrderByWithRelationInput | ThumbnailPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ThumbnailPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailPrompts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ThumbnailPrompts
+    **/
+    _count?: true | ThumbnailPromptCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ThumbnailPromptMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ThumbnailPromptMaxAggregateInputType
+  }
+
+  export type GetThumbnailPromptAggregateType<T extends ThumbnailPromptAggregateArgs> = {
+        [P in keyof T & keyof AggregateThumbnailPrompt]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateThumbnailPrompt[P]>
+      : GetScalarType<T[P], AggregateThumbnailPrompt[P]>
+  }
+
+
+
+
+  export type ThumbnailPromptGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ThumbnailPromptWhereInput
+    orderBy?: ThumbnailPromptOrderByWithAggregationInput | ThumbnailPromptOrderByWithAggregationInput[]
+    by: ThumbnailPromptScalarFieldEnum[] | ThumbnailPromptScalarFieldEnum
+    having?: ThumbnailPromptScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ThumbnailPromptCountAggregateInputType | true
+    _min?: ThumbnailPromptMinAggregateInputType
+    _max?: ThumbnailPromptMaxAggregateInputType
+  }
+
+  export type ThumbnailPromptGroupByOutputType = {
+    id: string
+    name: string
+    slug: string
+    type: $Enums.ThumbnailPromptType
+    content: string
+    status: $Enums.ThumbnailPromptStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: ThumbnailPromptCountAggregateOutputType | null
+    _min: ThumbnailPromptMinAggregateOutputType | null
+    _max: ThumbnailPromptMaxAggregateOutputType | null
+  }
+
+  type GetThumbnailPromptGroupByPayload<T extends ThumbnailPromptGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ThumbnailPromptGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ThumbnailPromptGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ThumbnailPromptGroupByOutputType[P]>
+            : GetScalarType<T[P], ThumbnailPromptGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ThumbnailPromptSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    type?: boolean
+    content?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["thumbnailPrompt"]>
+
+  export type ThumbnailPromptSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    type?: boolean
+    content?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["thumbnailPrompt"]>
+
+  export type ThumbnailPromptSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    type?: boolean
+    content?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["thumbnailPrompt"]>
+
+  export type ThumbnailPromptSelectScalar = {
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    type?: boolean
+    content?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ThumbnailPromptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "type" | "content" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["thumbnailPrompt"]>
+
+  export type $ThumbnailPromptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ThumbnailPrompt"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      slug: string
+      type: $Enums.ThumbnailPromptType
+      content: string
+      status: $Enums.ThumbnailPromptStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["thumbnailPrompt"]>
+    composites: {}
+  }
+
+  type ThumbnailPromptGetPayload<S extends boolean | null | undefined | ThumbnailPromptDefaultArgs> = $Result.GetResult<Prisma.$ThumbnailPromptPayload, S>
+
+  type ThumbnailPromptCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ThumbnailPromptFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ThumbnailPromptCountAggregateInputType | true
+    }
+
+  export interface ThumbnailPromptDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ThumbnailPrompt'], meta: { name: 'ThumbnailPrompt' } }
+    /**
+     * Find zero or one ThumbnailPrompt that matches the filter.
+     * @param {ThumbnailPromptFindUniqueArgs} args - Arguments to find a ThumbnailPrompt
+     * @example
+     * // Get one ThumbnailPrompt
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ThumbnailPromptFindUniqueArgs>(args: SelectSubset<T, ThumbnailPromptFindUniqueArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ThumbnailPrompt that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ThumbnailPromptFindUniqueOrThrowArgs} args - Arguments to find a ThumbnailPrompt
+     * @example
+     * // Get one ThumbnailPrompt
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ThumbnailPromptFindUniqueOrThrowArgs>(args: SelectSubset<T, ThumbnailPromptFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ThumbnailPrompt that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailPromptFindFirstArgs} args - Arguments to find a ThumbnailPrompt
+     * @example
+     * // Get one ThumbnailPrompt
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ThumbnailPromptFindFirstArgs>(args?: SelectSubset<T, ThumbnailPromptFindFirstArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ThumbnailPrompt that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailPromptFindFirstOrThrowArgs} args - Arguments to find a ThumbnailPrompt
+     * @example
+     * // Get one ThumbnailPrompt
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ThumbnailPromptFindFirstOrThrowArgs>(args?: SelectSubset<T, ThumbnailPromptFindFirstOrThrowArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ThumbnailPrompts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailPromptFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ThumbnailPrompts
+     * const thumbnailPrompts = await prisma.thumbnailPrompt.findMany()
+     * 
+     * // Get first 10 ThumbnailPrompts
+     * const thumbnailPrompts = await prisma.thumbnailPrompt.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const thumbnailPromptWithIdOnly = await prisma.thumbnailPrompt.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ThumbnailPromptFindManyArgs>(args?: SelectSubset<T, ThumbnailPromptFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ThumbnailPrompt.
+     * @param {ThumbnailPromptCreateArgs} args - Arguments to create a ThumbnailPrompt.
+     * @example
+     * // Create one ThumbnailPrompt
+     * const ThumbnailPrompt = await prisma.thumbnailPrompt.create({
+     *   data: {
+     *     // ... data to create a ThumbnailPrompt
+     *   }
+     * })
+     * 
+     */
+    create<T extends ThumbnailPromptCreateArgs>(args: SelectSubset<T, ThumbnailPromptCreateArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ThumbnailPrompts.
+     * @param {ThumbnailPromptCreateManyArgs} args - Arguments to create many ThumbnailPrompts.
+     * @example
+     * // Create many ThumbnailPrompts
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ThumbnailPromptCreateManyArgs>(args?: SelectSubset<T, ThumbnailPromptCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ThumbnailPrompts and returns the data saved in the database.
+     * @param {ThumbnailPromptCreateManyAndReturnArgs} args - Arguments to create many ThumbnailPrompts.
+     * @example
+     * // Create many ThumbnailPrompts
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ThumbnailPrompts and only return the `id`
+     * const thumbnailPromptWithIdOnly = await prisma.thumbnailPrompt.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ThumbnailPromptCreateManyAndReturnArgs>(args?: SelectSubset<T, ThumbnailPromptCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ThumbnailPrompt.
+     * @param {ThumbnailPromptDeleteArgs} args - Arguments to delete one ThumbnailPrompt.
+     * @example
+     * // Delete one ThumbnailPrompt
+     * const ThumbnailPrompt = await prisma.thumbnailPrompt.delete({
+     *   where: {
+     *     // ... filter to delete one ThumbnailPrompt
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ThumbnailPromptDeleteArgs>(args: SelectSubset<T, ThumbnailPromptDeleteArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ThumbnailPrompt.
+     * @param {ThumbnailPromptUpdateArgs} args - Arguments to update one ThumbnailPrompt.
+     * @example
+     * // Update one ThumbnailPrompt
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ThumbnailPromptUpdateArgs>(args: SelectSubset<T, ThumbnailPromptUpdateArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ThumbnailPrompts.
+     * @param {ThumbnailPromptDeleteManyArgs} args - Arguments to filter ThumbnailPrompts to delete.
+     * @example
+     * // Delete a few ThumbnailPrompts
+     * const { count } = await prisma.thumbnailPrompt.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ThumbnailPromptDeleteManyArgs>(args?: SelectSubset<T, ThumbnailPromptDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ThumbnailPrompts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailPromptUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ThumbnailPrompts
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ThumbnailPromptUpdateManyArgs>(args: SelectSubset<T, ThumbnailPromptUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ThumbnailPrompts and returns the data updated in the database.
+     * @param {ThumbnailPromptUpdateManyAndReturnArgs} args - Arguments to update many ThumbnailPrompts.
+     * @example
+     * // Update many ThumbnailPrompts
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ThumbnailPrompts and only return the `id`
+     * const thumbnailPromptWithIdOnly = await prisma.thumbnailPrompt.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ThumbnailPromptUpdateManyAndReturnArgs>(args: SelectSubset<T, ThumbnailPromptUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ThumbnailPrompt.
+     * @param {ThumbnailPromptUpsertArgs} args - Arguments to update or create a ThumbnailPrompt.
+     * @example
+     * // Update or create a ThumbnailPrompt
+     * const thumbnailPrompt = await prisma.thumbnailPrompt.upsert({
+     *   create: {
+     *     // ... data to create a ThumbnailPrompt
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ThumbnailPrompt we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ThumbnailPromptUpsertArgs>(args: SelectSubset<T, ThumbnailPromptUpsertArgs<ExtArgs>>): Prisma__ThumbnailPromptClient<$Result.GetResult<Prisma.$ThumbnailPromptPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ThumbnailPrompts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailPromptCountArgs} args - Arguments to filter ThumbnailPrompts to count.
+     * @example
+     * // Count the number of ThumbnailPrompts
+     * const count = await prisma.thumbnailPrompt.count({
+     *   where: {
+     *     // ... the filter for the ThumbnailPrompts we want to count
+     *   }
+     * })
+    **/
+    count<T extends ThumbnailPromptCountArgs>(
+      args?: Subset<T, ThumbnailPromptCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ThumbnailPromptCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ThumbnailPrompt.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailPromptAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ThumbnailPromptAggregateArgs>(args: Subset<T, ThumbnailPromptAggregateArgs>): Prisma.PrismaPromise<GetThumbnailPromptAggregateType<T>>
+
+    /**
+     * Group by ThumbnailPrompt.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ThumbnailPromptGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ThumbnailPromptGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ThumbnailPromptGroupByArgs['orderBy'] }
+        : { orderBy?: ThumbnailPromptGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ThumbnailPromptGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetThumbnailPromptGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ThumbnailPrompt model
+   */
+  readonly fields: ThumbnailPromptFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ThumbnailPrompt.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ThumbnailPromptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ThumbnailPrompt model
+   */
+  interface ThumbnailPromptFieldRefs {
+    readonly id: FieldRef<"ThumbnailPrompt", 'String'>
+    readonly name: FieldRef<"ThumbnailPrompt", 'String'>
+    readonly slug: FieldRef<"ThumbnailPrompt", 'String'>
+    readonly type: FieldRef<"ThumbnailPrompt", 'ThumbnailPromptType'>
+    readonly content: FieldRef<"ThumbnailPrompt", 'String'>
+    readonly status: FieldRef<"ThumbnailPrompt", 'ThumbnailPromptStatus'>
+    readonly createdAt: FieldRef<"ThumbnailPrompt", 'DateTime'>
+    readonly updatedAt: FieldRef<"ThumbnailPrompt", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ThumbnailPrompt findUnique
+   */
+  export type ThumbnailPromptFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailPrompt to fetch.
+     */
+    where: ThumbnailPromptWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailPrompt findUniqueOrThrow
+   */
+  export type ThumbnailPromptFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailPrompt to fetch.
+     */
+    where: ThumbnailPromptWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailPrompt findFirst
+   */
+  export type ThumbnailPromptFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailPrompt to fetch.
+     */
+    where?: ThumbnailPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailPrompts to fetch.
+     */
+    orderBy?: ThumbnailPromptOrderByWithRelationInput | ThumbnailPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ThumbnailPrompts.
+     */
+    cursor?: ThumbnailPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailPrompts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ThumbnailPrompts.
+     */
+    distinct?: ThumbnailPromptScalarFieldEnum | ThumbnailPromptScalarFieldEnum[]
+  }
+
+  /**
+   * ThumbnailPrompt findFirstOrThrow
+   */
+  export type ThumbnailPromptFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailPrompt to fetch.
+     */
+    where?: ThumbnailPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailPrompts to fetch.
+     */
+    orderBy?: ThumbnailPromptOrderByWithRelationInput | ThumbnailPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ThumbnailPrompts.
+     */
+    cursor?: ThumbnailPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailPrompts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ThumbnailPrompts.
+     */
+    distinct?: ThumbnailPromptScalarFieldEnum | ThumbnailPromptScalarFieldEnum[]
+  }
+
+  /**
+   * ThumbnailPrompt findMany
+   */
+  export type ThumbnailPromptFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which ThumbnailPrompts to fetch.
+     */
+    where?: ThumbnailPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ThumbnailPrompts to fetch.
+     */
+    orderBy?: ThumbnailPromptOrderByWithRelationInput | ThumbnailPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ThumbnailPrompts.
+     */
+    cursor?: ThumbnailPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ThumbnailPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ThumbnailPrompts.
+     */
+    skip?: number
+    distinct?: ThumbnailPromptScalarFieldEnum | ThumbnailPromptScalarFieldEnum[]
+  }
+
+  /**
+   * ThumbnailPrompt create
+   */
+  export type ThumbnailPromptCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ThumbnailPrompt.
+     */
+    data: XOR<ThumbnailPromptCreateInput, ThumbnailPromptUncheckedCreateInput>
+  }
+
+  /**
+   * ThumbnailPrompt createMany
+   */
+  export type ThumbnailPromptCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ThumbnailPrompts.
+     */
+    data: ThumbnailPromptCreateManyInput | ThumbnailPromptCreateManyInput[]
+  }
+
+  /**
+   * ThumbnailPrompt createManyAndReturn
+   */
+  export type ThumbnailPromptCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * The data used to create many ThumbnailPrompts.
+     */
+    data: ThumbnailPromptCreateManyInput | ThumbnailPromptCreateManyInput[]
+  }
+
+  /**
+   * ThumbnailPrompt update
+   */
+  export type ThumbnailPromptUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ThumbnailPrompt.
+     */
+    data: XOR<ThumbnailPromptUpdateInput, ThumbnailPromptUncheckedUpdateInput>
+    /**
+     * Choose, which ThumbnailPrompt to update.
+     */
+    where: ThumbnailPromptWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailPrompt updateMany
+   */
+  export type ThumbnailPromptUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ThumbnailPrompts.
+     */
+    data: XOR<ThumbnailPromptUpdateManyMutationInput, ThumbnailPromptUncheckedUpdateManyInput>
+    /**
+     * Filter which ThumbnailPrompts to update
+     */
+    where?: ThumbnailPromptWhereInput
+    /**
+     * Limit how many ThumbnailPrompts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ThumbnailPrompt updateManyAndReturn
+   */
+  export type ThumbnailPromptUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * The data used to update ThumbnailPrompts.
+     */
+    data: XOR<ThumbnailPromptUpdateManyMutationInput, ThumbnailPromptUncheckedUpdateManyInput>
+    /**
+     * Filter which ThumbnailPrompts to update
+     */
+    where?: ThumbnailPromptWhereInput
+    /**
+     * Limit how many ThumbnailPrompts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ThumbnailPrompt upsert
+   */
+  export type ThumbnailPromptUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ThumbnailPrompt to update in case it exists.
+     */
+    where: ThumbnailPromptWhereUniqueInput
+    /**
+     * In case the ThumbnailPrompt found by the `where` argument doesn't exist, create a new ThumbnailPrompt with this data.
+     */
+    create: XOR<ThumbnailPromptCreateInput, ThumbnailPromptUncheckedCreateInput>
+    /**
+     * In case the ThumbnailPrompt was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ThumbnailPromptUpdateInput, ThumbnailPromptUncheckedUpdateInput>
+  }
+
+  /**
+   * ThumbnailPrompt delete
+   */
+  export type ThumbnailPromptDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+    /**
+     * Filter which ThumbnailPrompt to delete.
+     */
+    where: ThumbnailPromptWhereUniqueInput
+  }
+
+  /**
+   * ThumbnailPrompt deleteMany
+   */
+  export type ThumbnailPromptDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ThumbnailPrompts to delete
+     */
+    where?: ThumbnailPromptWhereInput
+    /**
+     * Limit how many ThumbnailPrompts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ThumbnailPrompt without action
+   */
+  export type ThumbnailPromptDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThumbnailPrompt
+     */
+    select?: ThumbnailPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThumbnailPrompt
+     */
+    omit?: ThumbnailPromptOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SiteSettings
+   */
+
+  export type AggregateSiteSettings = {
+    _count: SiteSettingsCountAggregateOutputType | null
+    _avg: SiteSettingsAvgAggregateOutputType | null
+    _sum: SiteSettingsSumAggregateOutputType | null
+    _min: SiteSettingsMinAggregateOutputType | null
+    _max: SiteSettingsMaxAggregateOutputType | null
+  }
+
+  export type SiteSettingsAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type SiteSettingsSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type SiteSettingsMinAggregateOutputType = {
+    id: number | null
+    siteName: string | null
+    siteUrl: string | null
+    titleTemplate: string | null
+    defaultMetaTitle: string | null
+    defaultMetaDescription: string | null
+    defaultKeywords: string | null
+    defaultOgImage: string | null
+    faviconUrl: string | null
+    globalHeadHtml: string | null
+    globalHeadJs: string | null
+    globalCss: string | null
+    globalBodyJs: string | null
+    googleSiteVerification: string | null
+    bingSiteVerification: string | null
+    customHeadSnippet: string | null
+    googleAuthEnabled: boolean | null
+    googleClientId: string | null
+    updatedAt: Date | null
+  }
+
+  export type SiteSettingsMaxAggregateOutputType = {
+    id: number | null
+    siteName: string | null
+    siteUrl: string | null
+    titleTemplate: string | null
+    defaultMetaTitle: string | null
+    defaultMetaDescription: string | null
+    defaultKeywords: string | null
+    defaultOgImage: string | null
+    faviconUrl: string | null
+    globalHeadHtml: string | null
+    globalHeadJs: string | null
+    globalCss: string | null
+    globalBodyJs: string | null
+    googleSiteVerification: string | null
+    bingSiteVerification: string | null
+    customHeadSnippet: string | null
+    googleAuthEnabled: boolean | null
+    googleClientId: string | null
+    updatedAt: Date | null
+  }
+
+  export type SiteSettingsCountAggregateOutputType = {
+    id: number
+    siteName: number
+    siteUrl: number
+    titleTemplate: number
+    defaultMetaTitle: number
+    defaultMetaDescription: number
+    defaultKeywords: number
+    defaultOgImage: number
+    faviconUrl: number
+    globalHeadHtml: number
+    globalHeadJs: number
+    globalCss: number
+    globalBodyJs: number
+    googleSiteVerification: number
+    bingSiteVerification: number
+    customHeadSnippet: number
+    verificationFiles: number
+    routeSeo: number
+    googleAuthEnabled: number
+    googleClientId: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SiteSettingsAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type SiteSettingsSumAggregateInputType = {
+    id?: true
+  }
+
+  export type SiteSettingsMinAggregateInputType = {
+    id?: true
+    siteName?: true
+    siteUrl?: true
+    titleTemplate?: true
+    defaultMetaTitle?: true
+    defaultMetaDescription?: true
+    defaultKeywords?: true
+    defaultOgImage?: true
+    faviconUrl?: true
+    globalHeadHtml?: true
+    globalHeadJs?: true
+    globalCss?: true
+    globalBodyJs?: true
+    googleSiteVerification?: true
+    bingSiteVerification?: true
+    customHeadSnippet?: true
+    googleAuthEnabled?: true
+    googleClientId?: true
+    updatedAt?: true
+  }
+
+  export type SiteSettingsMaxAggregateInputType = {
+    id?: true
+    siteName?: true
+    siteUrl?: true
+    titleTemplate?: true
+    defaultMetaTitle?: true
+    defaultMetaDescription?: true
+    defaultKeywords?: true
+    defaultOgImage?: true
+    faviconUrl?: true
+    globalHeadHtml?: true
+    globalHeadJs?: true
+    globalCss?: true
+    globalBodyJs?: true
+    googleSiteVerification?: true
+    bingSiteVerification?: true
+    customHeadSnippet?: true
+    googleAuthEnabled?: true
+    googleClientId?: true
+    updatedAt?: true
+  }
+
+  export type SiteSettingsCountAggregateInputType = {
+    id?: true
+    siteName?: true
+    siteUrl?: true
+    titleTemplate?: true
+    defaultMetaTitle?: true
+    defaultMetaDescription?: true
+    defaultKeywords?: true
+    defaultOgImage?: true
+    faviconUrl?: true
+    globalHeadHtml?: true
+    globalHeadJs?: true
+    globalCss?: true
+    globalBodyJs?: true
+    googleSiteVerification?: true
+    bingSiteVerification?: true
+    customHeadSnippet?: true
+    verificationFiles?: true
+    routeSeo?: true
+    googleAuthEnabled?: true
+    googleClientId?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SiteSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SiteSettings to aggregate.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SiteSettings
+    **/
+    _count?: true | SiteSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SiteSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SiteSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SiteSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SiteSettingsMaxAggregateInputType
+  }
+
+  export type GetSiteSettingsAggregateType<T extends SiteSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateSiteSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSiteSettings[P]>
+      : GetScalarType<T[P], AggregateSiteSettings[P]>
+  }
+
+
+
+
+  export type SiteSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SiteSettingsWhereInput
+    orderBy?: SiteSettingsOrderByWithAggregationInput | SiteSettingsOrderByWithAggregationInput[]
+    by: SiteSettingsScalarFieldEnum[] | SiteSettingsScalarFieldEnum
+    having?: SiteSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SiteSettingsCountAggregateInputType | true
+    _avg?: SiteSettingsAvgAggregateInputType
+    _sum?: SiteSettingsSumAggregateInputType
+    _min?: SiteSettingsMinAggregateInputType
+    _max?: SiteSettingsMaxAggregateInputType
+  }
+
+  export type SiteSettingsGroupByOutputType = {
+    id: number
+    siteName: string
+    siteUrl: string
+    titleTemplate: string
+    defaultMetaTitle: string
+    defaultMetaDescription: string
+    defaultKeywords: string
+    defaultOgImage: string
+    faviconUrl: string
+    globalHeadHtml: string
+    globalHeadJs: string
+    globalCss: string
+    globalBodyJs: string
+    googleSiteVerification: string
+    bingSiteVerification: string
+    customHeadSnippet: string
+    verificationFiles: JsonValue | null
+    routeSeo: JsonValue | null
+    googleAuthEnabled: boolean
+    googleClientId: string
+    updatedAt: Date
+    _count: SiteSettingsCountAggregateOutputType | null
+    _avg: SiteSettingsAvgAggregateOutputType | null
+    _sum: SiteSettingsSumAggregateOutputType | null
+    _min: SiteSettingsMinAggregateOutputType | null
+    _max: SiteSettingsMaxAggregateOutputType | null
+  }
+
+  type GetSiteSettingsGroupByPayload<T extends SiteSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SiteSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SiteSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SiteSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], SiteSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SiteSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    siteName?: boolean
+    siteUrl?: boolean
+    titleTemplate?: boolean
+    defaultMetaTitle?: boolean
+    defaultMetaDescription?: boolean
+    defaultKeywords?: boolean
+    defaultOgImage?: boolean
+    faviconUrl?: boolean
+    globalHeadHtml?: boolean
+    globalHeadJs?: boolean
+    globalCss?: boolean
+    globalBodyJs?: boolean
+    googleSiteVerification?: boolean
+    bingSiteVerification?: boolean
+    customHeadSnippet?: boolean
+    verificationFiles?: boolean
+    routeSeo?: boolean
+    googleAuthEnabled?: boolean
+    googleClientId?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["siteSettings"]>
+
+  export type SiteSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    siteName?: boolean
+    siteUrl?: boolean
+    titleTemplate?: boolean
+    defaultMetaTitle?: boolean
+    defaultMetaDescription?: boolean
+    defaultKeywords?: boolean
+    defaultOgImage?: boolean
+    faviconUrl?: boolean
+    globalHeadHtml?: boolean
+    globalHeadJs?: boolean
+    globalCss?: boolean
+    globalBodyJs?: boolean
+    googleSiteVerification?: boolean
+    bingSiteVerification?: boolean
+    customHeadSnippet?: boolean
+    verificationFiles?: boolean
+    routeSeo?: boolean
+    googleAuthEnabled?: boolean
+    googleClientId?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["siteSettings"]>
+
+  export type SiteSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    siteName?: boolean
+    siteUrl?: boolean
+    titleTemplate?: boolean
+    defaultMetaTitle?: boolean
+    defaultMetaDescription?: boolean
+    defaultKeywords?: boolean
+    defaultOgImage?: boolean
+    faviconUrl?: boolean
+    globalHeadHtml?: boolean
+    globalHeadJs?: boolean
+    globalCss?: boolean
+    globalBodyJs?: boolean
+    googleSiteVerification?: boolean
+    bingSiteVerification?: boolean
+    customHeadSnippet?: boolean
+    verificationFiles?: boolean
+    routeSeo?: boolean
+    googleAuthEnabled?: boolean
+    googleClientId?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["siteSettings"]>
+
+  export type SiteSettingsSelectScalar = {
+    id?: boolean
+    siteName?: boolean
+    siteUrl?: boolean
+    titleTemplate?: boolean
+    defaultMetaTitle?: boolean
+    defaultMetaDescription?: boolean
+    defaultKeywords?: boolean
+    defaultOgImage?: boolean
+    faviconUrl?: boolean
+    globalHeadHtml?: boolean
+    globalHeadJs?: boolean
+    globalCss?: boolean
+    globalBodyJs?: boolean
+    googleSiteVerification?: boolean
+    bingSiteVerification?: boolean
+    customHeadSnippet?: boolean
+    verificationFiles?: boolean
+    routeSeo?: boolean
+    googleAuthEnabled?: boolean
+    googleClientId?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteUrl" | "titleTemplate" | "defaultMetaTitle" | "defaultMetaDescription" | "defaultKeywords" | "defaultOgImage" | "faviconUrl" | "globalHeadHtml" | "globalHeadJs" | "globalCss" | "globalBodyJs" | "googleSiteVerification" | "bingSiteVerification" | "customHeadSnippet" | "verificationFiles" | "routeSeo" | "googleAuthEnabled" | "googleClientId" | "updatedAt", ExtArgs["result"]["siteSettings"]>
+
+  export type $SiteSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SiteSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      siteName: string
+      siteUrl: string
+      titleTemplate: string
+      defaultMetaTitle: string
+      defaultMetaDescription: string
+      defaultKeywords: string
+      defaultOgImage: string
+      faviconUrl: string
+      globalHeadHtml: string
+      globalHeadJs: string
+      globalCss: string
+      globalBodyJs: string
+      googleSiteVerification: string
+      bingSiteVerification: string
+      customHeadSnippet: string
+      verificationFiles: Prisma.JsonValue | null
+      routeSeo: Prisma.JsonValue | null
+      googleAuthEnabled: boolean
+      googleClientId: string
+      updatedAt: Date
+    }, ExtArgs["result"]["siteSettings"]>
+    composites: {}
+  }
+
+  type SiteSettingsGetPayload<S extends boolean | null | undefined | SiteSettingsDefaultArgs> = $Result.GetResult<Prisma.$SiteSettingsPayload, S>
+
+  type SiteSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SiteSettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SiteSettingsCountAggregateInputType | true
+    }
+
+  export interface SiteSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SiteSettings'], meta: { name: 'SiteSettings' } }
+    /**
+     * Find zero or one SiteSettings that matches the filter.
+     * @param {SiteSettingsFindUniqueArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SiteSettingsFindUniqueArgs>(args: SelectSubset<T, SiteSettingsFindUniqueArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SiteSettings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SiteSettingsFindUniqueOrThrowArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SiteSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, SiteSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SiteSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsFindFirstArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SiteSettingsFindFirstArgs>(args?: SelectSubset<T, SiteSettingsFindFirstArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SiteSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsFindFirstOrThrowArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SiteSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, SiteSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SiteSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SiteSettings
+     * const siteSettings = await prisma.siteSettings.findMany()
+     * 
+     * // Get first 10 SiteSettings
+     * const siteSettings = await prisma.siteSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const siteSettingsWithIdOnly = await prisma.siteSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SiteSettingsFindManyArgs>(args?: SelectSubset<T, SiteSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SiteSettings.
+     * @param {SiteSettingsCreateArgs} args - Arguments to create a SiteSettings.
+     * @example
+     * // Create one SiteSettings
+     * const SiteSettings = await prisma.siteSettings.create({
+     *   data: {
+     *     // ... data to create a SiteSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends SiteSettingsCreateArgs>(args: SelectSubset<T, SiteSettingsCreateArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SiteSettings.
+     * @param {SiteSettingsCreateManyArgs} args - Arguments to create many SiteSettings.
+     * @example
+     * // Create many SiteSettings
+     * const siteSettings = await prisma.siteSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SiteSettingsCreateManyArgs>(args?: SelectSubset<T, SiteSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SiteSettings and returns the data saved in the database.
+     * @param {SiteSettingsCreateManyAndReturnArgs} args - Arguments to create many SiteSettings.
+     * @example
+     * // Create many SiteSettings
+     * const siteSettings = await prisma.siteSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SiteSettings and only return the `id`
+     * const siteSettingsWithIdOnly = await prisma.siteSettings.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SiteSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, SiteSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SiteSettings.
+     * @param {SiteSettingsDeleteArgs} args - Arguments to delete one SiteSettings.
+     * @example
+     * // Delete one SiteSettings
+     * const SiteSettings = await prisma.siteSettings.delete({
+     *   where: {
+     *     // ... filter to delete one SiteSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SiteSettingsDeleteArgs>(args: SelectSubset<T, SiteSettingsDeleteArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SiteSettings.
+     * @param {SiteSettingsUpdateArgs} args - Arguments to update one SiteSettings.
+     * @example
+     * // Update one SiteSettings
+     * const siteSettings = await prisma.siteSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SiteSettingsUpdateArgs>(args: SelectSubset<T, SiteSettingsUpdateArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SiteSettings.
+     * @param {SiteSettingsDeleteManyArgs} args - Arguments to filter SiteSettings to delete.
+     * @example
+     * // Delete a few SiteSettings
+     * const { count } = await prisma.siteSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SiteSettingsDeleteManyArgs>(args?: SelectSubset<T, SiteSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SiteSettings
+     * const siteSettings = await prisma.siteSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SiteSettingsUpdateManyArgs>(args: SelectSubset<T, SiteSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SiteSettings and returns the data updated in the database.
+     * @param {SiteSettingsUpdateManyAndReturnArgs} args - Arguments to update many SiteSettings.
+     * @example
+     * // Update many SiteSettings
+     * const siteSettings = await prisma.siteSettings.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SiteSettings and only return the `id`
+     * const siteSettingsWithIdOnly = await prisma.siteSettings.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SiteSettingsUpdateManyAndReturnArgs>(args: SelectSubset<T, SiteSettingsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SiteSettings.
+     * @param {SiteSettingsUpsertArgs} args - Arguments to update or create a SiteSettings.
+     * @example
+     * // Update or create a SiteSettings
+     * const siteSettings = await prisma.siteSettings.upsert({
+     *   create: {
+     *     // ... data to create a SiteSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SiteSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SiteSettingsUpsertArgs>(args: SelectSubset<T, SiteSettingsUpsertArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsCountArgs} args - Arguments to filter SiteSettings to count.
+     * @example
+     * // Count the number of SiteSettings
+     * const count = await prisma.siteSettings.count({
+     *   where: {
+     *     // ... the filter for the SiteSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends SiteSettingsCountArgs>(
+      args?: Subset<T, SiteSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SiteSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SiteSettingsAggregateArgs>(args: Subset<T, SiteSettingsAggregateArgs>): Prisma.PrismaPromise<GetSiteSettingsAggregateType<T>>
+
+    /**
+     * Group by SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SiteSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SiteSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: SiteSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SiteSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSiteSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SiteSettings model
+   */
+  readonly fields: SiteSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SiteSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SiteSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SiteSettings model
+   */
+  interface SiteSettingsFieldRefs {
+    readonly id: FieldRef<"SiteSettings", 'Int'>
+    readonly siteName: FieldRef<"SiteSettings", 'String'>
+    readonly siteUrl: FieldRef<"SiteSettings", 'String'>
+    readonly titleTemplate: FieldRef<"SiteSettings", 'String'>
+    readonly defaultMetaTitle: FieldRef<"SiteSettings", 'String'>
+    readonly defaultMetaDescription: FieldRef<"SiteSettings", 'String'>
+    readonly defaultKeywords: FieldRef<"SiteSettings", 'String'>
+    readonly defaultOgImage: FieldRef<"SiteSettings", 'String'>
+    readonly faviconUrl: FieldRef<"SiteSettings", 'String'>
+    readonly globalHeadHtml: FieldRef<"SiteSettings", 'String'>
+    readonly globalHeadJs: FieldRef<"SiteSettings", 'String'>
+    readonly globalCss: FieldRef<"SiteSettings", 'String'>
+    readonly globalBodyJs: FieldRef<"SiteSettings", 'String'>
+    readonly googleSiteVerification: FieldRef<"SiteSettings", 'String'>
+    readonly bingSiteVerification: FieldRef<"SiteSettings", 'String'>
+    readonly customHeadSnippet: FieldRef<"SiteSettings", 'String'>
+    readonly verificationFiles: FieldRef<"SiteSettings", 'Json'>
+    readonly routeSeo: FieldRef<"SiteSettings", 'Json'>
+    readonly googleAuthEnabled: FieldRef<"SiteSettings", 'Boolean'>
+    readonly googleClientId: FieldRef<"SiteSettings", 'String'>
+    readonly updatedAt: FieldRef<"SiteSettings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SiteSettings findUnique
+   */
+  export type SiteSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings findUniqueOrThrow
+   */
+  export type SiteSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings findFirst
+   */
+  export type SiteSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SiteSettings.
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SiteSettings.
+     */
+    distinct?: SiteSettingsScalarFieldEnum | SiteSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * SiteSettings findFirstOrThrow
+   */
+  export type SiteSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SiteSettings.
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SiteSettings.
+     */
+    distinct?: SiteSettingsScalarFieldEnum | SiteSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * SiteSettings findMany
+   */
+  export type SiteSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SiteSettings.
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    distinct?: SiteSettingsScalarFieldEnum | SiteSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * SiteSettings create
+   */
+  export type SiteSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a SiteSettings.
+     */
+    data: XOR<SiteSettingsCreateInput, SiteSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * SiteSettings createMany
+   */
+  export type SiteSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SiteSettings.
+     */
+    data: SiteSettingsCreateManyInput | SiteSettingsCreateManyInput[]
+  }
+
+  /**
+   * SiteSettings createManyAndReturn
+   */
+  export type SiteSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to create many SiteSettings.
+     */
+    data: SiteSettingsCreateManyInput | SiteSettingsCreateManyInput[]
+  }
+
+  /**
+   * SiteSettings update
+   */
+  export type SiteSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a SiteSettings.
+     */
+    data: XOR<SiteSettingsUpdateInput, SiteSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which SiteSettings to update.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings updateMany
+   */
+  export type SiteSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SiteSettings.
+     */
+    data: XOR<SiteSettingsUpdateManyMutationInput, SiteSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which SiteSettings to update
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * Limit how many SiteSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SiteSettings updateManyAndReturn
+   */
+  export type SiteSettingsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to update SiteSettings.
+     */
+    data: XOR<SiteSettingsUpdateManyMutationInput, SiteSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which SiteSettings to update
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * Limit how many SiteSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SiteSettings upsert
+   */
+  export type SiteSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the SiteSettings to update in case it exists.
+     */
+    where: SiteSettingsWhereUniqueInput
+    /**
+     * In case the SiteSettings found by the `where` argument doesn't exist, create a new SiteSettings with this data.
+     */
+    create: XOR<SiteSettingsCreateInput, SiteSettingsUncheckedCreateInput>
+    /**
+     * In case the SiteSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SiteSettingsUpdateInput, SiteSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * SiteSettings delete
+   */
+  export type SiteSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter which SiteSettings to delete.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings deleteMany
+   */
+  export type SiteSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SiteSettings to delete
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * Limit how many SiteSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SiteSettings without action
+   */
+  export type SiteSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FourKInterestSurvey
+   */
+
+  export type AggregateFourKInterestSurvey = {
+    _count: FourKInterestSurveyCountAggregateOutputType | null
+    _min: FourKInterestSurveyMinAggregateOutputType | null
+    _max: FourKInterestSurveyMaxAggregateOutputType | null
+  }
+
+  export type FourKInterestSurveyMinAggregateOutputType = {
+    id: string | null
+    interested: boolean | null
+    userId: string | null
+    visitorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FourKInterestSurveyMaxAggregateOutputType = {
+    id: string | null
+    interested: boolean | null
+    userId: string | null
+    visitorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FourKInterestSurveyCountAggregateOutputType = {
+    id: number
+    interested: number
+    userId: number
+    visitorId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FourKInterestSurveyMinAggregateInputType = {
+    id?: true
+    interested?: true
+    userId?: true
+    visitorId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FourKInterestSurveyMaxAggregateInputType = {
+    id?: true
+    interested?: true
+    userId?: true
+    visitorId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FourKInterestSurveyCountAggregateInputType = {
+    id?: true
+    interested?: true
+    userId?: true
+    visitorId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FourKInterestSurveyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FourKInterestSurvey to aggregate.
+     */
+    where?: FourKInterestSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FourKInterestSurveys to fetch.
+     */
+    orderBy?: FourKInterestSurveyOrderByWithRelationInput | FourKInterestSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FourKInterestSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FourKInterestSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FourKInterestSurveys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FourKInterestSurveys
+    **/
+    _count?: true | FourKInterestSurveyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FourKInterestSurveyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FourKInterestSurveyMaxAggregateInputType
+  }
+
+  export type GetFourKInterestSurveyAggregateType<T extends FourKInterestSurveyAggregateArgs> = {
+        [P in keyof T & keyof AggregateFourKInterestSurvey]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFourKInterestSurvey[P]>
+      : GetScalarType<T[P], AggregateFourKInterestSurvey[P]>
+  }
+
+
+
+
+  export type FourKInterestSurveyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FourKInterestSurveyWhereInput
+    orderBy?: FourKInterestSurveyOrderByWithAggregationInput | FourKInterestSurveyOrderByWithAggregationInput[]
+    by: FourKInterestSurveyScalarFieldEnum[] | FourKInterestSurveyScalarFieldEnum
+    having?: FourKInterestSurveyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FourKInterestSurveyCountAggregateInputType | true
+    _min?: FourKInterestSurveyMinAggregateInputType
+    _max?: FourKInterestSurveyMaxAggregateInputType
+  }
+
+  export type FourKInterestSurveyGroupByOutputType = {
+    id: string
+    interested: boolean
+    userId: string | null
+    visitorId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: FourKInterestSurveyCountAggregateOutputType | null
+    _min: FourKInterestSurveyMinAggregateOutputType | null
+    _max: FourKInterestSurveyMaxAggregateOutputType | null
+  }
+
+  type GetFourKInterestSurveyGroupByPayload<T extends FourKInterestSurveyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FourKInterestSurveyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FourKInterestSurveyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FourKInterestSurveyGroupByOutputType[P]>
+            : GetScalarType<T[P], FourKInterestSurveyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FourKInterestSurveySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    interested?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | FourKInterestSurvey$userArgs<ExtArgs>
+  }, ExtArgs["result"]["fourKInterestSurvey"]>
+
+  export type FourKInterestSurveySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    interested?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | FourKInterestSurvey$userArgs<ExtArgs>
+  }, ExtArgs["result"]["fourKInterestSurvey"]>
+
+  export type FourKInterestSurveySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    interested?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | FourKInterestSurvey$userArgs<ExtArgs>
+  }, ExtArgs["result"]["fourKInterestSurvey"]>
+
+  export type FourKInterestSurveySelectScalar = {
+    id?: boolean
+    interested?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FourKInterestSurveyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "interested" | "userId" | "visitorId" | "createdAt" | "updatedAt", ExtArgs["result"]["fourKInterestSurvey"]>
+  export type FourKInterestSurveyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | FourKInterestSurvey$userArgs<ExtArgs>
+  }
+  export type FourKInterestSurveyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | FourKInterestSurvey$userArgs<ExtArgs>
+  }
+  export type FourKInterestSurveyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | FourKInterestSurvey$userArgs<ExtArgs>
+  }
+
+  export type $FourKInterestSurveyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FourKInterestSurvey"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      interested: boolean
+      userId: string | null
+      visitorId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["fourKInterestSurvey"]>
+    composites: {}
+  }
+
+  type FourKInterestSurveyGetPayload<S extends boolean | null | undefined | FourKInterestSurveyDefaultArgs> = $Result.GetResult<Prisma.$FourKInterestSurveyPayload, S>
+
+  type FourKInterestSurveyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FourKInterestSurveyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FourKInterestSurveyCountAggregateInputType | true
+    }
+
+  export interface FourKInterestSurveyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FourKInterestSurvey'], meta: { name: 'FourKInterestSurvey' } }
+    /**
+     * Find zero or one FourKInterestSurvey that matches the filter.
+     * @param {FourKInterestSurveyFindUniqueArgs} args - Arguments to find a FourKInterestSurvey
+     * @example
+     * // Get one FourKInterestSurvey
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FourKInterestSurveyFindUniqueArgs>(args: SelectSubset<T, FourKInterestSurveyFindUniqueArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FourKInterestSurvey that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FourKInterestSurveyFindUniqueOrThrowArgs} args - Arguments to find a FourKInterestSurvey
+     * @example
+     * // Get one FourKInterestSurvey
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FourKInterestSurveyFindUniqueOrThrowArgs>(args: SelectSubset<T, FourKInterestSurveyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FourKInterestSurvey that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FourKInterestSurveyFindFirstArgs} args - Arguments to find a FourKInterestSurvey
+     * @example
+     * // Get one FourKInterestSurvey
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FourKInterestSurveyFindFirstArgs>(args?: SelectSubset<T, FourKInterestSurveyFindFirstArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FourKInterestSurvey that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FourKInterestSurveyFindFirstOrThrowArgs} args - Arguments to find a FourKInterestSurvey
+     * @example
+     * // Get one FourKInterestSurvey
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FourKInterestSurveyFindFirstOrThrowArgs>(args?: SelectSubset<T, FourKInterestSurveyFindFirstOrThrowArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FourKInterestSurveys that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FourKInterestSurveyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FourKInterestSurveys
+     * const fourKInterestSurveys = await prisma.fourKInterestSurvey.findMany()
+     * 
+     * // Get first 10 FourKInterestSurveys
+     * const fourKInterestSurveys = await prisma.fourKInterestSurvey.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const fourKInterestSurveyWithIdOnly = await prisma.fourKInterestSurvey.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FourKInterestSurveyFindManyArgs>(args?: SelectSubset<T, FourKInterestSurveyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FourKInterestSurvey.
+     * @param {FourKInterestSurveyCreateArgs} args - Arguments to create a FourKInterestSurvey.
+     * @example
+     * // Create one FourKInterestSurvey
+     * const FourKInterestSurvey = await prisma.fourKInterestSurvey.create({
+     *   data: {
+     *     // ... data to create a FourKInterestSurvey
+     *   }
+     * })
+     * 
+     */
+    create<T extends FourKInterestSurveyCreateArgs>(args: SelectSubset<T, FourKInterestSurveyCreateArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FourKInterestSurveys.
+     * @param {FourKInterestSurveyCreateManyArgs} args - Arguments to create many FourKInterestSurveys.
+     * @example
+     * // Create many FourKInterestSurveys
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FourKInterestSurveyCreateManyArgs>(args?: SelectSubset<T, FourKInterestSurveyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FourKInterestSurveys and returns the data saved in the database.
+     * @param {FourKInterestSurveyCreateManyAndReturnArgs} args - Arguments to create many FourKInterestSurveys.
+     * @example
+     * // Create many FourKInterestSurveys
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FourKInterestSurveys and only return the `id`
+     * const fourKInterestSurveyWithIdOnly = await prisma.fourKInterestSurvey.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FourKInterestSurveyCreateManyAndReturnArgs>(args?: SelectSubset<T, FourKInterestSurveyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FourKInterestSurvey.
+     * @param {FourKInterestSurveyDeleteArgs} args - Arguments to delete one FourKInterestSurvey.
+     * @example
+     * // Delete one FourKInterestSurvey
+     * const FourKInterestSurvey = await prisma.fourKInterestSurvey.delete({
+     *   where: {
+     *     // ... filter to delete one FourKInterestSurvey
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FourKInterestSurveyDeleteArgs>(args: SelectSubset<T, FourKInterestSurveyDeleteArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FourKInterestSurvey.
+     * @param {FourKInterestSurveyUpdateArgs} args - Arguments to update one FourKInterestSurvey.
+     * @example
+     * // Update one FourKInterestSurvey
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FourKInterestSurveyUpdateArgs>(args: SelectSubset<T, FourKInterestSurveyUpdateArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FourKInterestSurveys.
+     * @param {FourKInterestSurveyDeleteManyArgs} args - Arguments to filter FourKInterestSurveys to delete.
+     * @example
+     * // Delete a few FourKInterestSurveys
+     * const { count } = await prisma.fourKInterestSurvey.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FourKInterestSurveyDeleteManyArgs>(args?: SelectSubset<T, FourKInterestSurveyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FourKInterestSurveys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FourKInterestSurveyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FourKInterestSurveys
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FourKInterestSurveyUpdateManyArgs>(args: SelectSubset<T, FourKInterestSurveyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FourKInterestSurveys and returns the data updated in the database.
+     * @param {FourKInterestSurveyUpdateManyAndReturnArgs} args - Arguments to update many FourKInterestSurveys.
+     * @example
+     * // Update many FourKInterestSurveys
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FourKInterestSurveys and only return the `id`
+     * const fourKInterestSurveyWithIdOnly = await prisma.fourKInterestSurvey.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FourKInterestSurveyUpdateManyAndReturnArgs>(args: SelectSubset<T, FourKInterestSurveyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FourKInterestSurvey.
+     * @param {FourKInterestSurveyUpsertArgs} args - Arguments to update or create a FourKInterestSurvey.
+     * @example
+     * // Update or create a FourKInterestSurvey
+     * const fourKInterestSurvey = await prisma.fourKInterestSurvey.upsert({
+     *   create: {
+     *     // ... data to create a FourKInterestSurvey
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FourKInterestSurvey we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FourKInterestSurveyUpsertArgs>(args: SelectSubset<T, FourKInterestSurveyUpsertArgs<ExtArgs>>): Prisma__FourKInterestSurveyClient<$Result.GetResult<Prisma.$FourKInterestSurveyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FourKInterestSurveys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FourKInterestSurveyCountArgs} args - Arguments to filter FourKInterestSurveys to count.
+     * @example
+     * // Count the number of FourKInterestSurveys
+     * const count = await prisma.fourKInterestSurvey.count({
+     *   where: {
+     *     // ... the filter for the FourKInterestSurveys we want to count
+     *   }
+     * })
+    **/
+    count<T extends FourKInterestSurveyCountArgs>(
+      args?: Subset<T, FourKInterestSurveyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FourKInterestSurveyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FourKInterestSurvey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FourKInterestSurveyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FourKInterestSurveyAggregateArgs>(args: Subset<T, FourKInterestSurveyAggregateArgs>): Prisma.PrismaPromise<GetFourKInterestSurveyAggregateType<T>>
+
+    /**
+     * Group by FourKInterestSurvey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FourKInterestSurveyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FourKInterestSurveyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FourKInterestSurveyGroupByArgs['orderBy'] }
+        : { orderBy?: FourKInterestSurveyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FourKInterestSurveyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFourKInterestSurveyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FourKInterestSurvey model
+   */
+  readonly fields: FourKInterestSurveyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FourKInterestSurvey.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FourKInterestSurveyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends FourKInterestSurvey$userArgs<ExtArgs> = {}>(args?: Subset<T, FourKInterestSurvey$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FourKInterestSurvey model
+   */
+  interface FourKInterestSurveyFieldRefs {
+    readonly id: FieldRef<"FourKInterestSurvey", 'String'>
+    readonly interested: FieldRef<"FourKInterestSurvey", 'Boolean'>
+    readonly userId: FieldRef<"FourKInterestSurvey", 'String'>
+    readonly visitorId: FieldRef<"FourKInterestSurvey", 'String'>
+    readonly createdAt: FieldRef<"FourKInterestSurvey", 'DateTime'>
+    readonly updatedAt: FieldRef<"FourKInterestSurvey", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FourKInterestSurvey findUnique
+   */
+  export type FourKInterestSurveyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * Filter, which FourKInterestSurvey to fetch.
+     */
+    where: FourKInterestSurveyWhereUniqueInput
+  }
+
+  /**
+   * FourKInterestSurvey findUniqueOrThrow
+   */
+  export type FourKInterestSurveyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * Filter, which FourKInterestSurvey to fetch.
+     */
+    where: FourKInterestSurveyWhereUniqueInput
+  }
+
+  /**
+   * FourKInterestSurvey findFirst
+   */
+  export type FourKInterestSurveyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * Filter, which FourKInterestSurvey to fetch.
+     */
+    where?: FourKInterestSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FourKInterestSurveys to fetch.
+     */
+    orderBy?: FourKInterestSurveyOrderByWithRelationInput | FourKInterestSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FourKInterestSurveys.
+     */
+    cursor?: FourKInterestSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FourKInterestSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FourKInterestSurveys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FourKInterestSurveys.
+     */
+    distinct?: FourKInterestSurveyScalarFieldEnum | FourKInterestSurveyScalarFieldEnum[]
+  }
+
+  /**
+   * FourKInterestSurvey findFirstOrThrow
+   */
+  export type FourKInterestSurveyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * Filter, which FourKInterestSurvey to fetch.
+     */
+    where?: FourKInterestSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FourKInterestSurveys to fetch.
+     */
+    orderBy?: FourKInterestSurveyOrderByWithRelationInput | FourKInterestSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FourKInterestSurveys.
+     */
+    cursor?: FourKInterestSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FourKInterestSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FourKInterestSurveys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FourKInterestSurveys.
+     */
+    distinct?: FourKInterestSurveyScalarFieldEnum | FourKInterestSurveyScalarFieldEnum[]
+  }
+
+  /**
+   * FourKInterestSurvey findMany
+   */
+  export type FourKInterestSurveyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * Filter, which FourKInterestSurveys to fetch.
+     */
+    where?: FourKInterestSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FourKInterestSurveys to fetch.
+     */
+    orderBy?: FourKInterestSurveyOrderByWithRelationInput | FourKInterestSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FourKInterestSurveys.
+     */
+    cursor?: FourKInterestSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FourKInterestSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FourKInterestSurveys.
+     */
+    skip?: number
+    distinct?: FourKInterestSurveyScalarFieldEnum | FourKInterestSurveyScalarFieldEnum[]
+  }
+
+  /**
+   * FourKInterestSurvey create
+   */
+  export type FourKInterestSurveyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FourKInterestSurvey.
+     */
+    data: XOR<FourKInterestSurveyCreateInput, FourKInterestSurveyUncheckedCreateInput>
+  }
+
+  /**
+   * FourKInterestSurvey createMany
+   */
+  export type FourKInterestSurveyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FourKInterestSurveys.
+     */
+    data: FourKInterestSurveyCreateManyInput | FourKInterestSurveyCreateManyInput[]
+  }
+
+  /**
+   * FourKInterestSurvey createManyAndReturn
+   */
+  export type FourKInterestSurveyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * The data used to create many FourKInterestSurveys.
+     */
+    data: FourKInterestSurveyCreateManyInput | FourKInterestSurveyCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FourKInterestSurvey update
+   */
+  export type FourKInterestSurveyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FourKInterestSurvey.
+     */
+    data: XOR<FourKInterestSurveyUpdateInput, FourKInterestSurveyUncheckedUpdateInput>
+    /**
+     * Choose, which FourKInterestSurvey to update.
+     */
+    where: FourKInterestSurveyWhereUniqueInput
+  }
+
+  /**
+   * FourKInterestSurvey updateMany
+   */
+  export type FourKInterestSurveyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FourKInterestSurveys.
+     */
+    data: XOR<FourKInterestSurveyUpdateManyMutationInput, FourKInterestSurveyUncheckedUpdateManyInput>
+    /**
+     * Filter which FourKInterestSurveys to update
+     */
+    where?: FourKInterestSurveyWhereInput
+    /**
+     * Limit how many FourKInterestSurveys to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FourKInterestSurvey updateManyAndReturn
+   */
+  export type FourKInterestSurveyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * The data used to update FourKInterestSurveys.
+     */
+    data: XOR<FourKInterestSurveyUpdateManyMutationInput, FourKInterestSurveyUncheckedUpdateManyInput>
+    /**
+     * Filter which FourKInterestSurveys to update
+     */
+    where?: FourKInterestSurveyWhereInput
+    /**
+     * Limit how many FourKInterestSurveys to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FourKInterestSurvey upsert
+   */
+  export type FourKInterestSurveyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FourKInterestSurvey to update in case it exists.
+     */
+    where: FourKInterestSurveyWhereUniqueInput
+    /**
+     * In case the FourKInterestSurvey found by the `where` argument doesn't exist, create a new FourKInterestSurvey with this data.
+     */
+    create: XOR<FourKInterestSurveyCreateInput, FourKInterestSurveyUncheckedCreateInput>
+    /**
+     * In case the FourKInterestSurvey was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FourKInterestSurveyUpdateInput, FourKInterestSurveyUncheckedUpdateInput>
+  }
+
+  /**
+   * FourKInterestSurvey delete
+   */
+  export type FourKInterestSurveyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+    /**
+     * Filter which FourKInterestSurvey to delete.
+     */
+    where: FourKInterestSurveyWhereUniqueInput
+  }
+
+  /**
+   * FourKInterestSurvey deleteMany
+   */
+  export type FourKInterestSurveyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FourKInterestSurveys to delete
+     */
+    where?: FourKInterestSurveyWhereInput
+    /**
+     * Limit how many FourKInterestSurveys to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FourKInterestSurvey.user
+   */
+  export type FourKInterestSurvey$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * FourKInterestSurvey without action
+   */
+  export type FourKInterestSurveyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FourKInterestSurvey
+     */
+    select?: FourKInterestSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FourKInterestSurvey
+     */
+    omit?: FourKInterestSurveyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FourKInterestSurveyInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -18376,6 +22083,7 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     passwordHash: 'passwordHash',
+    googleId: 'googleId',
     name: 'name',
     role: 'role',
     plan: 'plan',
@@ -18577,15 +22285,17 @@ export namespace Prisma {
 
   export const AiApiSettingsScalarFieldEnum: {
     id: 'id',
+    textProvider: 'textProvider',
+    textModel: 'textModel',
     openaiApiKey: 'openaiApiKey',
-    openaiModel: 'openaiModel',
     openaiConnectionStatus: 'openaiConnectionStatus',
     openaiLastTestedAt: 'openaiLastTestedAt',
-    freepikApiKey: 'freepikApiKey',
-    freepikConnectionStatus: 'freepikConnectionStatus',
-    freepikLastTestedAt: 'freepikLastTestedAt',
-    basicPlanModel: 'basicPlanModel',
-    proPlanModel: 'proPlanModel',
+    imageProvider: 'imageProvider',
+    basicImageModel: 'basicImageModel',
+    proImageModel: 'proImageModel',
+    falApiKey: 'falApiKey',
+    falConnectionStatus: 'falConnectionStatus',
+    falLastTestedAt: 'falLastTestedAt',
     enableAiAnalysis: 'enableAiAnalysis',
     enableAiThumbnailGeneration: 'enableAiThumbnailGeneration',
     enableAiImproveThumbnail: 'enableAiImproveThumbnail',
@@ -18596,6 +22306,59 @@ export namespace Prisma {
   };
 
   export type AiApiSettingsScalarFieldEnum = (typeof AiApiSettingsScalarFieldEnum)[keyof typeof AiApiSettingsScalarFieldEnum]
+
+
+  export const ThumbnailPromptScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    slug: 'slug',
+    type: 'type',
+    content: 'content',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ThumbnailPromptScalarFieldEnum = (typeof ThumbnailPromptScalarFieldEnum)[keyof typeof ThumbnailPromptScalarFieldEnum]
+
+
+  export const SiteSettingsScalarFieldEnum: {
+    id: 'id',
+    siteName: 'siteName',
+    siteUrl: 'siteUrl',
+    titleTemplate: 'titleTemplate',
+    defaultMetaTitle: 'defaultMetaTitle',
+    defaultMetaDescription: 'defaultMetaDescription',
+    defaultKeywords: 'defaultKeywords',
+    defaultOgImage: 'defaultOgImage',
+    faviconUrl: 'faviconUrl',
+    globalHeadHtml: 'globalHeadHtml',
+    globalHeadJs: 'globalHeadJs',
+    globalCss: 'globalCss',
+    globalBodyJs: 'globalBodyJs',
+    googleSiteVerification: 'googleSiteVerification',
+    bingSiteVerification: 'bingSiteVerification',
+    customHeadSnippet: 'customHeadSnippet',
+    verificationFiles: 'verificationFiles',
+    routeSeo: 'routeSeo',
+    googleAuthEnabled: 'googleAuthEnabled',
+    googleClientId: 'googleClientId',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[keyof typeof SiteSettingsScalarFieldEnum]
+
+
+  export const FourKInterestSurveyScalarFieldEnum: {
+    id: 'id',
+    interested: 'interested',
+    userId: 'userId',
+    visitorId: 'visitorId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FourKInterestSurveyScalarFieldEnum = (typeof FourKInterestSurveyScalarFieldEnum)[keyof typeof FourKInterestSurveyScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -18768,6 +22531,20 @@ export namespace Prisma {
    */
   export type EnumAiImageProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiImageProvider'>
     
+
+
+  /**
+   * Reference to a field of type 'ThumbnailPromptType'
+   */
+  export type EnumThumbnailPromptTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ThumbnailPromptType'>
+    
+
+
+  /**
+   * Reference to a field of type 'ThumbnailPromptStatus'
+   */
+  export type EnumThumbnailPromptStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ThumbnailPromptStatus'>
+    
   /**
    * Deep Input Types
    */
@@ -18779,7 +22556,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
-    passwordHash?: StringFilter<"User"> | string
+    passwordHash?: StringNullableFilter<"User"> | string | null
+    googleId?: StringNullableFilter<"User"> | string | null
     name?: StringNullableFilter<"User"> | string | null
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     plan?: EnumPlanTypeFilter<"User"> | $Enums.PlanType
@@ -18796,12 +22574,14 @@ export namespace Prisma {
     creditLogs?: CreditLogListRelationFilter
     payments?: PaymentListRelationFilter
     analytics?: AnalyticsListRelationFilter
+    fourKInterestSurvey?: XOR<FourKInterestSurveyNullableScalarRelationFilter, FourKInterestSurveyWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     email?: SortOrder
-    passwordHash?: SortOrder
+    passwordHash?: SortOrderInput | SortOrder
+    googleId?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
     role?: SortOrder
     plan?: SortOrder
@@ -18818,15 +22598,17 @@ export namespace Prisma {
     creditLogs?: CreditLogOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
     analytics?: AnalyticsOrderByRelationAggregateInput
+    fourKInterestSurvey?: FourKInterestSurveyOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
+    googleId?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    passwordHash?: StringFilter<"User"> | string
+    passwordHash?: StringNullableFilter<"User"> | string | null
     name?: StringNullableFilter<"User"> | string | null
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     plan?: EnumPlanTypeFilter<"User"> | $Enums.PlanType
@@ -18843,12 +22625,14 @@ export namespace Prisma {
     creditLogs?: CreditLogListRelationFilter
     payments?: PaymentListRelationFilter
     analytics?: AnalyticsListRelationFilter
-  }, "id" | "email">
+    fourKInterestSurvey?: XOR<FourKInterestSurveyNullableScalarRelationFilter, FourKInterestSurveyWhereInput> | null
+  }, "id" | "email" | "googleId">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     email?: SortOrder
-    passwordHash?: SortOrder
+    passwordHash?: SortOrderInput | SortOrder
+    googleId?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
     role?: SortOrder
     plan?: SortOrder
@@ -18870,7 +22654,8 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
-    passwordHash?: StringWithAggregatesFilter<"User"> | string
+    passwordHash?: StringNullableWithAggregatesFilter<"User"> | string | null
+    googleId?: StringNullableWithAggregatesFilter<"User"> | string | null
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
     plan?: EnumPlanTypeWithAggregatesFilter<"User"> | $Enums.PlanType
@@ -19828,15 +23613,17 @@ export namespace Prisma {
     OR?: AiApiSettingsWhereInput[]
     NOT?: AiApiSettingsWhereInput | AiApiSettingsWhereInput[]
     id?: IntFilter<"AiApiSettings"> | number
+    textProvider?: StringFilter<"AiApiSettings"> | string
+    textModel?: StringFilter<"AiApiSettings"> | string
     openaiApiKey?: StringFilter<"AiApiSettings"> | string
-    openaiModel?: StringFilter<"AiApiSettings"> | string
     openaiConnectionStatus?: StringFilter<"AiApiSettings"> | string
     openaiLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
-    freepikApiKey?: StringFilter<"AiApiSettings"> | string
-    freepikConnectionStatus?: StringFilter<"AiApiSettings"> | string
-    freepikLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
-    basicPlanModel?: StringFilter<"AiApiSettings"> | string
-    proPlanModel?: StringFilter<"AiApiSettings"> | string
+    imageProvider?: StringFilter<"AiApiSettings"> | string
+    basicImageModel?: StringFilter<"AiApiSettings"> | string
+    proImageModel?: StringFilter<"AiApiSettings"> | string
+    falApiKey?: StringFilter<"AiApiSettings"> | string
+    falConnectionStatus?: StringFilter<"AiApiSettings"> | string
+    falLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
     enableAiAnalysis?: BoolFilter<"AiApiSettings"> | boolean
     enableAiThumbnailGeneration?: BoolFilter<"AiApiSettings"> | boolean
     enableAiImproveThumbnail?: BoolFilter<"AiApiSettings"> | boolean
@@ -19848,15 +23635,17 @@ export namespace Prisma {
 
   export type AiApiSettingsOrderByWithRelationInput = {
     id?: SortOrder
+    textProvider?: SortOrder
+    textModel?: SortOrder
     openaiApiKey?: SortOrder
-    openaiModel?: SortOrder
     openaiConnectionStatus?: SortOrder
     openaiLastTestedAt?: SortOrderInput | SortOrder
-    freepikApiKey?: SortOrder
-    freepikConnectionStatus?: SortOrder
-    freepikLastTestedAt?: SortOrderInput | SortOrder
-    basicPlanModel?: SortOrder
-    proPlanModel?: SortOrder
+    imageProvider?: SortOrder
+    basicImageModel?: SortOrder
+    proImageModel?: SortOrder
+    falApiKey?: SortOrder
+    falConnectionStatus?: SortOrder
+    falLastTestedAt?: SortOrderInput | SortOrder
     enableAiAnalysis?: SortOrder
     enableAiThumbnailGeneration?: SortOrder
     enableAiImproveThumbnail?: SortOrder
@@ -19871,15 +23660,17 @@ export namespace Prisma {
     AND?: AiApiSettingsWhereInput | AiApiSettingsWhereInput[]
     OR?: AiApiSettingsWhereInput[]
     NOT?: AiApiSettingsWhereInput | AiApiSettingsWhereInput[]
+    textProvider?: StringFilter<"AiApiSettings"> | string
+    textModel?: StringFilter<"AiApiSettings"> | string
     openaiApiKey?: StringFilter<"AiApiSettings"> | string
-    openaiModel?: StringFilter<"AiApiSettings"> | string
     openaiConnectionStatus?: StringFilter<"AiApiSettings"> | string
     openaiLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
-    freepikApiKey?: StringFilter<"AiApiSettings"> | string
-    freepikConnectionStatus?: StringFilter<"AiApiSettings"> | string
-    freepikLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
-    basicPlanModel?: StringFilter<"AiApiSettings"> | string
-    proPlanModel?: StringFilter<"AiApiSettings"> | string
+    imageProvider?: StringFilter<"AiApiSettings"> | string
+    basicImageModel?: StringFilter<"AiApiSettings"> | string
+    proImageModel?: StringFilter<"AiApiSettings"> | string
+    falApiKey?: StringFilter<"AiApiSettings"> | string
+    falConnectionStatus?: StringFilter<"AiApiSettings"> | string
+    falLastTestedAt?: DateTimeNullableFilter<"AiApiSettings"> | Date | string | null
     enableAiAnalysis?: BoolFilter<"AiApiSettings"> | boolean
     enableAiThumbnailGeneration?: BoolFilter<"AiApiSettings"> | boolean
     enableAiImproveThumbnail?: BoolFilter<"AiApiSettings"> | boolean
@@ -19891,15 +23682,17 @@ export namespace Prisma {
 
   export type AiApiSettingsOrderByWithAggregationInput = {
     id?: SortOrder
+    textProvider?: SortOrder
+    textModel?: SortOrder
     openaiApiKey?: SortOrder
-    openaiModel?: SortOrder
     openaiConnectionStatus?: SortOrder
     openaiLastTestedAt?: SortOrderInput | SortOrder
-    freepikApiKey?: SortOrder
-    freepikConnectionStatus?: SortOrder
-    freepikLastTestedAt?: SortOrderInput | SortOrder
-    basicPlanModel?: SortOrder
-    proPlanModel?: SortOrder
+    imageProvider?: SortOrder
+    basicImageModel?: SortOrder
+    proImageModel?: SortOrder
+    falApiKey?: SortOrder
+    falConnectionStatus?: SortOrder
+    falLastTestedAt?: SortOrderInput | SortOrder
     enableAiAnalysis?: SortOrder
     enableAiThumbnailGeneration?: SortOrder
     enableAiImproveThumbnail?: SortOrder
@@ -19919,15 +23712,17 @@ export namespace Prisma {
     OR?: AiApiSettingsScalarWhereWithAggregatesInput[]
     NOT?: AiApiSettingsScalarWhereWithAggregatesInput | AiApiSettingsScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"AiApiSettings"> | number
+    textProvider?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    textModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
     openaiApiKey?: StringWithAggregatesFilter<"AiApiSettings"> | string
-    openaiModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
     openaiConnectionStatus?: StringWithAggregatesFilter<"AiApiSettings"> | string
     openaiLastTestedAt?: DateTimeNullableWithAggregatesFilter<"AiApiSettings"> | Date | string | null
-    freepikApiKey?: StringWithAggregatesFilter<"AiApiSettings"> | string
-    freepikConnectionStatus?: StringWithAggregatesFilter<"AiApiSettings"> | string
-    freepikLastTestedAt?: DateTimeNullableWithAggregatesFilter<"AiApiSettings"> | Date | string | null
-    basicPlanModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
-    proPlanModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    imageProvider?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    basicImageModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    proImageModel?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    falApiKey?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    falConnectionStatus?: StringWithAggregatesFilter<"AiApiSettings"> | string
+    falLastTestedAt?: DateTimeNullableWithAggregatesFilter<"AiApiSettings"> | Date | string | null
     enableAiAnalysis?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
     enableAiThumbnailGeneration?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
     enableAiImproveThumbnail?: BoolWithAggregatesFilter<"AiApiSettings"> | boolean
@@ -19937,10 +23732,272 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"AiApiSettings"> | Date | string
   }
 
+  export type ThumbnailPromptWhereInput = {
+    AND?: ThumbnailPromptWhereInput | ThumbnailPromptWhereInput[]
+    OR?: ThumbnailPromptWhereInput[]
+    NOT?: ThumbnailPromptWhereInput | ThumbnailPromptWhereInput[]
+    id?: StringFilter<"ThumbnailPrompt"> | string
+    name?: StringFilter<"ThumbnailPrompt"> | string
+    slug?: StringFilter<"ThumbnailPrompt"> | string
+    type?: EnumThumbnailPromptTypeFilter<"ThumbnailPrompt"> | $Enums.ThumbnailPromptType
+    content?: StringFilter<"ThumbnailPrompt"> | string
+    status?: EnumThumbnailPromptStatusFilter<"ThumbnailPrompt"> | $Enums.ThumbnailPromptStatus
+    createdAt?: DateTimeFilter<"ThumbnailPrompt"> | Date | string
+    updatedAt?: DateTimeFilter<"ThumbnailPrompt"> | Date | string
+  }
+
+  export type ThumbnailPromptOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ThumbnailPromptWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    slug?: string
+    AND?: ThumbnailPromptWhereInput | ThumbnailPromptWhereInput[]
+    OR?: ThumbnailPromptWhereInput[]
+    NOT?: ThumbnailPromptWhereInput | ThumbnailPromptWhereInput[]
+    name?: StringFilter<"ThumbnailPrompt"> | string
+    type?: EnumThumbnailPromptTypeFilter<"ThumbnailPrompt"> | $Enums.ThumbnailPromptType
+    content?: StringFilter<"ThumbnailPrompt"> | string
+    status?: EnumThumbnailPromptStatusFilter<"ThumbnailPrompt"> | $Enums.ThumbnailPromptStatus
+    createdAt?: DateTimeFilter<"ThumbnailPrompt"> | Date | string
+    updatedAt?: DateTimeFilter<"ThumbnailPrompt"> | Date | string
+  }, "id" | "slug">
+
+  export type ThumbnailPromptOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ThumbnailPromptCountOrderByAggregateInput
+    _max?: ThumbnailPromptMaxOrderByAggregateInput
+    _min?: ThumbnailPromptMinOrderByAggregateInput
+  }
+
+  export type ThumbnailPromptScalarWhereWithAggregatesInput = {
+    AND?: ThumbnailPromptScalarWhereWithAggregatesInput | ThumbnailPromptScalarWhereWithAggregatesInput[]
+    OR?: ThumbnailPromptScalarWhereWithAggregatesInput[]
+    NOT?: ThumbnailPromptScalarWhereWithAggregatesInput | ThumbnailPromptScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ThumbnailPrompt"> | string
+    name?: StringWithAggregatesFilter<"ThumbnailPrompt"> | string
+    slug?: StringWithAggregatesFilter<"ThumbnailPrompt"> | string
+    type?: EnumThumbnailPromptTypeWithAggregatesFilter<"ThumbnailPrompt"> | $Enums.ThumbnailPromptType
+    content?: StringWithAggregatesFilter<"ThumbnailPrompt"> | string
+    status?: EnumThumbnailPromptStatusWithAggregatesFilter<"ThumbnailPrompt"> | $Enums.ThumbnailPromptStatus
+    createdAt?: DateTimeWithAggregatesFilter<"ThumbnailPrompt"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ThumbnailPrompt"> | Date | string
+  }
+
+  export type SiteSettingsWhereInput = {
+    AND?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    OR?: SiteSettingsWhereInput[]
+    NOT?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    id?: IntFilter<"SiteSettings"> | number
+    siteName?: StringFilter<"SiteSettings"> | string
+    siteUrl?: StringFilter<"SiteSettings"> | string
+    titleTemplate?: StringFilter<"SiteSettings"> | string
+    defaultMetaTitle?: StringFilter<"SiteSettings"> | string
+    defaultMetaDescription?: StringFilter<"SiteSettings"> | string
+    defaultKeywords?: StringFilter<"SiteSettings"> | string
+    defaultOgImage?: StringFilter<"SiteSettings"> | string
+    faviconUrl?: StringFilter<"SiteSettings"> | string
+    globalHeadHtml?: StringFilter<"SiteSettings"> | string
+    globalHeadJs?: StringFilter<"SiteSettings"> | string
+    globalCss?: StringFilter<"SiteSettings"> | string
+    globalBodyJs?: StringFilter<"SiteSettings"> | string
+    googleSiteVerification?: StringFilter<"SiteSettings"> | string
+    bingSiteVerification?: StringFilter<"SiteSettings"> | string
+    customHeadSnippet?: StringFilter<"SiteSettings"> | string
+    verificationFiles?: JsonNullableFilter<"SiteSettings">
+    routeSeo?: JsonNullableFilter<"SiteSettings">
+    googleAuthEnabled?: BoolFilter<"SiteSettings"> | boolean
+    googleClientId?: StringFilter<"SiteSettings"> | string
+    updatedAt?: DateTimeFilter<"SiteSettings"> | Date | string
+  }
+
+  export type SiteSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteUrl?: SortOrder
+    titleTemplate?: SortOrder
+    defaultMetaTitle?: SortOrder
+    defaultMetaDescription?: SortOrder
+    defaultKeywords?: SortOrder
+    defaultOgImage?: SortOrder
+    faviconUrl?: SortOrder
+    globalHeadHtml?: SortOrder
+    globalHeadJs?: SortOrder
+    globalCss?: SortOrder
+    globalBodyJs?: SortOrder
+    googleSiteVerification?: SortOrder
+    bingSiteVerification?: SortOrder
+    customHeadSnippet?: SortOrder
+    verificationFiles?: SortOrderInput | SortOrder
+    routeSeo?: SortOrderInput | SortOrder
+    googleAuthEnabled?: SortOrder
+    googleClientId?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SiteSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    OR?: SiteSettingsWhereInput[]
+    NOT?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    siteName?: StringFilter<"SiteSettings"> | string
+    siteUrl?: StringFilter<"SiteSettings"> | string
+    titleTemplate?: StringFilter<"SiteSettings"> | string
+    defaultMetaTitle?: StringFilter<"SiteSettings"> | string
+    defaultMetaDescription?: StringFilter<"SiteSettings"> | string
+    defaultKeywords?: StringFilter<"SiteSettings"> | string
+    defaultOgImage?: StringFilter<"SiteSettings"> | string
+    faviconUrl?: StringFilter<"SiteSettings"> | string
+    globalHeadHtml?: StringFilter<"SiteSettings"> | string
+    globalHeadJs?: StringFilter<"SiteSettings"> | string
+    globalCss?: StringFilter<"SiteSettings"> | string
+    globalBodyJs?: StringFilter<"SiteSettings"> | string
+    googleSiteVerification?: StringFilter<"SiteSettings"> | string
+    bingSiteVerification?: StringFilter<"SiteSettings"> | string
+    customHeadSnippet?: StringFilter<"SiteSettings"> | string
+    verificationFiles?: JsonNullableFilter<"SiteSettings">
+    routeSeo?: JsonNullableFilter<"SiteSettings">
+    googleAuthEnabled?: BoolFilter<"SiteSettings"> | boolean
+    googleClientId?: StringFilter<"SiteSettings"> | string
+    updatedAt?: DateTimeFilter<"SiteSettings"> | Date | string
+  }, "id">
+
+  export type SiteSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteUrl?: SortOrder
+    titleTemplate?: SortOrder
+    defaultMetaTitle?: SortOrder
+    defaultMetaDescription?: SortOrder
+    defaultKeywords?: SortOrder
+    defaultOgImage?: SortOrder
+    faviconUrl?: SortOrder
+    globalHeadHtml?: SortOrder
+    globalHeadJs?: SortOrder
+    globalCss?: SortOrder
+    globalBodyJs?: SortOrder
+    googleSiteVerification?: SortOrder
+    bingSiteVerification?: SortOrder
+    customHeadSnippet?: SortOrder
+    verificationFiles?: SortOrderInput | SortOrder
+    routeSeo?: SortOrderInput | SortOrder
+    googleAuthEnabled?: SortOrder
+    googleClientId?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SiteSettingsCountOrderByAggregateInput
+    _avg?: SiteSettingsAvgOrderByAggregateInput
+    _max?: SiteSettingsMaxOrderByAggregateInput
+    _min?: SiteSettingsMinOrderByAggregateInput
+    _sum?: SiteSettingsSumOrderByAggregateInput
+  }
+
+  export type SiteSettingsScalarWhereWithAggregatesInput = {
+    AND?: SiteSettingsScalarWhereWithAggregatesInput | SiteSettingsScalarWhereWithAggregatesInput[]
+    OR?: SiteSettingsScalarWhereWithAggregatesInput[]
+    NOT?: SiteSettingsScalarWhereWithAggregatesInput | SiteSettingsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"SiteSettings"> | number
+    siteName?: StringWithAggregatesFilter<"SiteSettings"> | string
+    siteUrl?: StringWithAggregatesFilter<"SiteSettings"> | string
+    titleTemplate?: StringWithAggregatesFilter<"SiteSettings"> | string
+    defaultMetaTitle?: StringWithAggregatesFilter<"SiteSettings"> | string
+    defaultMetaDescription?: StringWithAggregatesFilter<"SiteSettings"> | string
+    defaultKeywords?: StringWithAggregatesFilter<"SiteSettings"> | string
+    defaultOgImage?: StringWithAggregatesFilter<"SiteSettings"> | string
+    faviconUrl?: StringWithAggregatesFilter<"SiteSettings"> | string
+    globalHeadHtml?: StringWithAggregatesFilter<"SiteSettings"> | string
+    globalHeadJs?: StringWithAggregatesFilter<"SiteSettings"> | string
+    globalCss?: StringWithAggregatesFilter<"SiteSettings"> | string
+    globalBodyJs?: StringWithAggregatesFilter<"SiteSettings"> | string
+    googleSiteVerification?: StringWithAggregatesFilter<"SiteSettings"> | string
+    bingSiteVerification?: StringWithAggregatesFilter<"SiteSettings"> | string
+    customHeadSnippet?: StringWithAggregatesFilter<"SiteSettings"> | string
+    verificationFiles?: JsonNullableWithAggregatesFilter<"SiteSettings">
+    routeSeo?: JsonNullableWithAggregatesFilter<"SiteSettings">
+    googleAuthEnabled?: BoolWithAggregatesFilter<"SiteSettings"> | boolean
+    googleClientId?: StringWithAggregatesFilter<"SiteSettings"> | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SiteSettings"> | Date | string
+  }
+
+  export type FourKInterestSurveyWhereInput = {
+    AND?: FourKInterestSurveyWhereInput | FourKInterestSurveyWhereInput[]
+    OR?: FourKInterestSurveyWhereInput[]
+    NOT?: FourKInterestSurveyWhereInput | FourKInterestSurveyWhereInput[]
+    id?: StringFilter<"FourKInterestSurvey"> | string
+    interested?: BoolFilter<"FourKInterestSurvey"> | boolean
+    userId?: StringNullableFilter<"FourKInterestSurvey"> | string | null
+    visitorId?: StringNullableFilter<"FourKInterestSurvey"> | string | null
+    createdAt?: DateTimeFilter<"FourKInterestSurvey"> | Date | string
+    updatedAt?: DateTimeFilter<"FourKInterestSurvey"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type FourKInterestSurveyOrderByWithRelationInput = {
+    id?: SortOrder
+    interested?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    visitorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type FourKInterestSurveyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    visitorId?: string
+    AND?: FourKInterestSurveyWhereInput | FourKInterestSurveyWhereInput[]
+    OR?: FourKInterestSurveyWhereInput[]
+    NOT?: FourKInterestSurveyWhereInput | FourKInterestSurveyWhereInput[]
+    interested?: BoolFilter<"FourKInterestSurvey"> | boolean
+    createdAt?: DateTimeFilter<"FourKInterestSurvey"> | Date | string
+    updatedAt?: DateTimeFilter<"FourKInterestSurvey"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "userId" | "visitorId">
+
+  export type FourKInterestSurveyOrderByWithAggregationInput = {
+    id?: SortOrder
+    interested?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    visitorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FourKInterestSurveyCountOrderByAggregateInput
+    _max?: FourKInterestSurveyMaxOrderByAggregateInput
+    _min?: FourKInterestSurveyMinOrderByAggregateInput
+  }
+
+  export type FourKInterestSurveyScalarWhereWithAggregatesInput = {
+    AND?: FourKInterestSurveyScalarWhereWithAggregatesInput | FourKInterestSurveyScalarWhereWithAggregatesInput[]
+    OR?: FourKInterestSurveyScalarWhereWithAggregatesInput[]
+    NOT?: FourKInterestSurveyScalarWhereWithAggregatesInput | FourKInterestSurveyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FourKInterestSurvey"> | string
+    interested?: BoolWithAggregatesFilter<"FourKInterestSurvey"> | boolean
+    userId?: StringNullableWithAggregatesFilter<"FourKInterestSurvey"> | string | null
+    visitorId?: StringNullableWithAggregatesFilter<"FourKInterestSurvey"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"FourKInterestSurvey"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FourKInterestSurvey"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -19957,12 +24014,14 @@ export namespace Prisma {
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -19979,12 +24038,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -20001,12 +24062,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -20023,12 +24086,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -20042,7 +24107,8 @@ export namespace Prisma {
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -20056,7 +24122,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -21114,15 +25181,17 @@ export namespace Prisma {
 
   export type AiApiSettingsCreateInput = {
     id?: number
+    textProvider?: string
+    textModel?: string
     openaiApiKey?: string
-    openaiModel?: string
     openaiConnectionStatus?: string
     openaiLastTestedAt?: Date | string | null
-    freepikApiKey?: string
-    freepikConnectionStatus?: string
-    freepikLastTestedAt?: Date | string | null
-    basicPlanModel?: string
-    proPlanModel?: string
+    imageProvider?: string
+    basicImageModel?: string
+    proImageModel?: string
+    falApiKey?: string
+    falConnectionStatus?: string
+    falLastTestedAt?: Date | string | null
     enableAiAnalysis?: boolean
     enableAiThumbnailGeneration?: boolean
     enableAiImproveThumbnail?: boolean
@@ -21134,15 +25203,17 @@ export namespace Prisma {
 
   export type AiApiSettingsUncheckedCreateInput = {
     id?: number
+    textProvider?: string
+    textModel?: string
     openaiApiKey?: string
-    openaiModel?: string
     openaiConnectionStatus?: string
     openaiLastTestedAt?: Date | string | null
-    freepikApiKey?: string
-    freepikConnectionStatus?: string
-    freepikLastTestedAt?: Date | string | null
-    basicPlanModel?: string
-    proPlanModel?: string
+    imageProvider?: string
+    basicImageModel?: string
+    proImageModel?: string
+    falApiKey?: string
+    falConnectionStatus?: string
+    falLastTestedAt?: Date | string | null
     enableAiAnalysis?: boolean
     enableAiThumbnailGeneration?: boolean
     enableAiImproveThumbnail?: boolean
@@ -21154,15 +25225,17 @@ export namespace Prisma {
 
   export type AiApiSettingsUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    textProvider?: StringFieldUpdateOperationsInput | string
+    textModel?: StringFieldUpdateOperationsInput | string
     openaiApiKey?: StringFieldUpdateOperationsInput | string
-    openaiModel?: StringFieldUpdateOperationsInput | string
     openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
     openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    freepikApiKey?: StringFieldUpdateOperationsInput | string
-    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
-    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    basicPlanModel?: StringFieldUpdateOperationsInput | string
-    proPlanModel?: StringFieldUpdateOperationsInput | string
+    imageProvider?: StringFieldUpdateOperationsInput | string
+    basicImageModel?: StringFieldUpdateOperationsInput | string
+    proImageModel?: StringFieldUpdateOperationsInput | string
+    falApiKey?: StringFieldUpdateOperationsInput | string
+    falConnectionStatus?: StringFieldUpdateOperationsInput | string
+    falLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
     enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
     enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
@@ -21174,15 +25247,17 @@ export namespace Prisma {
 
   export type AiApiSettingsUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    textProvider?: StringFieldUpdateOperationsInput | string
+    textModel?: StringFieldUpdateOperationsInput | string
     openaiApiKey?: StringFieldUpdateOperationsInput | string
-    openaiModel?: StringFieldUpdateOperationsInput | string
     openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
     openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    freepikApiKey?: StringFieldUpdateOperationsInput | string
-    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
-    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    basicPlanModel?: StringFieldUpdateOperationsInput | string
-    proPlanModel?: StringFieldUpdateOperationsInput | string
+    imageProvider?: StringFieldUpdateOperationsInput | string
+    basicImageModel?: StringFieldUpdateOperationsInput | string
+    proImageModel?: StringFieldUpdateOperationsInput | string
+    falApiKey?: StringFieldUpdateOperationsInput | string
+    falConnectionStatus?: StringFieldUpdateOperationsInput | string
+    falLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
     enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
     enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
@@ -21194,15 +25269,17 @@ export namespace Prisma {
 
   export type AiApiSettingsCreateManyInput = {
     id?: number
+    textProvider?: string
+    textModel?: string
     openaiApiKey?: string
-    openaiModel?: string
     openaiConnectionStatus?: string
     openaiLastTestedAt?: Date | string | null
-    freepikApiKey?: string
-    freepikConnectionStatus?: string
-    freepikLastTestedAt?: Date | string | null
-    basicPlanModel?: string
-    proPlanModel?: string
+    imageProvider?: string
+    basicImageModel?: string
+    proImageModel?: string
+    falApiKey?: string
+    falConnectionStatus?: string
+    falLastTestedAt?: Date | string | null
     enableAiAnalysis?: boolean
     enableAiThumbnailGeneration?: boolean
     enableAiImproveThumbnail?: boolean
@@ -21214,15 +25291,17 @@ export namespace Prisma {
 
   export type AiApiSettingsUpdateManyMutationInput = {
     id?: IntFieldUpdateOperationsInput | number
+    textProvider?: StringFieldUpdateOperationsInput | string
+    textModel?: StringFieldUpdateOperationsInput | string
     openaiApiKey?: StringFieldUpdateOperationsInput | string
-    openaiModel?: StringFieldUpdateOperationsInput | string
     openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
     openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    freepikApiKey?: StringFieldUpdateOperationsInput | string
-    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
-    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    basicPlanModel?: StringFieldUpdateOperationsInput | string
-    proPlanModel?: StringFieldUpdateOperationsInput | string
+    imageProvider?: StringFieldUpdateOperationsInput | string
+    basicImageModel?: StringFieldUpdateOperationsInput | string
+    proImageModel?: StringFieldUpdateOperationsInput | string
+    falApiKey?: StringFieldUpdateOperationsInput | string
+    falConnectionStatus?: StringFieldUpdateOperationsInput | string
+    falLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
     enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
     enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
@@ -21234,21 +25313,330 @@ export namespace Prisma {
 
   export type AiApiSettingsUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    textProvider?: StringFieldUpdateOperationsInput | string
+    textModel?: StringFieldUpdateOperationsInput | string
     openaiApiKey?: StringFieldUpdateOperationsInput | string
-    openaiModel?: StringFieldUpdateOperationsInput | string
     openaiConnectionStatus?: StringFieldUpdateOperationsInput | string
     openaiLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    freepikApiKey?: StringFieldUpdateOperationsInput | string
-    freepikConnectionStatus?: StringFieldUpdateOperationsInput | string
-    freepikLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    basicPlanModel?: StringFieldUpdateOperationsInput | string
-    proPlanModel?: StringFieldUpdateOperationsInput | string
+    imageProvider?: StringFieldUpdateOperationsInput | string
+    basicImageModel?: StringFieldUpdateOperationsInput | string
+    proImageModel?: StringFieldUpdateOperationsInput | string
+    falApiKey?: StringFieldUpdateOperationsInput | string
+    falConnectionStatus?: StringFieldUpdateOperationsInput | string
+    falLastTestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     enableAiAnalysis?: BoolFieldUpdateOperationsInput | boolean
     enableAiThumbnailGeneration?: BoolFieldUpdateOperationsInput | boolean
     enableAiImproveThumbnail?: BoolFieldUpdateOperationsInput | boolean
     enableAutoCategoryDetection?: BoolFieldUpdateOperationsInput | boolean
     enableThumbnailScoring?: BoolFieldUpdateOperationsInput | boolean
     enableAutoLayoutDetection?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailPromptCreateInput = {
+    id?: string
+    name: string
+    slug: string
+    type: $Enums.ThumbnailPromptType
+    content?: string
+    status?: $Enums.ThumbnailPromptStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ThumbnailPromptUncheckedCreateInput = {
+    id?: string
+    name: string
+    slug: string
+    type: $Enums.ThumbnailPromptType
+    content?: string
+    status?: $Enums.ThumbnailPromptStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ThumbnailPromptUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    type?: EnumThumbnailPromptTypeFieldUpdateOperationsInput | $Enums.ThumbnailPromptType
+    content?: StringFieldUpdateOperationsInput | string
+    status?: EnumThumbnailPromptStatusFieldUpdateOperationsInput | $Enums.ThumbnailPromptStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailPromptUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    type?: EnumThumbnailPromptTypeFieldUpdateOperationsInput | $Enums.ThumbnailPromptType
+    content?: StringFieldUpdateOperationsInput | string
+    status?: EnumThumbnailPromptStatusFieldUpdateOperationsInput | $Enums.ThumbnailPromptStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailPromptCreateManyInput = {
+    id?: string
+    name: string
+    slug: string
+    type: $Enums.ThumbnailPromptType
+    content?: string
+    status?: $Enums.ThumbnailPromptStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ThumbnailPromptUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    type?: EnumThumbnailPromptTypeFieldUpdateOperationsInput | $Enums.ThumbnailPromptType
+    content?: StringFieldUpdateOperationsInput | string
+    status?: EnumThumbnailPromptStatusFieldUpdateOperationsInput | $Enums.ThumbnailPromptStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThumbnailPromptUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    type?: EnumThumbnailPromptTypeFieldUpdateOperationsInput | $Enums.ThumbnailPromptType
+    content?: StringFieldUpdateOperationsInput | string
+    status?: EnumThumbnailPromptStatusFieldUpdateOperationsInput | $Enums.ThumbnailPromptStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SiteSettingsCreateInput = {
+    id?: number
+    siteName?: string
+    siteUrl?: string
+    titleTemplate?: string
+    defaultMetaTitle?: string
+    defaultMetaDescription?: string
+    defaultKeywords?: string
+    defaultOgImage?: string
+    faviconUrl?: string
+    globalHeadHtml?: string
+    globalHeadJs?: string
+    globalCss?: string
+    globalBodyJs?: string
+    googleSiteVerification?: string
+    bingSiteVerification?: string
+    customHeadSnippet?: string
+    verificationFiles?: NullableJsonNullValueInput | InputJsonValue
+    routeSeo?: NullableJsonNullValueInput | InputJsonValue
+    googleAuthEnabled?: boolean
+    googleClientId?: string
+    updatedAt?: Date | string
+  }
+
+  export type SiteSettingsUncheckedCreateInput = {
+    id?: number
+    siteName?: string
+    siteUrl?: string
+    titleTemplate?: string
+    defaultMetaTitle?: string
+    defaultMetaDescription?: string
+    defaultKeywords?: string
+    defaultOgImage?: string
+    faviconUrl?: string
+    globalHeadHtml?: string
+    globalHeadJs?: string
+    globalCss?: string
+    globalBodyJs?: string
+    googleSiteVerification?: string
+    bingSiteVerification?: string
+    customHeadSnippet?: string
+    verificationFiles?: NullableJsonNullValueInput | InputJsonValue
+    routeSeo?: NullableJsonNullValueInput | InputJsonValue
+    googleAuthEnabled?: boolean
+    googleClientId?: string
+    updatedAt?: Date | string
+  }
+
+  export type SiteSettingsUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteUrl?: StringFieldUpdateOperationsInput | string
+    titleTemplate?: StringFieldUpdateOperationsInput | string
+    defaultMetaTitle?: StringFieldUpdateOperationsInput | string
+    defaultMetaDescription?: StringFieldUpdateOperationsInput | string
+    defaultKeywords?: StringFieldUpdateOperationsInput | string
+    defaultOgImage?: StringFieldUpdateOperationsInput | string
+    faviconUrl?: StringFieldUpdateOperationsInput | string
+    globalHeadHtml?: StringFieldUpdateOperationsInput | string
+    globalHeadJs?: StringFieldUpdateOperationsInput | string
+    globalCss?: StringFieldUpdateOperationsInput | string
+    globalBodyJs?: StringFieldUpdateOperationsInput | string
+    googleSiteVerification?: StringFieldUpdateOperationsInput | string
+    bingSiteVerification?: StringFieldUpdateOperationsInput | string
+    customHeadSnippet?: StringFieldUpdateOperationsInput | string
+    verificationFiles?: NullableJsonNullValueInput | InputJsonValue
+    routeSeo?: NullableJsonNullValueInput | InputJsonValue
+    googleAuthEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleClientId?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SiteSettingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteUrl?: StringFieldUpdateOperationsInput | string
+    titleTemplate?: StringFieldUpdateOperationsInput | string
+    defaultMetaTitle?: StringFieldUpdateOperationsInput | string
+    defaultMetaDescription?: StringFieldUpdateOperationsInput | string
+    defaultKeywords?: StringFieldUpdateOperationsInput | string
+    defaultOgImage?: StringFieldUpdateOperationsInput | string
+    faviconUrl?: StringFieldUpdateOperationsInput | string
+    globalHeadHtml?: StringFieldUpdateOperationsInput | string
+    globalHeadJs?: StringFieldUpdateOperationsInput | string
+    globalCss?: StringFieldUpdateOperationsInput | string
+    globalBodyJs?: StringFieldUpdateOperationsInput | string
+    googleSiteVerification?: StringFieldUpdateOperationsInput | string
+    bingSiteVerification?: StringFieldUpdateOperationsInput | string
+    customHeadSnippet?: StringFieldUpdateOperationsInput | string
+    verificationFiles?: NullableJsonNullValueInput | InputJsonValue
+    routeSeo?: NullableJsonNullValueInput | InputJsonValue
+    googleAuthEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleClientId?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SiteSettingsCreateManyInput = {
+    id?: number
+    siteName?: string
+    siteUrl?: string
+    titleTemplate?: string
+    defaultMetaTitle?: string
+    defaultMetaDescription?: string
+    defaultKeywords?: string
+    defaultOgImage?: string
+    faviconUrl?: string
+    globalHeadHtml?: string
+    globalHeadJs?: string
+    globalCss?: string
+    globalBodyJs?: string
+    googleSiteVerification?: string
+    bingSiteVerification?: string
+    customHeadSnippet?: string
+    verificationFiles?: NullableJsonNullValueInput | InputJsonValue
+    routeSeo?: NullableJsonNullValueInput | InputJsonValue
+    googleAuthEnabled?: boolean
+    googleClientId?: string
+    updatedAt?: Date | string
+  }
+
+  export type SiteSettingsUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteUrl?: StringFieldUpdateOperationsInput | string
+    titleTemplate?: StringFieldUpdateOperationsInput | string
+    defaultMetaTitle?: StringFieldUpdateOperationsInput | string
+    defaultMetaDescription?: StringFieldUpdateOperationsInput | string
+    defaultKeywords?: StringFieldUpdateOperationsInput | string
+    defaultOgImage?: StringFieldUpdateOperationsInput | string
+    faviconUrl?: StringFieldUpdateOperationsInput | string
+    globalHeadHtml?: StringFieldUpdateOperationsInput | string
+    globalHeadJs?: StringFieldUpdateOperationsInput | string
+    globalCss?: StringFieldUpdateOperationsInput | string
+    globalBodyJs?: StringFieldUpdateOperationsInput | string
+    googleSiteVerification?: StringFieldUpdateOperationsInput | string
+    bingSiteVerification?: StringFieldUpdateOperationsInput | string
+    customHeadSnippet?: StringFieldUpdateOperationsInput | string
+    verificationFiles?: NullableJsonNullValueInput | InputJsonValue
+    routeSeo?: NullableJsonNullValueInput | InputJsonValue
+    googleAuthEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleClientId?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SiteSettingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteUrl?: StringFieldUpdateOperationsInput | string
+    titleTemplate?: StringFieldUpdateOperationsInput | string
+    defaultMetaTitle?: StringFieldUpdateOperationsInput | string
+    defaultMetaDescription?: StringFieldUpdateOperationsInput | string
+    defaultKeywords?: StringFieldUpdateOperationsInput | string
+    defaultOgImage?: StringFieldUpdateOperationsInput | string
+    faviconUrl?: StringFieldUpdateOperationsInput | string
+    globalHeadHtml?: StringFieldUpdateOperationsInput | string
+    globalHeadJs?: StringFieldUpdateOperationsInput | string
+    globalCss?: StringFieldUpdateOperationsInput | string
+    globalBodyJs?: StringFieldUpdateOperationsInput | string
+    googleSiteVerification?: StringFieldUpdateOperationsInput | string
+    bingSiteVerification?: StringFieldUpdateOperationsInput | string
+    customHeadSnippet?: StringFieldUpdateOperationsInput | string
+    verificationFiles?: NullableJsonNullValueInput | InputJsonValue
+    routeSeo?: NullableJsonNullValueInput | InputJsonValue
+    googleAuthEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleClientId?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FourKInterestSurveyCreateInput = {
+    id?: string
+    interested: boolean
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutFourKInterestSurveyInput
+  }
+
+  export type FourKInterestSurveyUncheckedCreateInput = {
+    id?: string
+    interested: boolean
+    userId?: string | null
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FourKInterestSurveyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutFourKInterestSurveyNestedInput
+  }
+
+  export type FourKInterestSurveyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FourKInterestSurveyCreateManyInput = {
+    id?: string
+    interested: boolean
+    userId?: string | null
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FourKInterestSurveyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FourKInterestSurveyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21369,6 +25757,11 @@ export namespace Prisma {
     none?: AnalyticsWhereInput
   }
 
+  export type FourKInterestSurveyNullableScalarRelationFilter = {
+    is?: FourKInterestSurveyWhereInput | null
+    isNot?: FourKInterestSurveyWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -21410,6 +25803,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     passwordHash?: SortOrder
+    googleId?: SortOrder
     name?: SortOrder
     role?: SortOrder
     plan?: SortOrder
@@ -21428,6 +25822,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     passwordHash?: SortOrder
+    googleId?: SortOrder
     name?: SortOrder
     role?: SortOrder
     plan?: SortOrder
@@ -21442,6 +25837,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     passwordHash?: SortOrder
+    googleId?: SortOrder
     name?: SortOrder
     role?: SortOrder
     plan?: SortOrder
@@ -22360,15 +26756,17 @@ export namespace Prisma {
 
   export type AiApiSettingsCountOrderByAggregateInput = {
     id?: SortOrder
+    textProvider?: SortOrder
+    textModel?: SortOrder
     openaiApiKey?: SortOrder
-    openaiModel?: SortOrder
     openaiConnectionStatus?: SortOrder
     openaiLastTestedAt?: SortOrder
-    freepikApiKey?: SortOrder
-    freepikConnectionStatus?: SortOrder
-    freepikLastTestedAt?: SortOrder
-    basicPlanModel?: SortOrder
-    proPlanModel?: SortOrder
+    imageProvider?: SortOrder
+    basicImageModel?: SortOrder
+    proImageModel?: SortOrder
+    falApiKey?: SortOrder
+    falConnectionStatus?: SortOrder
+    falLastTestedAt?: SortOrder
     enableAiAnalysis?: SortOrder
     enableAiThumbnailGeneration?: SortOrder
     enableAiImproveThumbnail?: SortOrder
@@ -22384,15 +26782,17 @@ export namespace Prisma {
 
   export type AiApiSettingsMaxOrderByAggregateInput = {
     id?: SortOrder
+    textProvider?: SortOrder
+    textModel?: SortOrder
     openaiApiKey?: SortOrder
-    openaiModel?: SortOrder
     openaiConnectionStatus?: SortOrder
     openaiLastTestedAt?: SortOrder
-    freepikApiKey?: SortOrder
-    freepikConnectionStatus?: SortOrder
-    freepikLastTestedAt?: SortOrder
-    basicPlanModel?: SortOrder
-    proPlanModel?: SortOrder
+    imageProvider?: SortOrder
+    basicImageModel?: SortOrder
+    proImageModel?: SortOrder
+    falApiKey?: SortOrder
+    falConnectionStatus?: SortOrder
+    falLastTestedAt?: SortOrder
     enableAiAnalysis?: SortOrder
     enableAiThumbnailGeneration?: SortOrder
     enableAiImproveThumbnail?: SortOrder
@@ -22404,15 +26804,17 @@ export namespace Prisma {
 
   export type AiApiSettingsMinOrderByAggregateInput = {
     id?: SortOrder
+    textProvider?: SortOrder
+    textModel?: SortOrder
     openaiApiKey?: SortOrder
-    openaiModel?: SortOrder
     openaiConnectionStatus?: SortOrder
     openaiLastTestedAt?: SortOrder
-    freepikApiKey?: SortOrder
-    freepikConnectionStatus?: SortOrder
-    freepikLastTestedAt?: SortOrder
-    basicPlanModel?: SortOrder
-    proPlanModel?: SortOrder
+    imageProvider?: SortOrder
+    basicImageModel?: SortOrder
+    proImageModel?: SortOrder
+    falApiKey?: SortOrder
+    falConnectionStatus?: SortOrder
+    falLastTestedAt?: SortOrder
     enableAiAnalysis?: SortOrder
     enableAiThumbnailGeneration?: SortOrder
     enableAiImproveThumbnail?: SortOrder
@@ -22424,6 +26826,176 @@ export namespace Prisma {
 
   export type AiApiSettingsSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type EnumThumbnailPromptTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptType | EnumThumbnailPromptTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptType[]
+    notIn?: $Enums.ThumbnailPromptType[]
+    not?: NestedEnumThumbnailPromptTypeFilter<$PrismaModel> | $Enums.ThumbnailPromptType
+  }
+
+  export type EnumThumbnailPromptStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptStatus | EnumThumbnailPromptStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptStatus[]
+    notIn?: $Enums.ThumbnailPromptStatus[]
+    not?: NestedEnumThumbnailPromptStatusFilter<$PrismaModel> | $Enums.ThumbnailPromptStatus
+  }
+
+  export type ThumbnailPromptCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ThumbnailPromptMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ThumbnailPromptMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumThumbnailPromptTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptType | EnumThumbnailPromptTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptType[]
+    notIn?: $Enums.ThumbnailPromptType[]
+    not?: NestedEnumThumbnailPromptTypeWithAggregatesFilter<$PrismaModel> | $Enums.ThumbnailPromptType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumThumbnailPromptTypeFilter<$PrismaModel>
+    _max?: NestedEnumThumbnailPromptTypeFilter<$PrismaModel>
+  }
+
+  export type EnumThumbnailPromptStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptStatus | EnumThumbnailPromptStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptStatus[]
+    notIn?: $Enums.ThumbnailPromptStatus[]
+    not?: NestedEnumThumbnailPromptStatusWithAggregatesFilter<$PrismaModel> | $Enums.ThumbnailPromptStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumThumbnailPromptStatusFilter<$PrismaModel>
+    _max?: NestedEnumThumbnailPromptStatusFilter<$PrismaModel>
+  }
+
+  export type SiteSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteUrl?: SortOrder
+    titleTemplate?: SortOrder
+    defaultMetaTitle?: SortOrder
+    defaultMetaDescription?: SortOrder
+    defaultKeywords?: SortOrder
+    defaultOgImage?: SortOrder
+    faviconUrl?: SortOrder
+    globalHeadHtml?: SortOrder
+    globalHeadJs?: SortOrder
+    globalCss?: SortOrder
+    globalBodyJs?: SortOrder
+    googleSiteVerification?: SortOrder
+    bingSiteVerification?: SortOrder
+    customHeadSnippet?: SortOrder
+    verificationFiles?: SortOrder
+    routeSeo?: SortOrder
+    googleAuthEnabled?: SortOrder
+    googleClientId?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SiteSettingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type SiteSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteUrl?: SortOrder
+    titleTemplate?: SortOrder
+    defaultMetaTitle?: SortOrder
+    defaultMetaDescription?: SortOrder
+    defaultKeywords?: SortOrder
+    defaultOgImage?: SortOrder
+    faviconUrl?: SortOrder
+    globalHeadHtml?: SortOrder
+    globalHeadJs?: SortOrder
+    globalCss?: SortOrder
+    globalBodyJs?: SortOrder
+    googleSiteVerification?: SortOrder
+    bingSiteVerification?: SortOrder
+    customHeadSnippet?: SortOrder
+    googleAuthEnabled?: SortOrder
+    googleClientId?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SiteSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteUrl?: SortOrder
+    titleTemplate?: SortOrder
+    defaultMetaTitle?: SortOrder
+    defaultMetaDescription?: SortOrder
+    defaultKeywords?: SortOrder
+    defaultOgImage?: SortOrder
+    faviconUrl?: SortOrder
+    globalHeadHtml?: SortOrder
+    globalHeadJs?: SortOrder
+    globalCss?: SortOrder
+    globalBodyJs?: SortOrder
+    googleSiteVerification?: SortOrder
+    bingSiteVerification?: SortOrder
+    customHeadSnippet?: SortOrder
+    googleAuthEnabled?: SortOrder
+    googleClientId?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SiteSettingsSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type FourKInterestSurveyCountOrderByAggregateInput = {
+    id?: SortOrder
+    interested?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FourKInterestSurveyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    interested?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FourKInterestSurveyMinOrderByAggregateInput = {
+    id?: SortOrder
+    interested?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type DownloadCreateNestedManyWithoutUserInput = {
@@ -22482,6 +27054,12 @@ export namespace Prisma {
     connect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
   }
 
+  export type FourKInterestSurveyCreateNestedOneWithoutUserInput = {
+    create?: XOR<FourKInterestSurveyCreateWithoutUserInput, FourKInterestSurveyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: FourKInterestSurveyCreateOrConnectWithoutUserInput
+    connect?: FourKInterestSurveyWhereUniqueInput
+  }
+
   export type DownloadUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<DownloadCreateWithoutUserInput, DownloadUncheckedCreateWithoutUserInput> | DownloadCreateWithoutUserInput[] | DownloadUncheckedCreateWithoutUserInput[]
     connectOrCreate?: DownloadCreateOrConnectWithoutUserInput | DownloadCreateOrConnectWithoutUserInput[]
@@ -22536,6 +27114,12 @@ export namespace Prisma {
     connectOrCreate?: AnalyticsCreateOrConnectWithoutUserInput | AnalyticsCreateOrConnectWithoutUserInput[]
     createMany?: AnalyticsCreateManyUserInputEnvelope
     connect?: AnalyticsWhereUniqueInput | AnalyticsWhereUniqueInput[]
+  }
+
+  export type FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<FourKInterestSurveyCreateWithoutUserInput, FourKInterestSurveyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: FourKInterestSurveyCreateOrConnectWithoutUserInput
+    connect?: FourKInterestSurveyWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -22682,6 +27266,16 @@ export namespace Prisma {
     deleteMany?: AnalyticsScalarWhereInput | AnalyticsScalarWhereInput[]
   }
 
+  export type FourKInterestSurveyUpdateOneWithoutUserNestedInput = {
+    create?: XOR<FourKInterestSurveyCreateWithoutUserInput, FourKInterestSurveyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: FourKInterestSurveyCreateOrConnectWithoutUserInput
+    upsert?: FourKInterestSurveyUpsertWithoutUserInput
+    disconnect?: FourKInterestSurveyWhereInput | boolean
+    delete?: FourKInterestSurveyWhereInput | boolean
+    connect?: FourKInterestSurveyWhereUniqueInput
+    update?: XOR<XOR<FourKInterestSurveyUpdateToOneWithWhereWithoutUserInput, FourKInterestSurveyUpdateWithoutUserInput>, FourKInterestSurveyUncheckedUpdateWithoutUserInput>
+  }
+
   export type DownloadUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<DownloadCreateWithoutUserInput, DownloadUncheckedCreateWithoutUserInput> | DownloadCreateWithoutUserInput[] | DownloadUncheckedCreateWithoutUserInput[]
     connectOrCreate?: DownloadCreateOrConnectWithoutUserInput | DownloadCreateOrConnectWithoutUserInput[]
@@ -22792,6 +27386,16 @@ export namespace Prisma {
     update?: AnalyticsUpdateWithWhereUniqueWithoutUserInput | AnalyticsUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AnalyticsUpdateManyWithWhereWithoutUserInput | AnalyticsUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AnalyticsScalarWhereInput | AnalyticsScalarWhereInput[]
+  }
+
+  export type FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<FourKInterestSurveyCreateWithoutUserInput, FourKInterestSurveyUncheckedCreateWithoutUserInput>
+    connectOrCreate?: FourKInterestSurveyCreateOrConnectWithoutUserInput
+    upsert?: FourKInterestSurveyUpsertWithoutUserInput
+    disconnect?: FourKInterestSurveyWhereInput | boolean
+    delete?: FourKInterestSurveyWhereInput | boolean
+    connect?: FourKInterestSurveyWhereUniqueInput
+    update?: XOR<XOR<FourKInterestSurveyUpdateToOneWithWhereWithoutUserInput, FourKInterestSurveyUpdateWithoutUserInput>, FourKInterestSurveyUncheckedUpdateWithoutUserInput>
   }
 
   export type UserCreateNestedOneWithoutDownloadsInput = {
@@ -23024,6 +27628,30 @@ export namespace Prisma {
 
   export type EnumAiImageProviderFieldUpdateOperationsInput = {
     set?: $Enums.AiImageProvider
+  }
+
+  export type EnumThumbnailPromptTypeFieldUpdateOperationsInput = {
+    set?: $Enums.ThumbnailPromptType
+  }
+
+  export type EnumThumbnailPromptStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ThumbnailPromptStatus
+  }
+
+  export type UserCreateNestedOneWithoutFourKInterestSurveyInput = {
+    create?: XOR<UserCreateWithoutFourKInterestSurveyInput, UserUncheckedCreateWithoutFourKInterestSurveyInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFourKInterestSurveyInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneWithoutFourKInterestSurveyNestedInput = {
+    create?: XOR<UserCreateWithoutFourKInterestSurveyInput, UserUncheckedCreateWithoutFourKInterestSurveyInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFourKInterestSurveyInput
+    upsert?: UserUpsertWithoutFourKInterestSurveyInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFourKInterestSurveyInput, UserUpdateWithoutFourKInterestSurveyInput>, UserUncheckedUpdateWithoutFourKInterestSurveyInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -23458,6 +28086,40 @@ export namespace Prisma {
     _max?: NestedEnumAiImageProviderFilter<$PrismaModel>
   }
 
+  export type NestedEnumThumbnailPromptTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptType | EnumThumbnailPromptTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptType[]
+    notIn?: $Enums.ThumbnailPromptType[]
+    not?: NestedEnumThumbnailPromptTypeFilter<$PrismaModel> | $Enums.ThumbnailPromptType
+  }
+
+  export type NestedEnumThumbnailPromptStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptStatus | EnumThumbnailPromptStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptStatus[]
+    notIn?: $Enums.ThumbnailPromptStatus[]
+    not?: NestedEnumThumbnailPromptStatusFilter<$PrismaModel> | $Enums.ThumbnailPromptStatus
+  }
+
+  export type NestedEnumThumbnailPromptTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptType | EnumThumbnailPromptTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptType[]
+    notIn?: $Enums.ThumbnailPromptType[]
+    not?: NestedEnumThumbnailPromptTypeWithAggregatesFilter<$PrismaModel> | $Enums.ThumbnailPromptType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumThumbnailPromptTypeFilter<$PrismaModel>
+    _max?: NestedEnumThumbnailPromptTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumThumbnailPromptStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ThumbnailPromptStatus | EnumThumbnailPromptStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ThumbnailPromptStatus[]
+    notIn?: $Enums.ThumbnailPromptStatus[]
+    not?: NestedEnumThumbnailPromptStatusWithAggregatesFilter<$PrismaModel> | $Enums.ThumbnailPromptStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumThumbnailPromptStatusFilter<$PrismaModel>
+    _max?: NestedEnumThumbnailPromptStatusFilter<$PrismaModel>
+  }
+
   export type DownloadCreateWithoutUserInput = {
     id?: string
     url: string
@@ -23748,6 +28410,27 @@ export namespace Prisma {
     data: AnalyticsCreateManyUserInput | AnalyticsCreateManyUserInput[]
   }
 
+  export type FourKInterestSurveyCreateWithoutUserInput = {
+    id?: string
+    interested: boolean
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FourKInterestSurveyUncheckedCreateWithoutUserInput = {
+    id?: string
+    interested: boolean
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FourKInterestSurveyCreateOrConnectWithoutUserInput = {
+    where: FourKInterestSurveyWhereUniqueInput
+    create: XOR<FourKInterestSurveyCreateWithoutUserInput, FourKInterestSurveyUncheckedCreateWithoutUserInput>
+  }
+
   export type DownloadUpsertWithWhereUniqueWithoutUserInput = {
     where: DownloadWhereUniqueInput
     update: XOR<DownloadUpdateWithoutUserInput, DownloadUncheckedUpdateWithoutUserInput>
@@ -24016,10 +28699,38 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Analytics"> | Date | string
   }
 
+  export type FourKInterestSurveyUpsertWithoutUserInput = {
+    update: XOR<FourKInterestSurveyUpdateWithoutUserInput, FourKInterestSurveyUncheckedUpdateWithoutUserInput>
+    create: XOR<FourKInterestSurveyCreateWithoutUserInput, FourKInterestSurveyUncheckedCreateWithoutUserInput>
+    where?: FourKInterestSurveyWhereInput
+  }
+
+  export type FourKInterestSurveyUpdateToOneWithWhereWithoutUserInput = {
+    where?: FourKInterestSurveyWhereInput
+    data: XOR<FourKInterestSurveyUpdateWithoutUserInput, FourKInterestSurveyUncheckedUpdateWithoutUserInput>
+  }
+
+  export type FourKInterestSurveyUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FourKInterestSurveyUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateWithoutDownloadsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24035,12 +28746,14 @@ export namespace Prisma {
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDownloadsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24056,6 +28769,7 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDownloadsInput = {
@@ -24114,7 +28828,8 @@ export namespace Prisma {
   export type UserUpdateWithoutDownloadsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24130,12 +28845,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDownloadsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24151,6 +28868,7 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type PlaylistUpsertWithoutDownloadsInput = {
@@ -24199,7 +28917,8 @@ export namespace Prisma {
   export type UserCreateWithoutPlaylistsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24215,12 +28934,14 @@ export namespace Prisma {
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPlaylistsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24236,6 +28957,7 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPlaylistsInput = {
@@ -24310,7 +29032,8 @@ export namespace Prisma {
   export type UserUpdateWithoutPlaylistsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24326,12 +29049,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPlaylistsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24347,6 +29072,7 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type DownloadUpsertWithWhereUniqueWithoutPlaylistInput = {
@@ -24368,7 +29094,8 @@ export namespace Prisma {
   export type UserCreateWithoutThumbnailsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24384,12 +29111,14 @@ export namespace Prisma {
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutThumbnailsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24405,6 +29134,7 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutThumbnailsInput = {
@@ -24426,7 +29156,8 @@ export namespace Prisma {
   export type UserUpdateWithoutThumbnailsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24442,12 +29173,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutThumbnailsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24463,12 +29196,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSubscriptionsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24484,12 +29219,14 @@ export namespace Prisma {
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSubscriptionsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24505,6 +29242,7 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -24526,7 +29264,8 @@ export namespace Prisma {
   export type UserUpdateWithoutSubscriptionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24542,12 +29281,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubscriptionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24563,12 +29304,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutTransactionsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24584,12 +29327,14 @@ export namespace Prisma {
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTransactionsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24605,6 +29350,7 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -24626,7 +29372,8 @@ export namespace Prisma {
   export type UserUpdateWithoutTransactionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24642,12 +29389,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24663,12 +29412,14 @@ export namespace Prisma {
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutPaymentsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24684,12 +29435,14 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24705,6 +29458,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -24726,7 +29480,8 @@ export namespace Prisma {
   export type UserUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24742,12 +29497,14 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24763,12 +29520,14 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCreditLogsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24784,12 +29543,14 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     analytics?: AnalyticsCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreditLogsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24805,6 +29566,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreditLogsInput = {
@@ -24826,7 +29588,8 @@ export namespace Prisma {
   export type UserUpdateWithoutCreditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24842,12 +29605,14 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24863,12 +29628,14 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAnalyticsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24884,12 +29651,14 @@ export namespace Prisma {
     transactions?: TransactionCreateNestedManyWithoutUserInput
     creditLogs?: CreditLogCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAnalyticsInput = {
     id?: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
+    googleId?: string | null
     name?: string | null
     role?: $Enums.UserRole
     plan?: $Enums.PlanType
@@ -24905,6 +29674,7 @@ export namespace Prisma {
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
     creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAnalyticsInput = {
@@ -24926,7 +29696,8 @@ export namespace Prisma {
   export type UserUpdateWithoutAnalyticsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24942,12 +29713,14 @@ export namespace Prisma {
     transactions?: TransactionUpdateManyWithoutUserNestedInput
     creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAnalyticsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
@@ -24963,6 +29736,115 @@ export namespace Prisma {
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    fourKInterestSurvey?: FourKInterestSurveyUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutFourKInterestSurveyInput = {
+    id?: string
+    email: string
+    passwordHash?: string | null
+    googleId?: string | null
+    name?: string | null
+    role?: $Enums.UserRole
+    plan?: $Enums.PlanType
+    credits?: number
+    emailVerified?: boolean
+    avatarUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    downloads?: DownloadCreateNestedManyWithoutUserInput
+    playlists?: PlaylistCreateNestedManyWithoutUserInput
+    thumbnails?: ThumbnailCreateNestedManyWithoutUserInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    creditLogs?: CreditLogCreateNestedManyWithoutUserInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFourKInterestSurveyInput = {
+    id?: string
+    email: string
+    passwordHash?: string | null
+    googleId?: string | null
+    name?: string | null
+    role?: $Enums.UserRole
+    plan?: $Enums.PlanType
+    credits?: number
+    emailVerified?: boolean
+    avatarUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    downloads?: DownloadUncheckedCreateNestedManyWithoutUserInput
+    playlists?: PlaylistUncheckedCreateNestedManyWithoutUserInput
+    thumbnails?: ThumbnailUncheckedCreateNestedManyWithoutUserInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    creditLogs?: CreditLogUncheckedCreateNestedManyWithoutUserInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    analytics?: AnalyticsUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFourKInterestSurveyInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFourKInterestSurveyInput, UserUncheckedCreateWithoutFourKInterestSurveyInput>
+  }
+
+  export type UserUpsertWithoutFourKInterestSurveyInput = {
+    update: XOR<UserUpdateWithoutFourKInterestSurveyInput, UserUncheckedUpdateWithoutFourKInterestSurveyInput>
+    create: XOR<UserCreateWithoutFourKInterestSurveyInput, UserUncheckedCreateWithoutFourKInterestSurveyInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFourKInterestSurveyInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFourKInterestSurveyInput, UserUncheckedUpdateWithoutFourKInterestSurveyInput>
+  }
+
+  export type UserUpdateWithoutFourKInterestSurveyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
+    credits?: IntFieldUpdateOperationsInput | number
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    downloads?: DownloadUpdateManyWithoutUserNestedInput
+    playlists?: PlaylistUpdateManyWithoutUserNestedInput
+    thumbnails?: ThumbnailUpdateManyWithoutUserNestedInput
+    subscriptions?: SubscriptionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    creditLogs?: CreditLogUpdateManyWithoutUserNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFourKInterestSurveyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    plan?: EnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType
+    credits?: IntFieldUpdateOperationsInput | number
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    downloads?: DownloadUncheckedUpdateManyWithoutUserNestedInput
+    playlists?: PlaylistUncheckedUpdateManyWithoutUserNestedInput
+    thumbnails?: ThumbnailUncheckedUpdateManyWithoutUserNestedInput
+    subscriptions?: SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    creditLogs?: CreditLogUncheckedUpdateManyWithoutUserNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    analytics?: AnalyticsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type DownloadCreateManyUserInput = {

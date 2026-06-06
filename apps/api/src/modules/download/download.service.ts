@@ -4,9 +4,10 @@ import { PrismaService } from '../../database/prisma.service';
 import { DownloadQueueService } from '../../queues/download.queue';
 import { DownloadProcessorService } from '../../services/download-processor.service';
 import { YtDlpService } from '../../services/yt-dlp.service';
-import { PLAN_LIMITS, getHistorySince } from '@hellodownloader/shared-types';
+import { PLAN_LIMITS, effectivePlan, getHistorySince, hasProAccess, isQualityAccessible } from '@hellodownloader/shared-types';
 import { PlanType, type DownloadType } from '@hellodownloader/shared-types';
 import { CreateDownloadDto } from './download.dto';
+import { adminRuntimeConfig } from '../admin/admin-config';
 
 @Injectable()
 export class DownloadService {
@@ -20,11 +21,12 @@ export class DownloadService {
   ) {}
 
   async createForRequest(
-    user: { id: string; plan: string } | undefined,
+    user: { id: string; plan: string; role?: string } | undefined,
     dto: CreateDownloadDto,
   ) {
     if (user) {
-      return this.create(user.id, user.plan as PlanType, dto);
+      const plan = effectivePlan(user.plan, user.role) as PlanType;
+      return this.create(user.id, plan, dto, user.role);
     }
     const guest = await this.getOrCreateGuestUser();
     return this.create(guest.id, PlanType.FREE, dto);
@@ -46,10 +48,19 @@ export class DownloadService {
     return guest;
   }
 
-  async create(userId: string, plan: PlanType, dto: CreateDownloadDto) {
+  async create(userId: string, plan: PlanType, dto: CreateDownloadDto, role?: string) {
     const limits = PLAN_LIMITS[plan];
     const quality = dto.quality ?? limits.maxResolution;
-    if (quality > limits.maxResolution) {
+    const proAccess = hasProAccess(plan, role);
+    const qualityAccess = adminRuntimeConfig.getDownloadQualityAccess();
+
+    if (dto.type === 'VIDEO' && quality) {
+      if (!isQualityAccessible(quality, qualityAccess, proAccess)) {
+        throw new BadRequestException(
+          'This quality is not available on your plan. Check Admin settings or upgrade to Pro.',
+        );
+      }
+    } else if (quality > limits.maxResolution) {
       throw new BadRequestException(
         `Free plan limited to ${limits.maxResolution}p. Upgrade to Pro for higher quality.`,
       );
@@ -146,13 +157,12 @@ export class DownloadService {
   getFilePath(id: string) {
     return this.prisma.download.findUnique({
       where: { id },
-      select: { id: true, filePath: true, status: true, title: true },
+      select: { id: true, filePath: true, status: true, title: true, type: true },
     });
   }
 
-  async releaseFileAfterDelivery(id: string, filePath: string) {
-    const { deleteLocalFile, shouldDeleteAfterDownload } = await import('../../utils/file-delivery');
-    if (!shouldDeleteAfterDownload()) return;
+  async releaseStoredFile(id: string, filePath: string) {
+    const { deleteLocalFile } = await import('../../utils/file-delivery');
 
     try {
       deleteLocalFile(filePath);
@@ -160,18 +170,26 @@ export class DownloadService {
         where: { id },
         data: { filePath: null, fileUrl: null },
       });
-      this.logger.log(`Removed delivered file for download ${id}`);
+      this.logger.log(`Released stored file for download ${id}`);
     } catch (err) {
       this.logger.warn(
-        `Failed to remove file after delivery ${id}: ${err instanceof Error ? err.message : err}`,
+        `Failed to release stored file ${id}: ${err instanceof Error ? err.message : err}`,
       );
     }
+  }
+
+  /** @deprecated Use releaseStoredFile — kept for explicit opt-in via env. */
+  async releaseFileAfterDelivery(id: string, filePath: string) {
+    const { shouldDeleteAfterDownload } = await import('../../utils/file-delivery');
+    if (!shouldDeleteAfterDownload()) return;
+    await this.releaseStoredFile(id, filePath);
   }
 
   private serializeDownload(row: {
     id: string;
     status: string;
     progress: number;
+    type?: string;
     title: string | null;
     error: string | null;
     filePath: string | null;
@@ -184,6 +202,7 @@ export class DownloadService {
     return {
       id: row.id,
       status: row.status,
+      type: row.type ?? 'VIDEO',
       progress: row.status === 'COMPLETED' ? 100 : row.progress,
       title: row.title,
       error: row.error,
@@ -195,6 +214,10 @@ export class DownloadService {
       createdAt: row.createdAt,
       completedAt: row.completedAt,
     };
+  }
+
+  getQualityAccess() {
+    return adminRuntimeConfig.getDownloadQualityAccess();
   }
 
   async getMetadata(url: string) {

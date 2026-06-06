@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { GoogleSignInButton, AuthDivider } from '@/components/auth/GoogleSignInButton';
+import { useGoogleAuth } from '@/components/providers/GoogleAuthProvider';
 import { apiClient } from '@/lib/api';
 import { useUserStore } from '@/store/userStore';
 
@@ -16,6 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { enabled: googleEnabled, loading: googleLoading } = useGoogleAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +47,12 @@ export default function LoginPage() {
           <CardDescription>Access your HelloDownloader account</CardDescription>
         </CardHeader>
         <CardContent>
+          {googleEnabled && !googleLoading && (
+            <>
+              <GoogleSignInButton mode="login" onError={setError} />
+              <AuthDivider />
+            </>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />

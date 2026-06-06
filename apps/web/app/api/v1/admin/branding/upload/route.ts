@@ -31,9 +31,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'File must be 2 MB or smaller' }, { status: 400 });
   }
 
-  const allowed = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml', 'image/gif']);
-  if (!allowed.has(file.type)) {
-    return NextResponse.json({ message: 'Use PNG, JPG, WebP, SVG, or GIF' }, { status: 400 });
+  const allowed = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/x-icon']);
+  if (!allowed.has(file.type) && !file.name.toLowerCase().endsWith('.ico')) {
+    return NextResponse.json({ message: 'Use PNG, JPG, WebP, GIF, or ICO' }, { status: 400 });
   }
 
   const ext = path.extname(file.name).toLowerCase() || '.png';

@@ -28,9 +28,9 @@ export default function AdminCreditsPage() {
   return (
     <>
       <AdminPageHeader title="Credits" description="Credit ledger across all users" />
-      <div className="overflow-x-auto rounded-xl border border-white/10">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-white/5 text-left text-muted-foreground">
+          <thead className="bg-accent/50 text-left text-muted-foreground">
             <tr>
               <th className="p-3">User</th>
               <th className="p-3">Change</th>
@@ -41,7 +41,7 @@ export default function AdminCreditsPage() {
           </thead>
           <tbody>
             {data?.items.map((c) => (
-              <tr key={c.id} className="border-t border-white/5">
+              <tr key={c.id} className="border-t border-border/60">
                 <td className="p-3 text-xs">{c.user.email}</td>
                 <td className={`p-3 font-medium ${c.amount >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                   {c.amount >= 0 ? '+' : ''}

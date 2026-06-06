@@ -15,17 +15,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AdminGuard } from './admin.guard';
 import { AdminService } from './admin.service';
+import { AdsService } from '../ads/ads.service';
 import { ContentService } from '../content/content.service';
+import { SiteSettingsService } from '../site-settings/site-settings.service';
 import {
   SaveAiFeaturesDto,
-  SaveFreepikDto,
-  SaveOpenAiDto,
-  SavePlanModelsDto,
-  TestFreepikDto,
+  SaveAiProvidersDto,
+  TestFalDto,
   TestOpenAiDto,
 } from '../ai-api-settings/ai-api-settings.dto';
 import { IsBoolean, IsIn, IsInt, IsOptional, IsString, Min, MinLength } from 'class-validator';
-import { PlanType } from '@hellodownloader/shared-types';
+import { PlanType, type HdQualityAccessConfig } from '@hellodownloader/shared-types';
 import { PaymentProvider } from '@hellodownloader/database';
 
 class UpdateUserDto {
@@ -63,12 +63,7 @@ class UpdateSettingsDto {
   retentionHours?: number;
 
   @IsOptional()
-  ads?: {
-    bannerEnabled?: boolean;
-    popupEnabled?: boolean;
-    rewardedEnabled?: boolean;
-    creditsReward?: number;
-  };
+  downloadQualityAccess?: Partial<HdQualityAccessConfig>;
 }
 
 class CleanupDto {
@@ -84,6 +79,8 @@ export class AdminController {
   constructor(
     private admin: AdminService,
     private content: ContentService,
+    private ads: AdsService,
+    private siteSettings: SiteSettingsService,
   ) {}
 
   @Get('stats')
@@ -283,6 +280,28 @@ export class AdminController {
     return this.admin.updateSettings(dto);
   }
 
+  @Get('ads')
+  getAdsConfig() {
+    return this.ads.getAdminConfig();
+  }
+
+  @Patch('ads')
+  updateAdsConfig(@Body() body: Record<string, unknown>) {
+    return this.ads.updateAdminConfig(body as Parameters<AdsService['updateAdminConfig']>[0]);
+  }
+
+  @Post('ads/upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 2 * 1024 * 1024 },
+    }),
+  )
+  uploadAdImage(
+    @UploadedFile() file: { buffer: Buffer; originalname: string; mimetype: string },
+  ) {
+    return this.admin.uploadAdImage(file);
+  }
+
   @Get('content/pages')
   listContentPages() {
     return this.content.listPages();
@@ -313,6 +332,16 @@ export class AdminController {
     return this.content.createPage(body);
   }
 
+  @Get('site-settings')
+  getSiteSettings() {
+    return this.siteSettings.getAdmin();
+  }
+
+  @Patch('site-settings')
+  updateSiteSettings(@Body() body: Record<string, unknown>) {
+    return this.siteSettings.updateAdmin(body);
+  }
+
   @Get('api-settings')
   apiSettings() {
     return this.admin.getApiSettings();
@@ -323,24 +352,14 @@ export class AdminController {
     return this.admin.testOpenAiApi(body);
   }
 
-  @Post('api-settings/openai')
-  saveOpenAiApi(@Body() body: SaveOpenAiDto) {
-    return this.admin.saveOpenAiApi(body);
+  @Post('api-settings/fal/test')
+  testFalApi(@Body() body: TestFalDto) {
+    return this.admin.testFalApi(body);
   }
 
-  @Post('api-settings/freepik/test')
-  testFreepikApi(@Body() body: TestFreepikDto) {
-    return this.admin.testFreepikApi(body);
-  }
-
-  @Post('api-settings/freepik')
-  saveFreepikApi(@Body() body: SaveFreepikDto) {
-    return this.admin.saveFreepikApi(body);
-  }
-
-  @Patch('api-settings/plan-models')
-  savePlanModels(@Body() body: SavePlanModelsDto) {
-    return this.admin.savePlanModels(body);
+  @Post('api-settings/providers')
+  saveAiProviders(@Body() body: SaveAiProvidersDto) {
+    return this.admin.saveAiProviders(body);
   }
 
   @Patch('api-settings/features')

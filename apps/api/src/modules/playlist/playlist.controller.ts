@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   Res,
   StreamableFile,
@@ -12,6 +13,7 @@ import { Response } from 'express';
 import { PlaylistService } from './playlist.service';
 import { IsOptional, IsUrl, IsInt, Min, Max } from 'class-validator';
 import { PlanType } from '@hellodownloader/shared-types';
+import { Public } from '../auth/public.decorator';
 
 class CreatePlaylistDto {
   @IsUrl()
@@ -61,13 +63,16 @@ export class PlaylistController {
     return { ok: true };
   }
 
+  @Public()
   @Get(':id/file')
   async downloadFile(
-    @Req() req: { user: { id: string } },
+    @Req() req: { user?: { id: string } | null },
     @Param('id') id: string,
+    @Query('access_token') accessToken: string | undefined,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const record = await this.playlistService.getFileForUser(req.user.id, id);
+    const userId = this.playlistService.resolveRequestUserId(req.user, accessToken);
+    const record = await this.playlistService.getFileForUser(userId, id);
     const { stream, filename, safeName } = this.playlistService.getFileStream(record.zipPath!);
 
     res.set({

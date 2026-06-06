@@ -1,8 +1,8 @@
+'use client';
+
+import { LegalPageClient } from '@/components/content/LegalPageClient';
+import { DEFAULT_TERMS_CONTENT } from '@hellodownloader/shared-types';
+
 export default function TermsPage() {
-  return (
-    <div className="container mx-auto px-4 py-16 prose dark:prose-invert max-w-3xl">
-      <h1>Terms of Service</h1>
-      <p>Use HelloDownloader responsibly. Only download content you have rights to access.</p>
-    </div>
-  );
+  return <LegalPageClient slug="terms" defaults={DEFAULT_TERMS_CONTENT} />;
 }

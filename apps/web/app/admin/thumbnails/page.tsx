@@ -31,9 +31,9 @@ export default function AdminThumbnailsPage() {
   return (
     <>
       <AdminPageHeader title="Thumbnails" description="Original and AI thumbnail jobs" />
-      <div className="overflow-x-auto rounded-xl border border-white/10">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-white/5 text-left text-muted-foreground">
+          <thead className="bg-accent/50 text-left text-muted-foreground">
             <tr>
               <th className="p-3">User</th>
               <th className="p-3">Mode</th>
@@ -45,7 +45,7 @@ export default function AdminThumbnailsPage() {
           </thead>
           <tbody>
             {data?.items.map((t) => (
-              <tr key={t.id} className="border-t border-white/5">
+              <tr key={t.id} className="border-t border-border/60">
                 <td className="p-3 text-xs">{t.user.email}</td>
                 <td className="p-3">{t.ocrData?.mode ?? 'ai'}</td>
                 <td className="p-3">{t.ratio}</td>

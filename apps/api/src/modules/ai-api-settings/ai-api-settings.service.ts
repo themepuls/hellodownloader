@@ -5,36 +5,37 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import {
-  BASIC_PLAN_MODELS,
+  basicImageModelsForProvider,
   DEFAULT_AI_API_SETTINGS,
-  OPENAI_MODELS,
-  PRO_PLAN_MODELS,
-  normalizeBasicPlanModel,
-  normalizeProPlanModel,
+  isMaskedApiKey,
+  maskApiKey,
+  normalizeBasicImageModel,
+  normalizeImageProvider,
+  normalizeProImageModel,
+  normalizeTextModel,
+  normalizeTextProvider,
+  OPENAI_TEXT_MODELS,
+  proImageModelsForProvider,
+  modelBelongsToImageProvider,
   type AiApiSettingsPublic,
-  type BasicPlanModel,
+  type BasicImageModel,
   type ConnectionStatus,
-  type OpenAiModel,
-  type ProPlanModel,
+  type ImageProvider,
+  type OpenAiTextModel,
+  type ProImageModel,
+  type TextProvider,
 } from '@hellodownloader/shared-types';
 
-type Provider = 'openai' | 'freepik';
+type KeyProvider = 'openai' | 'fal';
 
 type VerificationEntry = {
-  provider: Provider;
+  provider: KeyProvider;
   apiKey: string;
   expiresAt: number;
 };
 
-function maskKey(value?: string): string {
-  if (!value?.trim()) return '';
-  const v = value.trim();
-  if (v.length <= 8) return '••••••••';
-  return `${'•'.repeat(Math.min(12, v.length - 4))}${v.slice(-4)}`;
-}
-
 function isMasked(value: string): boolean {
-  return value.includes('•');
+  return isMaskedApiKey(value);
 }
 
 @Injectable()
@@ -53,9 +54,11 @@ export class AiApiSettingsService implements OnModuleInit {
       where: { id: 1 },
       create: {
         id: 1,
-        openaiModel: DEFAULT_AI_API_SETTINGS.openaiModel,
-        basicPlanModel: DEFAULT_AI_API_SETTINGS.basicPlanModel,
-        proPlanModel: DEFAULT_AI_API_SETTINGS.proPlanModel,
+        textProvider: DEFAULT_AI_API_SETTINGS.textProvider,
+        textModel: DEFAULT_AI_API_SETTINGS.textModel,
+        imageProvider: DEFAULT_AI_API_SETTINGS.imageProvider,
+        basicImageModel: DEFAULT_AI_API_SETTINGS.basicImageModel,
+        proImageModel: DEFAULT_AI_API_SETTINGS.proImageModel,
         enableAiAnalysis: DEFAULT_AI_API_SETTINGS.features.enableAiAnalysis,
         enableAiThumbnailGeneration:
           DEFAULT_AI_API_SETTINGS.features.enableAiThumbnailGeneration,
@@ -76,23 +79,34 @@ export class AiApiSettingsService implements OnModuleInit {
     if (!row.openaiApiKey && process.env.OPENAI_API_KEY?.trim()) {
       patch.openaiApiKey = process.env.OPENAI_API_KEY.trim();
     }
-    if (!row.freepikApiKey && process.env.FREEPIK_API_KEY?.trim()) {
-      patch.freepikApiKey = process.env.FREEPIK_API_KEY.trim();
+    const falKey = process.env.FAL_API_KEY?.trim() || process.env.FAL_KEY?.trim();
+    if (!row.falApiKey && falKey) {
+      patch.falApiKey = falKey;
     }
-    if (process.env.OPENAI_MODEL?.trim() && OPENAI_MODELS.includes(process.env.OPENAI_MODEL as OpenAiModel)) {
-      patch.openaiModel = process.env.OPENAI_MODEL.trim();
+
+    const textModel = process.env.TEXT_MODEL?.trim() || process.env.OPENAI_MODEL?.trim();
+    if (textModel && OPENAI_TEXT_MODELS.includes(textModel as OpenAiTextModel)) {
+      patch.textModel = textModel;
     }
-    if (
-      process.env.BASIC_PLAN_MODEL?.trim() &&
-      BASIC_PLAN_MODELS.includes(process.env.BASIC_PLAN_MODEL as BasicPlanModel)
-    ) {
-      patch.basicPlanModel = process.env.BASIC_PLAN_MODEL.trim();
+
+    const imageProvider = process.env.IMAGE_PROVIDER?.trim();
+    if (imageProvider === 'fal' || imageProvider === 'openai') {
+      patch.imageProvider = imageProvider;
     }
-    if (
-      process.env.PRO_PLAN_MODEL?.trim() &&
-      PRO_PLAN_MODELS.includes(process.env.PRO_PLAN_MODEL as ProPlanModel)
-    ) {
-      patch.proPlanModel = process.env.PRO_PLAN_MODEL.trim();
+
+    const provider = normalizeImageProvider(patch.imageProvider ?? row.imageProvider);
+    const basicModel = process.env.BASIC_IMAGE_MODEL?.trim() || process.env.BASIC_PLAN_MODEL?.trim();
+    if (basicModel) {
+      patch.basicImageModel = normalizeBasicImageModel(basicModel, provider);
+    }
+
+    const proModel = process.env.PRO_IMAGE_MODEL?.trim() || process.env.PRO_PLAN_MODEL?.trim();
+    if (proModel) {
+      patch.proImageModel = normalizeProImageModel(proModel, provider);
+    }
+
+    if (process.env.TEXT_PROVIDER?.trim() === 'openai') {
+      patch.textProvider = 'openai';
     }
 
     if (Object.keys(patch).length > 0) {
@@ -100,7 +114,7 @@ export class AiApiSettingsService implements OnModuleInit {
     }
   }
 
-  private consumeVerificationToken(provider: Provider, token: string, apiKey: string) {
+  private consumeVerificationToken(provider: KeyProvider, token: string, apiKey: string) {
     const entry = this.verificationTokens.get(token);
     this.verificationTokens.delete(token);
     if (!entry) return false;
@@ -110,7 +124,7 @@ export class AiApiSettingsService implements OnModuleInit {
     return true;
   }
 
-  private issueVerificationToken(provider: Provider, apiKey: string) {
+  private issueVerificationToken(provider: KeyProvider, apiKey: string) {
     const token = `${provider}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     this.verificationTokens.set(token, {
       provider,
@@ -121,15 +135,17 @@ export class AiApiSettingsService implements OnModuleInit {
   }
 
   private toPublic(row: {
+    textProvider: string;
+    textModel: string;
+    imageProvider: string;
+    basicImageModel: string;
+    proImageModel: string;
     openaiApiKey: string;
-    openaiModel: string;
     openaiConnectionStatus: string;
     openaiLastTestedAt: Date | null;
-    freepikApiKey: string;
-    freepikConnectionStatus: string;
-    freepikLastTestedAt: Date | null;
-    basicPlanModel: string;
-    proPlanModel: string;
+    falApiKey: string;
+    falConnectionStatus: string;
+    falLastTestedAt: Date | null;
     enableAiAnalysis: boolean;
     enableAiThumbnailGeneration: boolean;
     enableAiImproveThumbnail: boolean;
@@ -138,18 +154,21 @@ export class AiApiSettingsService implements OnModuleInit {
     enableAutoLayoutDetection: boolean;
     updatedAt: Date;
   }): AiApiSettingsPublic {
+    const imageProvider = normalizeImageProvider(row.imageProvider);
     return {
-      openaiModel: row.openaiModel as OpenAiModel,
-      basicPlanModel: normalizeBasicPlanModel(row.basicPlanModel),
-      proPlanModel: normalizeProPlanModel(row.proPlanModel),
+      textProvider: normalizeTextProvider(row.textProvider),
+      textModel: normalizeTextModel(row.textModel),
+      imageProvider,
+      basicImageModel: normalizeBasicImageModel(row.basicImageModel, imageProvider),
+      proImageModel: normalizeProImageModel(row.proImageModel, imageProvider),
       openaiConnectionStatus: row.openaiConnectionStatus as ConnectionStatus,
-      freepikConnectionStatus: row.freepikConnectionStatus as ConnectionStatus,
+      falConnectionStatus: row.falConnectionStatus as ConnectionStatus,
       openaiLastTestedAt: row.openaiLastTestedAt?.toISOString() ?? null,
-      freepikLastTestedAt: row.freepikLastTestedAt?.toISOString() ?? null,
+      falLastTestedAt: row.falLastTestedAt?.toISOString() ?? null,
       hasOpenaiApiKey: Boolean(row.openaiApiKey?.trim()),
-      hasFreepikApiKey: Boolean(row.freepikApiKey?.trim()),
-      openaiApiKeyMasked: maskKey(row.openaiApiKey),
-      freepikApiKeyMasked: maskKey(row.freepikApiKey),
+      hasFalApiKey: Boolean(row.falApiKey?.trim()),
+      openaiApiKeyMasked: maskApiKey(row.openaiApiKey),
+      falApiKeyMasked: maskApiKey(row.falApiKey),
       features: {
         enableAiAnalysis: row.enableAiAnalysis,
         enableAiThumbnailGeneration: row.enableAiThumbnailGeneration,
@@ -168,29 +187,41 @@ export class AiApiSettingsService implements OnModuleInit {
     return {
       settings: publicSettings,
       mapping: {
-        basicPlan: { label: 'Basic Plan (Free)', model: publicSettings.basicPlanModel },
-        proPlan: { label: 'Pro Plan', model: publicSettings.proPlanModel },
-        openai: { label: 'OpenAI', model: publicSettings.openaiModel },
+        text: {
+          provider: publicSettings.textProvider,
+          model: publicSettings.textModel,
+        },
+        image: {
+          provider: publicSettings.imageProvider,
+          basicModel: publicSettings.basicImageModel,
+          proModel: publicSettings.proImageModel,
+        },
       },
       envVars: {
         OPENAI_API_KEY: publicSettings.hasOpenaiApiKey ? 'configured in database' : 'not set',
-        FREEPIK_API_KEY: publicSettings.hasFreepikApiKey ? 'configured in database' : 'not set',
-        OPENAI_MODEL: publicSettings.openaiModel,
-        BASIC_PLAN_MODEL: publicSettings.basicPlanModel,
-        PRO_PLAN_MODEL: publicSettings.proPlanModel,
+        FAL_API_KEY: publicSettings.hasFalApiKey ? 'configured in database' : 'not set',
+        TEXT_PROVIDER: publicSettings.textProvider,
+        TEXT_MODEL: publicSettings.textModel,
+        IMAGE_PROVIDER: publicSettings.imageProvider,
+        BASIC_IMAGE_MODEL: publicSettings.basicImageModel,
+        PRO_IMAGE_MODEL: publicSettings.proImageModel,
       },
     };
   }
 
-  async testOpenAi(apiKey: string, model: OpenAiModel) {
-    if (!apiKey?.trim()) {
+  async testOpenAi(apiKey: string | undefined, textModel: OpenAiTextModel) {
+    const current = await this.prisma.aiApiSettings.findUniqueOrThrow({ where: { id: 1 } });
+    const submitted = apiKey?.trim();
+    const key =
+      submitted && !isMasked(submitted) ? submitted : current.openaiApiKey?.trim();
+
+    if (!key) {
       throw new BadRequestException('OpenAI API key is required');
     }
-    if (!OPENAI_MODELS.includes(model)) {
-      throw new BadRequestException('Invalid OpenAI model');
+    if (!OPENAI_TEXT_MODELS.includes(textModel)) {
+      throw new BadRequestException('Invalid OpenAI text model');
     }
 
-    const key = apiKey.trim();
     const res = await fetch('https://api.openai.com/v1/models', {
       headers: { Authorization: `Bearer ${key}` },
     });
@@ -218,18 +249,22 @@ export class AiApiSettingsService implements OnModuleInit {
       ok: true,
       status,
       verificationToken,
-      message: `Connected successfully. Model configured: ${model}`,
+      message: `OpenAI connected. Text model: ${textModel}`,
     };
   }
 
-  async testFreepik(apiKey: string) {
-    if (!apiKey?.trim()) {
-      throw new BadRequestException('Freepik API key is required');
+  async testFal(apiKey: string | undefined) {
+    const current = await this.prisma.aiApiSettings.findUniqueOrThrow({ where: { id: 1 } });
+    const submitted = apiKey?.trim();
+    const key =
+      submitted && !isMasked(submitted) ? submitted : current.falApiKey?.trim();
+
+    if (!key) {
+      throw new BadRequestException('fal.ai API key is required');
     }
 
-    const key = apiKey.trim();
-    const res = await fetch('https://api.freepik.com/v1/resources?limit=1', {
-      headers: { 'x-freepik-api-key': key },
+    const res = await fetch('https://api.fal.ai/v1/models?limit=1', {
+      headers: { Authorization: `Key ${key}` },
     });
 
     const ok = res.ok;
@@ -238,106 +273,123 @@ export class AiApiSettingsService implements OnModuleInit {
     await this.prisma.aiApiSettings.update({
       where: { id: 1 },
       data: {
-        freepikConnectionStatus: status,
-        freepikLastTestedAt: new Date(),
+        falConnectionStatus: status,
+        falLastTestedAt: new Date(),
       },
     });
 
     if (!ok) {
       const body = await res.text().catch(() => '');
       throw new BadRequestException(
-        `Freepik connection failed (${res.status})${body ? `: ${body.slice(0, 120)}` : ''}`,
+        `fal.ai connection failed (${res.status})${body ? `: ${body.slice(0, 120)}` : ''}`,
       );
     }
 
-    const verificationToken = this.issueVerificationToken('freepik', key);
+    const verificationToken = this.issueVerificationToken('fal', key);
     return {
       ok: true,
       status,
       verificationToken,
-      message: 'Freepik connection successful',
+      message: 'fal.ai connection successful',
     };
   }
 
-  async saveOpenAi(data: {
-    apiKey?: string;
-    openaiModel: OpenAiModel;
-    verificationToken?: string;
+  private validateImageModels(
+    imageProvider: ImageProvider,
+    basicImageModel: BasicImageModel,
+    proImageModel: ProImageModel,
+  ) {
+    if (!modelBelongsToImageProvider(basicImageModel, imageProvider)) {
+      throw new BadRequestException(
+        `Basic model "${basicImageModel}" is not available for ${imageProvider}`,
+      );
+    }
+    if (!modelBelongsToImageProvider(proImageModel, imageProvider)) {
+      throw new BadRequestException(
+        `Pro model "${proImageModel}" is not available for ${imageProvider}`,
+      );
+    }
+    if (!basicImageModelsForProvider(imageProvider).includes(basicImageModel)) {
+      throw new BadRequestException('Invalid basic plan image model');
+    }
+    if (!proImageModelsForProvider(imageProvider).includes(proImageModel)) {
+      throw new BadRequestException('Invalid pro plan image model');
+    }
+  }
+
+  async saveProviders(data: {
+    textModel: OpenAiTextModel;
+    imageProvider: ImageProvider;
+    basicImageModel: BasicImageModel;
+    proImageModel: ProImageModel;
+    openaiApiKey?: string;
+    openaiVerificationToken?: string;
+    falApiKey?: string;
+    falVerificationToken?: string;
   }) {
-    if (!OPENAI_MODELS.includes(data.openaiModel)) {
-      throw new BadRequestException('OpenAI model is required');
+    if (!OPENAI_TEXT_MODELS.includes(data.textModel)) {
+      throw new BadRequestException('Text model is required');
     }
 
-    const current = await this.prisma.aiApiSettings.findUniqueOrThrow({ where: { id: 1 } });
-    const nextKey = data.apiKey?.trim();
-    const keyChanging = Boolean(nextKey && !isMasked(nextKey) && nextKey !== current.openaiApiKey);
+    const imageProvider = normalizeImageProvider(data.imageProvider);
+    this.validateImageModels(imageProvider, data.basicImageModel, data.proImageModel);
 
-    if (keyChanging) {
-      if (!nextKey) throw new BadRequestException('OpenAI API key is required');
+    const current = await this.prisma.aiApiSettings.findUniqueOrThrow({ where: { id: 1 } });
+
+    const nextOpenAiKey = data.openaiApiKey?.trim();
+    const openaiKeyChanging = Boolean(
+      nextOpenAiKey && !isMasked(nextOpenAiKey) && nextOpenAiKey !== current.openaiApiKey,
+    );
+
+    if (openaiKeyChanging) {
       if (
-        !data.verificationToken ||
-        !this.consumeVerificationToken('openai', data.verificationToken, nextKey)
+        !data.openaiVerificationToken ||
+        !this.consumeVerificationToken('openai', data.openaiVerificationToken, nextOpenAiKey!)
       ) {
         throw new BadRequestException('Test OpenAI connection before saving a new API key');
       }
-    } else if (!current.openaiApiKey?.trim()) {
-      throw new BadRequestException('OpenAI API key is required');
     }
 
-    await this.prisma.aiApiSettings.update({
-      where: { id: 1 },
-      data: {
-        openaiModel: data.openaiModel,
-        ...(keyChanging ? { openaiApiKey: nextKey } : {}),
-      },
-    });
+    const nextFalKey = data.falApiKey?.trim();
+    const falKeyChanging = Boolean(
+      nextFalKey && !isMasked(nextFalKey) && nextFalKey !== current.falApiKey,
+    );
 
-    return this.getSettings();
-  }
-
-  async saveFreepik(data: { apiKey?: string; verificationToken?: string }) {
-    const current = await this.prisma.aiApiSettings.findUniqueOrThrow({ where: { id: 1 } });
-    const nextKey = data.apiKey?.trim();
-    const keyChanging = Boolean(nextKey && !isMasked(nextKey) && nextKey !== current.freepikApiKey);
-
-    if (keyChanging) {
-      if (!nextKey) throw new BadRequestException('Freepik API key is required');
+    if (falKeyChanging) {
       if (
-        !data.verificationToken ||
-        !this.consumeVerificationToken('freepik', data.verificationToken, nextKey)
+        !data.falVerificationToken ||
+        !this.consumeVerificationToken('fal', data.falVerificationToken, nextFalKey!)
       ) {
-        throw new BadRequestException('Test Freepik connection before saving a new API key');
+        throw new BadRequestException('Test fal.ai connection before saving a new API key');
       }
-    } else if (!current.freepikApiKey?.trim()) {
-      throw new BadRequestException('Freepik API key is required');
     }
 
-    if (keyChanging) {
-      await this.prisma.aiApiSettings.update({
-        where: { id: 1 },
-        data: { freepikApiKey: nextKey },
-      });
+    const openaiKey =
+      openaiKeyChanging ? nextOpenAiKey! : current.openaiApiKey?.trim();
+    if (imageProvider === 'openai' && !openaiKey) {
+      throw new BadRequestException(
+        'OpenAI API key is required when OpenAI is the image provider',
+      );
     }
-
-    return this.getSettings();
-  }
-
-  async savePlanModels(data: {
-    basicPlanModel: BasicPlanModel;
-    proPlanModel: ProPlanModel;
-  }) {
-    if (!BASIC_PLAN_MODELS.includes(data.basicPlanModel)) {
-      throw new BadRequestException('Basic plan model is required');
-    }
-    if (!PRO_PLAN_MODELS.includes(data.proPlanModel)) {
-      throw new BadRequestException('Pro plan model is required');
+    if (imageProvider === 'fal') {
+      const falKey = falKeyChanging ? nextFalKey! : current.falApiKey?.trim();
+      if (!falKey) {
+        throw new BadRequestException(
+          'fal.ai API key is required when fal.ai is the image provider',
+        );
+      }
     }
 
     await this.prisma.aiApiSettings.update({
       where: { id: 1 },
       data: {
-        basicPlanModel: data.basicPlanModel,
-        proPlanModel: data.proPlanModel,
+        textProvider: 'openai' satisfies TextProvider,
+        textModel: data.textModel,
+        imageProvider,
+        basicImageModel: data.basicImageModel,
+        proImageModel: data.proImageModel,
+        ...(openaiKeyChanging ? { openaiApiKey: nextOpenAiKey } : {}),
+        ...(falKeyChanging ? { falApiKey: nextFalKey } : {}),
       },
     });
 
@@ -373,15 +425,39 @@ export class AiApiSettingsService implements OnModuleInit {
     return this.getSettings();
   }
 
-  /** Internal use — returns decrypted keys for workers. */
-  async getCredentials() {
+  async getPublicFeatures() {
     const row = await this.prisma.aiApiSettings.findUniqueOrThrow({ where: { id: 1 } });
     return {
+      enableAiAnalysis: row.enableAiAnalysis,
+      enableAiThumbnailGeneration: row.enableAiThumbnailGeneration,
+      enableAiImproveThumbnail: row.enableAiImproveThumbnail,
+      enableAutoCategoryDetection: row.enableAutoCategoryDetection,
+      enableThumbnailScoring: row.enableThumbnailScoring,
+      enableAutoLayoutDetection: row.enableAutoLayoutDetection,
+    };
+  }
+
+  /** Internal use — returns decrypted keys and resolved models for workers. */
+  async getCredentials() {
+    const row = await this.prisma.aiApiSettings.findUniqueOrThrow({ where: { id: 1 } });
+    const imageProvider = normalizeImageProvider(row.imageProvider);
+    const basicImageModel = normalizeBasicImageModel(row.basicImageModel, imageProvider);
+    const proImageModel = normalizeProImageModel(row.proImageModel, imageProvider);
+
+    return {
+      textProvider: normalizeTextProvider(row.textProvider),
+      textModel: normalizeTextModel(row.textModel),
+      imageProvider,
+      basicImageModel,
+      proImageModel,
       openaiApiKey: row.openaiApiKey,
-      openaiModel: row.openaiModel as OpenAiModel,
-      freepikApiKey: row.freepikApiKey,
-      basicPlanModel: normalizeBasicPlanModel(row.basicPlanModel),
-      proPlanModel: normalizeProPlanModel(row.proPlanModel),
+      falApiKey: row.falApiKey,
+      /** @deprecated use textModel */
+      openaiModel: normalizeTextModel(row.textModel),
+      /** @deprecated use basicImageModel */
+      basicPlanModel: basicImageModel,
+      /** @deprecated use proImageModel */
+      proPlanModel: proImageModel,
       features: {
         enableAiAnalysis: row.enableAiAnalysis,
         enableAiThumbnailGeneration: row.enableAiThumbnailGeneration,

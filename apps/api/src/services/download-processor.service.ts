@@ -71,7 +71,7 @@ export class DownloadProcessorService {
         }, 400);
       };
 
-      const downloadOpts = { onProgress, durationSeconds };
+      const downloadOpts = { onProgress, durationSeconds, url: data.url };
       const platform = detectPlatform(data.url);
       let primaryFilePath: string;
 
@@ -82,7 +82,10 @@ export class DownloadProcessorService {
         const files = await this.subtitleDownloader.download(data.url, outputDir);
         primaryFilePath = files[0];
       } else if (data.type === 'PLAYLIST') {
-        const files = await this.playlistDownloader.download(data.url, outputDir, maxHeight);
+        const files = await this.playlistDownloader.download(data.url, outputDir, {
+          maxHeight,
+          onProgress,
+        });
         if (files.length > 1) {
           const zipPath = path.join(outputDir, `playlist-${data.downloadId}.zip`);
           primaryFilePath = await this.zipService.createZip(files, zipPath);
@@ -93,12 +96,14 @@ export class DownloadProcessorService {
         primaryFilePath = await this.facebookDownloader.download(data.url, {
           type: isReelUrl(data.url, platform) ? 'REEL_FACEBOOK' : 'VIDEO',
           quality: maxHeight,
+          format: data.format,
           outputDir,
         });
       } else if (data.type === 'REEL_INSTAGRAM' || platform === 'instagram') {
         primaryFilePath = await this.instagramDownloader.download(data.url, {
           type: isReelUrl(data.url, platform) ? 'REEL_INSTAGRAM' : 'VIDEO',
           quality: maxHeight,
+          format: data.format,
           outputDir,
         });
       } else {

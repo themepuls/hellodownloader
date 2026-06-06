@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Copy, Loader2, Save, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
 import { AdminPageHeader } from '@/components/admin/AdminShell';
 import { SecretKeyInput } from '@/components/admin/api-settings/SecretKeyInput';
@@ -20,74 +21,106 @@ import { Switch } from '@/components/ui/switch';
 import { ToastStack, useToast } from '@/components/ui/toast';
 import {
   AI_API_ENV_VARS,
-  BASIC_PLAN_MODEL_LABELS,
-  BASIC_PLAN_MODELS,
-  OPENAI_MODELS,
-  OPENAI_PURPOSES,
-  PRO_PLAN_MODEL_LABELS,
-  PRO_PLAN_MODELS,
+  basicImageModelsForProvider,
+  DEFAULT_AI_API_SETTINGS,
+  IMAGE_MODEL_LABELS,
+  IMAGE_PROVIDER_LABELS,
+  IMAGE_PROVIDERS,
+  isMaskedApiKey,
+  OPENAI_TEXT_MODEL_LABELS,
+  OPENAI_TEXT_MODELS,
+  OPENAI_TEXT_PURPOSES,
+  proImageModelsForProvider,
+  TEXT_PROVIDER_LABELS,
   type AiApiSettingsPublic,
-  type BasicPlanModel,
-  type OpenAiModel,
-  type ProPlanModel,
+  type BasicImageModel,
+  type ConnectionStatus,
+  type ImageProvider,
+  type OpenAiTextModel,
+  type ProImageModel,
 } from '@hellodownloader/shared-types';
+
+type FeatureKey = keyof AiApiSettingsPublic['features'];
+
+const DEFAULT_FEATURES = DEFAULT_AI_API_SETTINGS.features;
+
+const FEATURE_TOGGLE_LABELS: Record<FeatureKey, { label: string; hint: string }> = {
+  enableAiAnalysis: {
+    label: 'Enable AI Analysis (Text/Vision API)',
+    hint: 'Required for CTR strategy, vision analysis, and AI Adjust.',
+  },
+  enableAiThumbnailGeneration: {
+    label: 'Enable AI Thumbnail Generate',
+    hint: 'Allows creating a brand-new thumbnail from CTR strategy (Pro users).',
+  },
+  enableAiImproveThumbnail: {
+    label: 'Enable AI Thumbnail Adjust',
+    hint: 'Allows AI Adjust — redesign existing thumbnail for a target ratio.',
+  },
+  enableAutoCategoryDetection: {
+    label: 'Enable Auto Category Detection',
+    hint: 'Uses AI to suggest video category during headline strategy.',
+  },
+  enableThumbnailScoring: {
+    label: 'Enable Thumbnail Scoring',
+    hint: 'Scores thumbnails for CTR potential in strategy output.',
+  },
+  enableAutoLayoutDetection: {
+    label: 'Enable Auto Layout Detection',
+    hint: 'Detects text layout zones during vision analysis.',
+  },
+};
 
 type ApiSettingsResponse = {
   settings: AiApiSettingsPublic;
   mapping: {
-    basicPlan: { label: string; model: BasicPlanModel };
-    proPlan: { label: string; model: ProPlanModel };
-    openai: { label: string; model: OpenAiModel };
+    text: { provider: string; model: OpenAiTextModel };
+    image: { provider: ImageProvider; basicModel: BasicImageModel; proModel: ProImageModel };
   };
   envVars: Record<string, string>;
 };
-
-function modelLabel(model: string, map: Record<string, string>) {
-  return map[model] ?? model;
-}
 
 export default function AdminApiSettingsPage() {
   const toast = useToast();
   const toastRef = useRef(toast);
   toastRef.current = toast;
+
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ApiSettingsResponse | null>(null);
 
+  const [textModel, setTextModel] = useState<OpenAiTextModel>('gpt-5-mini');
+  const [imageProvider, setImageProvider] = useState<ImageProvider>('fal');
+  const [basicImageModel, setBasicImageModel] = useState<BasicImageModel>('flux-dev');
+  const [proImageModel, setProImageModel] = useState<ProImageModel>('flux-kontext-pro');
+
   const [openaiKey, setOpenaiKey] = useState('');
-  const [openaiModel, setOpenaiModel] = useState<OpenAiModel>('gpt-5-mini');
   const [openaiToken, setOpenaiToken] = useState<string | null>(null);
   const [openaiTesting, setOpenaiTesting] = useState(false);
-  const [openaiSaving, setOpenaiSaving] = useState(false);
 
-  const [freepikKey, setFreepikKey] = useState('');
-  const [freepikToken, setFreepikToken] = useState<string | null>(null);
-  const [freepikTesting, setFreepikTesting] = useState(false);
-  const [freepikSaving, setFreepikSaving] = useState(false);
+  const [falKey, setFalKey] = useState('');
+  const [falToken, setFalToken] = useState<string | null>(null);
+  const [falTesting, setFalTesting] = useState(false);
 
-  const [basicPlanModel, setBasicPlanModel] = useState<BasicPlanModel>('flux-dev');
-  const [proPlanModel, setProPlanModel] = useState<ProPlanModel>('seedream-v4');
-  const [planSaving, setPlanSaving] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const [features, setFeatures] = useState<AiApiSettingsPublic['features']>({
-    enableAiAnalysis: true,
-    enableAiThumbnailGeneration: true,
-    enableAiImproveThumbnail: true,
-    enableAutoCategoryDetection: true,
-    enableThumbnailScoring: true,
-    enableAutoLayoutDetection: true,
-  });
+  const [features, setFeatures] = useState<AiApiSettingsPublic['features']>(DEFAULT_FEATURES);
   const [featuresSaving, setFeaturesSaving] = useState(false);
+  const [savingFeatureKey, setSavingFeatureKey] = useState<FeatureKey | null>(null);
+
+  const basicOptions = basicImageModelsForProvider(imageProvider);
+  const proOptions = proImageModelsForProvider(imageProvider);
 
   const applyResponse = useCallback((res: ApiSettingsResponse) => {
     setData(res);
-    setOpenaiModel(res.settings.openaiModel);
-    setBasicPlanModel(res.settings.basicPlanModel);
-    setProPlanModel(res.settings.proPlanModel);
-    setFeatures(res.settings.features);
+    setTextModel(res.settings.textModel);
+    setImageProvider(res.settings.imageProvider);
+    setBasicImageModel(res.settings.basicImageModel);
+    setProImageModel(res.settings.proImageModel);
+    setFeatures({ ...DEFAULT_FEATURES, ...res.settings.features });
     setOpenaiKey(res.settings.hasOpenaiApiKey ? res.settings.openaiApiKeyMasked : '');
-    setFreepikKey(res.settings.hasFreepikApiKey ? res.settings.freepikApiKeyMasked : '');
+    setFalKey(res.settings.hasFalApiKey ? res.settings.falApiKeyMasked : '');
     setOpenaiToken(null);
-    setFreepikToken(null);
+    setFalToken(null);
   }, []);
 
   const load = useCallback(async () => {
@@ -106,132 +139,159 @@ export default function AdminApiSettingsPage() {
     void load();
   }, [load]);
 
+  useEffect(() => {
+    if (!basicOptions.includes(basicImageModel)) {
+      setBasicImageModel(basicOptions[0] ?? 'flux-dev');
+    }
+    if (!proOptions.includes(proImageModel)) {
+      setProImageModel(proOptions[0] ?? 'flux-kontext-pro');
+    }
+  }, [imageProvider, basicOptions, proOptions, basicImageModel, proImageModel]);
+
   const openaiKeyChanged = Boolean(
-    openaiKey.trim() && !openaiKey.includes('•') && openaiKey !== data?.settings.openaiApiKeyMasked,
+    openaiKey.trim() &&
+      !isMaskedApiKey(openaiKey) &&
+      openaiKey !== data?.settings.openaiApiKeyMasked,
   );
-  const freepikKeyChanged = Boolean(
-    freepikKey.trim() && !freepikKey.includes('•') && freepikKey !== data?.settings.freepikApiKeyMasked,
+  const falKeyChanged = Boolean(
+    falKey.trim() && !isMaskedApiKey(falKey) && falKey !== data?.settings.falApiKeyMasked,
   );
 
+  const patchOpenAiConnection = (status: ConnectionStatus, lastTestedAt: string) => {
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            settings: {
+              ...prev.settings,
+              openaiConnectionStatus: status,
+              openaiLastTestedAt: lastTestedAt,
+            },
+          }
+        : prev,
+    );
+  };
+
+  const patchFalConnection = (status: ConnectionStatus, lastTestedAt: string) => {
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            settings: {
+              ...prev.settings,
+              falConnectionStatus: status,
+              falLastTestedAt: lastTestedAt,
+            },
+          }
+        : prev,
+    );
+  };
+
   const testOpenAi = async () => {
-    if (!openaiKey.trim()) {
+    const hasDraftKey = Boolean(openaiKey.trim() && !isMaskedApiKey(openaiKey));
+    const hasStoredKey = Boolean(data?.settings.hasOpenaiApiKey);
+    if (!hasDraftKey && !hasStoredKey) {
       toast.error('OpenAI API key is required');
       return;
     }
+
     setOpenaiTesting(true);
+    const testedAt = new Date().toISOString();
     try {
       const res = (await apiClient.admin.testOpenAiApi({
-        apiKey: openaiKey.trim(),
-        openaiModel,
+        apiKey: hasDraftKey ? openaiKey.trim() : undefined,
+        textModel,
       })) as { verificationToken: string; message: string };
       setOpenaiToken(res.verificationToken);
+      patchOpenAiConnection('connected', testedAt);
       toast.success(res.message || 'OpenAI connection successful');
-      await load();
     } catch (e) {
+      patchOpenAiConnection('failed', testedAt);
       toast.error(e instanceof Error ? e.message : 'OpenAI test failed');
-      await load();
     } finally {
       setOpenaiTesting(false);
     }
   };
 
-  const saveOpenAi = async () => {
-    if (!openaiModel) {
-      toast.error('OpenAI model is required');
+  const testFal = async () => {
+    const hasDraftKey = Boolean(falKey.trim() && !isMaskedApiKey(falKey));
+    const hasStoredKey = Boolean(data?.settings.hasFalApiKey);
+    if (!hasDraftKey && !hasStoredKey) {
+      toast.error('fal.ai API key is required');
       return;
     }
-    if (!openaiKey.trim() && !data?.settings.hasOpenaiApiKey) {
-      toast.error('OpenAI API key is required');
-      return;
+
+    setFalTesting(true);
+    const testedAt = new Date().toISOString();
+    try {
+      const res = (await apiClient.admin.testFalApi({
+        apiKey: hasDraftKey ? falKey.trim() : undefined,
+      })) as { verificationToken: string; message: string };
+      setFalToken(res.verificationToken);
+      patchFalConnection('connected', testedAt);
+      toast.success(res.message || 'fal.ai connection successful');
+    } catch (e) {
+      patchFalConnection('failed', testedAt);
+      toast.error(e instanceof Error ? e.message : 'fal.ai test failed');
+    } finally {
+      setFalTesting(false);
     }
+  };
+
+  const saveProviders = async () => {
     if (openaiKeyChanged && !openaiToken) {
       toast.error('Test OpenAI connection before saving a new API key');
       return;
     }
-    setOpenaiSaving(true);
+    if (imageProvider === 'fal' && falKeyChanged && !falToken) {
+      toast.error('Test fal.ai connection before saving a new API key');
+      return;
+    }
+    if (imageProvider === 'openai' && !settings?.hasOpenaiApiKey && !openaiKeyChanged) {
+      toast.error('Configure and test your OpenAI API key before saving with OpenAI as image provider');
+      return;
+    }
+    if (imageProvider === 'fal' && !settings?.hasFalApiKey && !falKeyChanged) {
+      toast.error('Configure and test your fal.ai API key before saving');
+      return;
+    }
+
+    setSaving(true);
     try {
-      const res = (await apiClient.admin.saveOpenAiApi({
-        apiKey: openaiKeyChanged ? openaiKey.trim() : undefined,
-        openaiModel,
-        verificationToken: openaiToken ?? undefined,
+      const res = (await apiClient.admin.saveAiProviders({
+        textModel,
+        imageProvider,
+        basicImageModel,
+        proImageModel,
+        openaiApiKey: openaiKeyChanged ? openaiKey.trim() : undefined,
+        openaiVerificationToken: openaiToken ?? undefined,
+        falApiKey: falKeyChanged ? falKey.trim() : undefined,
+        falVerificationToken: falToken ?? undefined,
       })) as ApiSettingsResponse;
       applyResponse(res);
-      toast.success('OpenAI settings saved');
+      toast.success('AI provider settings saved');
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to save OpenAI settings');
+      toast.error(e instanceof Error ? e.message : 'Failed to save settings');
     } finally {
-      setOpenaiSaving(false);
+      setSaving(false);
     }
   };
 
-  const testFreepik = async () => {
-    if (!freepikKey.trim()) {
-      toast.error('Freepik API key is required');
-      return;
-    }
-    setFreepikTesting(true);
-    try {
-      const res = (await apiClient.admin.testFreepikApi({ apiKey: freepikKey.trim() })) as {
-        verificationToken: string;
-        message: string;
-      };
-      setFreepikToken(res.verificationToken);
-      toast.success(res.message || 'Freepik connection successful');
-      await load();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Freepik test failed');
-      await load();
-    } finally {
-      setFreepikTesting(false);
-    }
-  };
-
-  const saveFreepik = async () => {
-    if (!freepikKey.trim() && !data?.settings.hasFreepikApiKey) {
-      toast.error('Freepik API key is required');
-      return;
-    }
-    if (freepikKeyChanged && !freepikToken) {
-      toast.error('Test Freepik connection before saving a new API key');
-      return;
-    }
-    setFreepikSaving(true);
-    try {
-      const res = (await apiClient.admin.saveFreepikApi({
-        apiKey: freepikKeyChanged ? freepikKey.trim() : undefined,
-        verificationToken: freepikToken ?? undefined,
-      })) as ApiSettingsResponse;
-      applyResponse(res);
-      toast.success('Freepik settings saved');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to save Freepik settings');
-    } finally {
-      setFreepikSaving(false);
-    }
-  };
-
-  const savePlanModels = async () => {
-    setPlanSaving(true);
-    try {
-      const res = (await apiClient.admin.savePlanModels({ basicPlanModel, proPlanModel })) as ApiSettingsResponse;
-      applyResponse(res);
-      toast.success('Plan models saved');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to save plan models');
-    } finally {
-      setPlanSaving(false);
-    }
-  };
-
-  const saveFeatures = async () => {
+  const updateFeature = async (key: FeatureKey, checked: boolean) => {
+    const previous = features;
+    const next = { ...features, [key]: checked };
+    setFeatures(next);
+    setSavingFeatureKey(key);
     setFeaturesSaving(true);
     try {
-      const res = (await apiClient.admin.saveAiFeatures(features)) as ApiSettingsResponse;
+      const res = (await apiClient.admin.saveAiFeatures(next)) as ApiSettingsResponse;
       applyResponse(res);
-      toast.success('Feature toggles saved');
+      toast.success(`${checked ? 'Enabled' : 'Disabled'}: ${FEATURE_TOGGLE_LABELS[key].label}`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to save features');
+      setFeatures(previous);
+      toast.error(e instanceof Error ? e.message : 'Failed to save feature toggle');
     } finally {
+      setSavingFeatureKey(null);
       setFeaturesSaving(false);
     }
   };
@@ -256,236 +316,290 @@ export default function AdminApiSettingsPage() {
     <>
       <AdminPageHeader
         title="API Settings"
-        description="Manage AI providers, models, API keys, and plan-to-model mapping."
+        description="Enable or disable AI features, then configure providers and API keys."
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* OpenAI */}
-        <Card className="border-white/10 bg-card/50">
-          <CardHeader>
-            <CardTitle className="text-lg">OpenAI Settings</CardTitle>
-            <CardDescription>
-              Used for analysis features — category detection, headlines, CTR optimization, scoring, and layout.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      {/* Feature Toggles — first so enable/disable is easy to find */}
+      <Card className="border-primary/30 bg-card/50 mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg">Enable / Disable AI Features</CardTitle>
+          <CardDescription>
+            Toggle each feature on or off. Changes save automatically and apply site-wide immediately.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <section className="space-y-3">
+            <h3 className="text-sm font-semibold">AI API &amp; Thumbnail Tools</h3>
+            {(['enableAiAnalysis', 'enableAiImproveThumbnail', 'enableAiThumbnailGeneration'] as const).map(
+              (key) => (
+                <FeatureToggleRow
+                  key={key}
+                  id={key}
+                  label={FEATURE_TOGGLE_LABELS[key].label}
+                  hint={FEATURE_TOGGLE_LABELS[key].hint}
+                  checked={Boolean(features[key])}
+                  saving={savingFeatureKey === key}
+                  disabled={featuresSaving && savingFeatureKey !== key}
+                  onCheckedChange={(checked) => void updateFeature(key, checked)}
+                />
+              ),
+            )}
+          </section>
+
+          <section className="space-y-3 border-t border-border pt-6">
+            <h3 className="text-sm font-semibold">Advanced Analysis (optional)</h3>
+            {(['enableAutoCategoryDetection', 'enableThumbnailScoring', 'enableAutoLayoutDetection'] as const).map(
+              (key) => (
+                <FeatureToggleRow
+                  key={key}
+                  id={key}
+                  label={FEATURE_TOGGLE_LABELS[key].label}
+                  hint={FEATURE_TOGGLE_LABELS[key].hint}
+                  checked={Boolean(features[key])}
+                  saving={savingFeatureKey === key}
+                  disabled={featuresSaving && savingFeatureKey !== key}
+                  onCheckedChange={(checked) => void updateFeature(key, checked)}
+                />
+              ),
+            )}
+          </section>
+        </CardContent>
+      </Card>
+
+      <Card className="border-border bg-card/50 mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg">AI Providers</CardTitle>
+          <CardDescription>
+            Text AI uses OpenAI. Image AI can use fal.ai or OpenAI for thumbnail generation.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-8">
+          {/* Text AI */}
+          <section className="space-y-4">
+            <div>
+              <h3 className="text-sm font-semibold mb-1">Text AI Provider</h3>
+              <p className="text-xs text-muted-foreground">
+                {TEXT_PROVIDER_LABELS.openai} — analysis, headlines, CTR, and scoring.
+              </p>
+            </div>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs text-muted-foreground">
-              {OPENAI_PURPOSES.map((p) => (
+              {OPENAI_TEXT_PURPOSES.map((p) => (
                 <li key={p} className="flex items-center gap-1.5">
                   <Zap className="h-3 w-3 text-primary shrink-0" />
                   {p}
                 </li>
               ))}
             </ul>
-
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Text Model</Label>
+                <Select value={textModel} onValueChange={(v) => setTextModel(v as OpenAiTextModel)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OPENAI_TEXT_MODELS.map((m) => (
+                      <SelectItem key={m} value={m}>
+                        {OPENAI_TEXT_MODEL_LABELS[m]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <SecretKeyInput
               label="OpenAI API Key"
               value={openaiKey}
               onChange={setOpenaiKey}
               placeholder="sk-…"
-              hint="Required. Test connection before saving a new key."
+              hint={
+                imageProvider === 'openai'
+                  ? 'Required for text and image AI. Test before saving a new key.'
+                  : 'Required for text AI. Test before saving a new key.'
+              }
+              configured={settings?.hasOpenaiApiKey}
             />
-
-            <div className="space-y-2">
-              <Label>OpenAI Model</Label>
-              <Select value={openaiModel} onValueChange={(v) => setOpenaiModel(v as OpenAiModel)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select model" />
-                </SelectTrigger>
-                <SelectContent>
-                  {OPENAI_MODELS.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {m}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             <ConnectionStatusBadge
               status={settings?.openaiConnectionStatus ?? 'unknown'}
               loading={openaiTesting}
               lastTestedAt={settings?.openaiLastTestedAt}
             />
+            <Button
+              variant="outline"
+              onClick={() => void testOpenAi()}
+              disabled={openaiTesting || saving}
+            >
+              {openaiTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Test OpenAI Connection
+            </Button>
+          </section>
+
+          <div className="border-t border-border" />
+
+          {/* Image AI */}
+          <section className="space-y-4">
+            <div>
+              <h3 className="text-sm font-semibold mb-1">Image AI Provider</h3>
+              <p className="text-xs text-muted-foreground">
+                Used for thumbnail image generation.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
+                <Label>Image Provider</Label>
+                <Select
+                  value={imageProvider}
+                  onValueChange={(v) => setImageProvider(v as ImageProvider)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {IMAGE_PROVIDERS.map((p) => (
+                      <SelectItem key={p} value={p}>
+                        {IMAGE_PROVIDER_LABELS[p]}
+                        {p === 'fal' ? ' (default)' : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Basic Plan Model</Label>
+                <Select
+                  value={basicImageModel}
+                  onValueChange={(v) => setBasicImageModel(v as BasicImageModel)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {basicOptions.map((m) => (
+                      <SelectItem key={m} value={m}>
+                        {IMAGE_MODEL_LABELS[m]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Pro Plan Model</Label>
+                <Select
+                  value={proImageModel}
+                  onValueChange={(v) => setProImageModel(v as ProImageModel)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {proOptions.map((m) => (
+                      <SelectItem key={m} value={m}>
+                        {IMAGE_MODEL_LABELS[m]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {imageProvider === 'openai' ? (
+              <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-4 space-y-3">
+                <p className="text-sm font-medium">OpenAI powers image generation</p>
+                <p className="text-xs text-muted-foreground">
+                  Image generation uses the same OpenAI API key configured in the Text AI section above.
+                  Test and save your OpenAI key there, then click Save Settings below.
+                </p>
+                <ConnectionStatusBadge
+                  status={settings?.openaiConnectionStatus ?? 'unknown'}
+                  loading={openaiTesting}
+                  lastTestedAt={settings?.openaiLastTestedAt}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => void testOpenAi()}
+                  disabled={openaiTesting || saving}
+                >
+                  {openaiTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Test OpenAI Connection
+                </Button>
+              </div>
+            ) : (
+              <>
+                <SecretKeyInput
+                  label="fal.ai API Key"
+                  value={falKey}
+                  onChange={setFalKey}
+                  placeholder="fal_…"
+                  hint="Required for fal.ai image generation. Test before saving a new key."
+                  configured={settings?.hasFalApiKey}
+                />
+                <ConnectionStatusBadge
+                  status={settings?.falConnectionStatus ?? 'unknown'}
+                  loading={falTesting}
+                  lastTestedAt={settings?.falLastTestedAt}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => void testFal()}
+                  disabled={falTesting || saving}
+                >
+                  {falTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Test fal.ai Connection
+                </Button>
+              </>
+            )}
 
             <div className="flex flex-wrap gap-2 pt-2">
-              <Button variant="outline" onClick={() => void testOpenAi()} disabled={openaiTesting || openaiSaving}>
-                {openaiTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Test Connection
-              </Button>
-              <Button onClick={() => void saveOpenAi()} disabled={openaiSaving || openaiTesting}>
-                {openaiSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Save API Key
+              <Button onClick={() => void saveProviders()} disabled={saving || openaiTesting || falTesting}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                Save Settings
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Freepik */}
-        <Card className="border-white/10 bg-card/50">
-          <CardHeader>
-            <CardTitle className="text-lg">Freepik Settings</CardTitle>
-            <CardDescription>Image assets and stock resources for thumbnail generation workflows.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <SecretKeyInput
-              label="Freepik API Key"
-              value={freepikKey}
-              onChange={setFreepikKey}
-              placeholder="fpk_…"
-              hint="Required. Test connection before saving a new key."
-            />
-
-            <ConnectionStatusBadge
-              status={settings?.freepikConnectionStatus ?? 'unknown'}
-              loading={freepikTesting}
-              lastTestedAt={settings?.freepikLastTestedAt}
-            />
-
-            <div className="flex flex-wrap gap-2 pt-2">
-              <Button variant="outline" onClick={() => void testFreepik()} disabled={freepikTesting || freepikSaving}>
-                {freepikTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Test Connection
-              </Button>
-              <Button onClick={() => void saveFreepik()} disabled={freepikSaving || freepikTesting}>
-                {freepikSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Save API Key
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Basic Plan */}
-        <Card className="border-white/10 bg-card/50">
-          <CardHeader>
-            <CardTitle className="text-lg">Basic Plan AI Model</CardTitle>
-            <CardDescription>Used for Free / Basic plan thumbnail generation.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Model</Label>
-              <Select value={basicPlanModel} onValueChange={(v) => setBasicPlanModel(v as BasicPlanModel)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {BASIC_PLAN_MODELS.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {BASIC_PLAN_MODEL_LABELS[m]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Pro Plan */}
-        <Card className="border-white/10 bg-card/50">
-          <CardHeader>
-            <CardTitle className="text-lg">Pro Plan AI Model</CardTitle>
-            <CardDescription>Premium models for Pro plan thumbnail generation.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Model</Label>
-              <Select value={proPlanModel} onValueChange={(v) => setProPlanModel(v as ProPlanModel)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PRO_PLAN_MODELS.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {PRO_PLAN_MODEL_LABELS[m]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3 mt-[17px] mb-6">
-        <Button onClick={() => void savePlanModels()} disabled={planSaving}>
-          {planSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-          Save Plan Models
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          Saves both Basic and Pro plan models together.
-        </p>
-      </div>
+          </section>
+        </CardContent>
+      </Card>
 
       {/* Provider Mapping */}
-      <Card className="border-white/10 bg-card/50 mt-6">
+      <Card className="border-border bg-card/50 mb-6">
         <CardHeader>
           <CardTitle className="text-lg">Provider Mapping</CardTitle>
-          <CardDescription>Current plan and provider assignments.</CardDescription>
+          <CardDescription>Current text and image provider assignments.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {data && (
               <>
                 <MappingRow
-                  label={data.mapping.basicPlan.label}
-                  value={modelLabel(data.mapping.basicPlan.model, BASIC_PLAN_MODEL_LABELS)}
+                  label="Text AI"
+                  value={`${TEXT_PROVIDER_LABELS[data.mapping.text.provider as keyof typeof TEXT_PROVIDER_LABELS]} → ${data.mapping.text.model}`}
                 />
                 <MappingRow
-                  label={data.mapping.proPlan.label}
-                  value={modelLabel(data.mapping.proPlan.model, PRO_PLAN_MODEL_LABELS)}
+                  label="Image AI"
+                  value={`${IMAGE_PROVIDER_LABELS[data.mapping.image.provider]} → Basic: ${IMAGE_MODEL_LABELS[data.mapping.image.basicModel]}`}
                 />
-                <MappingRow label="OpenAI" value={data.mapping.openai.model} />
+                <MappingRow
+                  label="Pro Image Model"
+                  value={IMAGE_MODEL_LABELS[data.mapping.image.proModel]}
+                />
               </>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Feature Toggles */}
-      <Card className="border-white/10 bg-card/50 mt-6">
-        <CardHeader>
-          <CardTitle className="text-lg">Feature Toggles</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {(
-            [
-              ['enableAiAnalysis', 'Enable AI Analysis'],
-              ['enableAiThumbnailGeneration', 'Enable AI Thumbnail Generation'],
-              ['enableAiImproveThumbnail', 'Enable AI Improve Thumbnail'],
-              ['enableAutoCategoryDetection', 'Enable Auto Category Detection'],
-              ['enableThumbnailScoring', 'Enable Thumbnail Scoring'],
-              ['enableAutoLayoutDetection', 'Enable Auto Layout Detection'],
-            ] as const
-          ).map(([key, label]) => (
-            <div key={key} className="flex items-center justify-between gap-4 rounded-lg border border-white/5 px-4 py-3">
-              <Label htmlFor={key}>{label}</Label>
-              <Switch
-                id={key}
-                checked={features[key]}
-                onCheckedChange={(checked) => setFeatures((f) => ({ ...f, [key]: checked }))}
-              />
-            </div>
-          ))}
-          <Button onClick={() => void saveFeatures()} disabled={featuresSaving}>
-            {featuresSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-            Save Feature Toggles
-          </Button>
-        </CardContent>
-      </Card>
-
       {/* Environment Variables */}
-      <Card className="border-white/10 bg-card/50 mt-6">
+      <Card className="border-border bg-card/50">
         <CardHeader>
           <CardTitle className="text-lg">Environment Variables</CardTitle>
           <CardDescription>
-            Optional fallbacks for first-time import. Production values are stored in the database via this page.
+            Optional fallbacks for first-time import. Production values are stored in the database.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           {AI_API_ENV_VARS.map((name) => (
             <div
               key={name}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/5 px-4 py-3"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 px-4 py-3"
             >
               <code className="text-sm font-mono text-primary">{name}</code>
               <div className="flex items-center gap-2">
@@ -507,11 +621,71 @@ export default function AdminApiSettingsPage() {
 
 function MappingRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+    <div className="rounded-lg border border-border bg-accent/50 px-4 py-3">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-sm font-medium mt-1 flex items-center gap-2">
-        <span className="text-muted-foreground">→</span> {value}
-      </p>
+      <p className="text-sm font-medium mt-1 break-words">{value}</p>
+    </div>
+  );
+}
+
+function FeatureToggleRow({
+  id,
+  label,
+  hint,
+  checked,
+  saving,
+  disabled,
+  onCheckedChange,
+}: {
+  id: string;
+  label: string;
+  hint: string;
+  checked: boolean;
+  saving?: boolean;
+  disabled?: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}) {
+  return (
+    <div
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-pressed={checked}
+      aria-disabled={disabled}
+      onClick={() => {
+        if (!disabled && !saving) onCheckedChange(!checked);
+      }}
+      onKeyDown={(e) => {
+        if (disabled || saving) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onCheckedChange(!checked);
+        }
+      }}
+      className="flex items-start justify-between gap-4 rounded-lg border border-border/60 px-4 py-3 cursor-pointer hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+    >
+      <div className="space-y-1 pointer-events-none">
+        <div className="flex items-center gap-2">
+          <Label htmlFor={id}>{label}</Label>
+          <span
+            className={cn(
+              'text-[10px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded',
+              checked ? 'bg-emerald-500/15 text-emerald-400' : 'bg-white/10 text-muted-foreground',
+            )}
+          >
+            {checked ? 'On' : 'Off'}
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      </div>
+      <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+        {saving ? <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /> : null}
+        <Switch
+          id={id}
+          checked={checked}
+          disabled={disabled || saving}
+          onCheckedChange={onCheckedChange}
+        />
+      </div>
     </div>
   );
 }

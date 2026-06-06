@@ -4,9 +4,18 @@ import {
   DEFAULT_HOME_CONTENT,
 } from '@hellodownloader/shared-types';
 
+function resolveServerApiUrl(): string {
+  const publicBase = process.env.API_PUBLIC_URL?.replace(/\/$/, '');
+  if (publicBase) return `${publicBase}/api/v1`;
+  const configured = process.env.NEXT_PUBLIC_API_URL;
+  if (configured?.startsWith('http')) return configured.replace(/\/$/, '');
+  return 'http://127.0.0.1:4001/api/v1';
+}
+
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  (typeof window === 'undefined' ? 'http://localhost:4000/api/v1' : '/api/v1');
+  typeof window === 'undefined'
+    ? resolveServerApiUrl()
+    : (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1');
 
 export async function fetchPageContent<T extends Record<string, unknown>>(
   slug: string,

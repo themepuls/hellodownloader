@@ -5,6 +5,7 @@ import { YtDlpService } from '../../services/yt-dlp.service';
 export interface FacebookDownloadOptions {
   type: 'REEL_FACEBOOK' | 'VIDEO';
   quality?: number;
+  format?: string;
   outputDir: string;
 }
 
@@ -22,6 +23,8 @@ export class FacebookDownloader {
     this.logger.log(`Facebook download: type=${options.type} url=${url}`);
     return this.ytDlp.downloadVideo(url, options.outputDir, {
       maxHeight: options.quality ?? 1080,
+      format: options.format,
+      url,
     });
   }
 }

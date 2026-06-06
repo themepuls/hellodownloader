@@ -81,7 +81,7 @@ export default function AdminUsersPage() {
           className="max-w-xs"
         />
         <select
-          className="rounded-md border border-white/10 bg-background px-3 py-2 text-sm"
+          className="rounded-md border border-border bg-background px-3 py-2 text-sm"
           value={plan}
           onChange={(e) => {
             setPlan(e.target.value);
@@ -95,9 +95,9 @@ export default function AdminUsersPage() {
       </div>
       {err && <p className="text-destructive text-sm mb-2">{err}</p>}
       {msg && <p className="text-emerald-400 text-sm mb-2">{msg}</p>}
-      <div className="overflow-x-auto rounded-xl border border-white/10">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-white/5 text-left text-muted-foreground">
+          <thead className="bg-accent/50 text-left text-muted-foreground">
             <tr>
               <th className="p-3">Email</th>
               <th className="p-3">Plan</th>
@@ -109,7 +109,7 @@ export default function AdminUsersPage() {
           </thead>
           <tbody>
             {data?.items.map((u) => (
-              <tr key={u.id} className="border-t border-white/5 hover:bg-white/5">
+              <tr key={u.id} className="border-t border-border/60 hover:bg-accent">
                 <td className="p-3">
                   <div className="font-medium">{u.email}</div>
                   <div className="text-xs text-muted-foreground">{u.name ?? '—'}</div>
@@ -134,7 +134,7 @@ export default function AdminUsersPage() {
 
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md rounded-xl border border-white/10 bg-card p-6 space-y-4">
+          <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 space-y-4">
             <h2 className="font-semibold text-lg">{selected.email}</h2>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" onClick={() => updateUser({ plan: 'PRO' })}>

@@ -1,9 +1,3 @@
-/** Browser uses same-origin proxy (next.config rewrites) to avoid CORS. */
-const API_URL =
-  typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1')
-    : (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1');
-
 function getAccessToken(): string | null {
   if (typeof window === 'undefined') return null;
   return (
@@ -21,20 +15,70 @@ function getAccessToken(): string | null {
   );
 }
 
+/** Browser uses same-origin proxy (next.config rewrites) to avoid CORS. */
+function getApiUrl(): string {
+  if (typeof window !== 'undefined') {
+    return process.env.NEXT_PUBLIC_API_URL ?? '/api/v1';
+  }
+  if (process.env.NEXT_PUBLIC_API_URL?.startsWith('http')) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  return `${process.env.API_PUBLIC_URL ?? 'http://127.0.0.1:4001'}/api/v1`;
+}
+
+const DEFAULT_FETCH_TIMEOUT_MS = 30_000;
+
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeoutMs = DEFAULT_FETCH_TIMEOUT_MS,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const externalSignal = options.signal;
+
+  if (externalSignal) {
+    if (externalSignal.aborted) {
+      clearTimeout(timer);
+      throw new DOMException('The operation was aborted.', 'AbortError');
+    }
+    externalSignal.addEventListener('abort', () => controller.abort(), { once: true });
+  }
+
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      if (externalSignal?.aborted) {
+        throw new Error('Cancelled');
+      }
+      throw new Error('Request timed out. Is the API server running on port 4001?');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function api<T>(
   path: string,
   options: RequestInit = {},
+  timeoutMs = DEFAULT_FETCH_TIMEOUT_MS,
 ): Promise<T> {
   const token = getAccessToken();
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
+  const res = await fetchWithTimeout(
+    `${getApiUrl()}${path}`,
+    {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      },
     },
-  });
+    timeoutMs,
+  );
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }));
@@ -72,31 +116,69 @@ export const apiClient = {
       api('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
     login: (data: { email: string; password: string }) =>
       api('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
+    google: (idToken: string) =>
+      api('/auth/google', { method: 'POST', body: JSON.stringify({ idToken }) }),
+    googleConfig: () => api<{ enabled: boolean; clientId: string }>('/auth/google/config'),
     me: () => api('/auth/me'),
   },
   downloads: {
-    metadata: (url: string) =>
-      api('/downloads/metadata', { method: 'POST', body: JSON.stringify({ url }) }),
+    qualityAccess: () => api('/downloads/quality-access'),
+    metadata: (url: string, signal?: AbortSignal) =>
+      api('/downloads/metadata', { method: 'POST', body: JSON.stringify({ url }), signal }),
     create: (data: { url: string; type: string; quality?: number; format?: string }) =>
       api('/downloads', { method: 'POST', body: JSON.stringify(data) }),
     status: (id: string) => api(`/downloads/${id}/status`),
+    release: (id: string) =>
+      api(`/downloads/${id}/release`, { method: 'POST' }),
     list: (page = 1) => api(`/downloads?page=${page}`),
     get: (id: string) => api(`/downloads/${id}`),
   },
+  surveys: {
+    fourKInterest: (visitorId?: string) =>
+      api(`/surveys/four-k-interest${visitorId ? `?visitorId=${encodeURIComponent(visitorId)}` : ''}`),
+    submitFourKInterest: (data: { interested: boolean; visitorId?: string }) =>
+      api('/surveys/four-k-interest', { method: 'POST', body: JSON.stringify(data) }),
+  },
   thumbnails: {
-    original: (url: string) =>
-      api('/thumbnails/original', { method: 'POST', body: JSON.stringify({ url }) }),
+    original: (url: string, signal?: AbortSignal) =>
+      api('/thumbnails/original', { method: 'POST', body: JSON.stringify({ url }), signal }),
+    features: () => api('/thumbnails/features'),
     saveOriginal: (url: string) =>
       api('/thumbnails/original/save', { method: 'POST', body: JSON.stringify({ url }) }),
-    createAi: (data: { videoUrl: string; ratio: string; mode: 'adjust' | 'generate'; prompt?: string }) =>
-      api('/thumbnails/ai', { method: 'POST', body: JSON.stringify(data) }),
+    createAi: (data: {
+      videoUrl: string;
+      ratio: string;
+      mode: 'adjust' | 'generate';
+      prompt?: string;
+      categorySlug?: string;
+      additionalInstructions?: string;
+    }, signal?: AbortSignal) =>
+      api('/thumbnails/ai', { method: 'POST', body: JSON.stringify(data), signal }),
+    generateHeadline: (data: {
+      title: string;
+      category?: string;
+      categorySlug?: string;
+      textStyle?: string;
+      ratio?: string;
+      instructions?: string;
+      thumbnailUrl?: string;
+    }, signal?: AbortSignal) =>
+      api('/thumbnails/headline', { method: 'POST', body: JSON.stringify(data), signal }),
     list: () => api('/thumbnails'),
+    get: (id: string) => api(`/thumbnails/${id}`),
   },
   credits: {
     balance: () => api('/credits'),
     history: () => api('/credits/history'),
   },
   billing: {
+    paymentMethods: () =>
+      api('/billing/payment-methods') as Promise<{
+        stripe: boolean;
+        binance: boolean;
+        sslcommerz: boolean;
+        anyEnabled: boolean;
+      }>,
     checkout: () => api('/billing/checkout/stripe', { method: 'POST' }),
     binanceCheckout: () => api('/billing/checkout/binance', { method: 'POST' }),
     sslcommerzCheckout: () => api('/billing/checkout/sslcommerz', { method: 'POST' }),
@@ -125,18 +207,25 @@ export const apiClient = {
     listThumbnails: (p: Record<string, string | number | undefined> = {}) =>
       api(`/admin/thumbnails${adminQs(p)}`),
     getApiSettings: () => api('/admin/api-settings'),
-    testOpenAiApi: (data: { apiKey: string; openaiModel: string }) =>
+    testOpenAiApi: (data: { apiKey?: string; textModel: string }) =>
       api('/admin/api-settings/openai/test', { method: 'POST', body: JSON.stringify(data) }),
-    saveOpenAiApi: (data: Record<string, unknown>) =>
-      api('/admin/api-settings/openai', { method: 'POST', body: JSON.stringify(data) }),
-    testFreepikApi: (data: { apiKey: string }) =>
-      api('/admin/api-settings/freepik/test', { method: 'POST', body: JSON.stringify(data) }),
-    saveFreepikApi: (data: Record<string, unknown>) =>
-      api('/admin/api-settings/freepik', { method: 'POST', body: JSON.stringify(data) }),
-    savePlanModels: (data: Record<string, unknown>) =>
-      api('/admin/api-settings/plan-models', { method: 'PATCH', body: JSON.stringify(data) }),
+    testFalApi: (data: { apiKey?: string }) =>
+      api('/admin/api-settings/fal/test', { method: 'POST', body: JSON.stringify(data) }),
+    saveAiProviders: (data: Record<string, unknown>) =>
+      api('/admin/api-settings/providers', { method: 'POST', body: JSON.stringify(data) }),
     saveAiFeatures: (data: Record<string, unknown>) =>
       api('/admin/api-settings/features', { method: 'PATCH', body: JSON.stringify(data) }),
+    listThumbnailPrompts: (p: { type?: string; search?: string } = {}) =>
+      api(`/admin/thumbnail-prompts${adminQs(p)}`),
+    getThumbnailPrompt: (id: string) => api(`/admin/thumbnail-prompts/${id}`),
+    createThumbnailPrompt: (data: Record<string, unknown>) =>
+      api('/admin/thumbnail-prompts', { method: 'POST', body: JSON.stringify(data) }),
+    updateThumbnailPrompt: (id: string, data: Record<string, unknown>) =>
+      api(`/admin/thumbnail-prompts/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    deleteThumbnailPrompt: (id: string) =>
+      api(`/admin/thumbnail-prompts/${id}`, { method: 'DELETE' }),
+    previewThumbnailPrompt: (data: Record<string, unknown>) =>
+      api('/admin/thumbnail-prompts/preview/combined', { method: 'POST', body: JSON.stringify(data) }),
     listPayments: (p: Record<string, string | number | undefined> = {}) =>
       api(`/admin/payments${adminQs(p)}`),
     paymentsOverview: () => api('/admin/payments/overview'),
@@ -161,17 +250,42 @@ export const apiClient = {
     settings: () => api('/admin/settings'),
     updateSettings: (data: Record<string, unknown>) =>
       api('/admin/settings', { method: 'PATCH', body: JSON.stringify(data) }),
+    getAds: () => api('/admin/ads'),
+    updateAds: (data: Record<string, unknown>) =>
+      api('/admin/ads', { method: 'PATCH', body: JSON.stringify(data) }),
     listContentPages: () => api('/admin/content/pages'),
     getContentPage: (slug: string) => api(`/admin/content/pages/${slug}`),
     updateContentPage: (slug: string, data: Record<string, unknown>) =>
       api(`/admin/content/pages/${slug}`, { method: 'PATCH', body: JSON.stringify(data) }),
     createContentPage: (data: { slug: string; title: string }) =>
       api('/admin/content/pages', { method: 'POST', body: JSON.stringify(data) }),
+    getSiteSettings: () => api('/admin/site-settings'),
+    updateSiteSettings: (data: Record<string, unknown>) =>
+      api('/admin/site-settings', { method: 'PATCH', body: JSON.stringify(data) }),
     uploadBranding: async (file: File) => {
       const token = getAccessToken();
       const body = new FormData();
       body.append('file', file);
-      const res = await fetch(`${API_URL}/admin/branding/upload`, {
+      const res = await fetch(`${getApiUrl()}/admin/branding/upload`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        const message =
+          (Array.isArray(err.message) ? err.message.join(', ') : err.message) ??
+          err.error ??
+          res.statusText;
+        throw new Error(message);
+      }
+      return res.json();
+    },
+    uploadAdImage: async (file: File) => {
+      const token = getAccessToken();
+      const body = new FormData();
+      body.append('file', file);
+      const res = await fetch(`${getApiUrl()}/admin/ads/upload`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body,
@@ -188,8 +302,8 @@ export const apiClient = {
     },
   },
   playlists: {
-    create: (data: { url: string; quality?: number }) =>
-      api('/playlists', { method: 'POST', body: JSON.stringify(data) }),
+    create: (data: { url: string; quality?: number }, signal?: AbortSignal) =>
+      api('/playlists', { method: 'POST', body: JSON.stringify(data), signal }),
     status: (id: string) => api(`/playlists/${id}/status`),
     list: () => api('/playlists'),
   },
@@ -198,5 +312,6 @@ export const apiClient = {
   },
   content: {
     page: (slug: string) => api(`/content/pages/${slug}`),
+    siteSettings: () => api('/content/site-settings'),
   },
 };

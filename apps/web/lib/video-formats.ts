@@ -6,6 +6,9 @@ export interface VideoFormat {
   fps?: number;
   filesize?: number;
   filesize_approx?: number;
+  tbr?: number;
+  vbr?: number;
+  abr?: number;
   vcodec?: string;
   acodec?: string;
 }
@@ -31,6 +34,37 @@ export interface QualityOption {
 
 function formatBytes(f: VideoFormat): number {
   return f.filesize ?? f.filesize_approx ?? 0;
+}
+
+/** Estimate size from yt-dlp bitrate fields (kbps) when filesize is missing. */
+function estimateBytesFromBitrate(kbps: number | undefined, durationSec: number): number {
+  if (!kbps || !durationSec || durationSec <= 0) return 0;
+  return Math.round((kbps * 1000 * durationSec) / 8);
+}
+
+function streamBitrate(f: VideoFormat): number | undefined {
+  return f.vbr ?? f.tbr ?? undefined;
+}
+
+function audioBitrate(f: VideoFormat): number | undefined {
+  return f.abr ?? f.tbr ?? undefined;
+}
+
+function estimateFormatBytes(f: VideoFormat, durationSec: number): number {
+  const direct = formatBytes(f);
+  if (direct > 0) return direct;
+  return estimateBytesFromBitrate(streamBitrate(f), durationSec);
+}
+
+function estimateAudioBytes(formats: VideoFormat[], durationSec: number): number {
+  let best = 0;
+  for (const f of formats) {
+    const direct = formatBytes(f);
+    const est =
+      direct > 0 ? direct : estimateBytesFromBitrate(audioBitrate(f), durationSec);
+    best = Math.max(best, est);
+  }
+  return best;
 }
 
 /** Standard resolution label — uses the shorter edge for vertical/square video. */
@@ -71,11 +105,20 @@ function groupKey(f: VideoFormat): string {
   return `${effectiveResolution(f)}-${fps}`;
 }
 
-function preferFormat(a: VideoFormat, b: VideoFormat): VideoFormat {
+function isH264Codec(vcodec?: string): boolean {
+  if (!vcodec) return false;
+  const v = vcodec.toLowerCase();
+  return v.includes('avc1') || v.includes('h264') || v.includes('avc');
+}
+
+function preferFormat(a: VideoFormat, b: VideoFormat, durationSec: number): VideoFormat {
   const score = (f: VideoFormat) => {
-    let s = formatBytes(f);
-    if (f.ext === 'mp4') s += 1_000_000_000;
+    const bytes = estimateFormatBytes(f, durationSec);
+    let s = bytes;
+    if (f.ext === 'mp4') s += 1_000_000;
     if (isCombined(f)) s += 500_000_000;
+    if (isH264Codec(f.vcodec)) s += 50_000_000;
+    if (!bytes) s -= 2_000_000_000;
     return s;
   };
   return score(a) >= score(b) ? a : b;
@@ -111,10 +154,7 @@ export function getVideoQualityOptions(
   const audioFormats = formats.filter(
     (f) => hasAudio(f) && (!f.vcodec || f.vcodec === 'none'),
   );
-  const bestAudioBytes = audioFormats.reduce(
-    (max, f) => Math.max(max, formatBytes(f)),
-    0,
-  );
+  const bestAudioBytes = estimateAudioBytes(audioFormats, duration);
 
   const groups = new Map<string, VideoFormat[]>();
   for (const f of videoFormats) {
@@ -131,13 +171,13 @@ export function getVideoQualityOptions(
   for (const [, group] of groups) {
     let best = group[0];
     for (const f of group.slice(1)) {
-      best = preferFormat(best, f);
+      best = preferFormat(best, f, duration);
     }
 
     const resolution = effectiveResolution(best);
     const fps = best.fps ? Math.round(best.fps) : undefined;
 
-    let filesize = formatBytes(best);
+    let filesize = estimateFormatBytes(best, duration);
     if (!isCombined(best) && bestAudioBytes > 0) {
       filesize = filesize > 0 ? filesize + bestAudioBytes : bestAudioBytes;
     }

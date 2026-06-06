@@ -7,16 +7,25 @@ import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export function LogoUploadField({
+const DEFAULT_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif';
+
+export function ImageUploadField({
   label,
   value,
   onChange,
   hint,
+  accept = DEFAULT_ACCEPT,
+  showUrlField = false,
+  previewClassName = 'h-10 w-10',
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
   hint?: string;
+  accept?: string;
+  /** Show optional URL text field (off by default — upload only). */
+  showUrlField?: boolean;
+  previewClassName?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -42,9 +51,9 @@ export function LogoUploadField({
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
 
       {value?.trim() && (
-        <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-background p-3">
-          <div className="relative h-10 w-10 shrink-0">
-            <Image src={value.trim()} alt="Logo preview" fill className="object-contain" unoptimized />
+        <div className="flex items-center gap-3 rounded-lg border border-border bg-background p-3">
+          <div className={`relative shrink-0 ${previewClassName}`}>
+            <Image src={value.trim()} alt="Preview" fill className="object-contain" unoptimized />
           </div>
           <span className="text-xs text-muted-foreground truncate flex-1">{value}</span>
           <Button type="button" variant="outline" size="sm" onClick={() => onChange('')}>
@@ -57,7 +66,7 @@ export function LogoUploadField({
         <input
           ref={inputRef}
           type="file"
-          accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+          accept={accept}
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
@@ -76,13 +85,25 @@ export function LogoUploadField({
         </Button>
       </div>
 
-      <Input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Or paste URL: /uploads/logo.png or https://…"
-      />
+      {showUrlField && (
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Or paste URL: /uploads/image.png or https://…"
+        />
+      )}
 
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
+}
+
+/** @deprecated use ImageUploadField */
+export function LogoUploadField(props: {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+  hint?: string;
+}) {
+  return <ImageUploadField {...props} showUrlField />;
 }

@@ -79,10 +79,22 @@ enum SubscriptionStatus {
   PAST_DUE
 }
 
+enum ThumbnailPromptType {
+  GLOBAL
+  CATEGORY
+  ADJUST
+}
+
+enum ThumbnailPromptStatus {
+  ENABLED
+  DISABLED
+}
+
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
-  passwordHash  String   @map("password_hash")
+  passwordHash  String?  @map("password_hash")
+  googleId      String?  @unique @map("google_id")
   name          String?
   role          UserRole @default(USER)
   plan          PlanType @default(FREE)
@@ -92,14 +104,15 @@ model User {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  downloads     Download[]
-  playlists     Playlist[]
-  thumbnails    Thumbnail[]
-  subscriptions Subscription[]
-  transactions  Transaction[]
-  creditLogs    CreditLog[]
-  payments      Payment[]
-  analytics     Analytics[]
+  downloads           Download[]
+  playlists           Playlist[]
+  thumbnails          Thumbnail[]
+  subscriptions       Subscription[]
+  transactions        Transaction[]
+  creditLogs          CreditLog[]
+  payments            Payment[]
+  analytics           Analytics[]
+  fourKInterestSurvey FourKInterestSurvey?
 
   @@map("users")
 }
@@ -308,15 +321,17 @@ model ThumbnailAiSettings {
 
 model AiApiSettings {
   id                          Int       @id @default(1)
+  textProvider                String    @default("openai") @map("text_provider")
+  textModel                   String    @default("gpt-5-mini") @map("text_model")
   openaiApiKey                String    @default("") @map("openai_api_key")
-  openaiModel                 String    @default("gpt-5-mini") @map("openai_model")
   openaiConnectionStatus      String    @default("unknown") @map("openai_connection_status")
   openaiLastTestedAt          DateTime? @map("openai_last_tested_at")
-  freepikApiKey               String    @default("") @map("freepik_api_key")
-  freepikConnectionStatus     String    @default("unknown") @map("freepik_connection_status")
-  freepikLastTestedAt         DateTime? @map("freepik_last_tested_at")
-  basicPlanModel              String    @default("flux-dev") @map("basic_plan_model")
-  proPlanModel                String    @default("flux-dev") @map("pro_plan_model")
+  imageProvider               String    @default("fal") @map("image_provider")
+  basicImageModel             String    @default("flux-dev") @map("basic_image_model")
+  proImageModel               String    @default("flux-kontext-pro") @map("pro_image_model")
+  falApiKey                   String    @default("") @map("fal_api_key")
+  falConnectionStatus         String    @default("unknown") @map("fal_connection_status")
+  falLastTestedAt             DateTime? @map("fal_last_tested_at")
   enableAiAnalysis            Boolean   @default(true) @map("enable_ai_analysis")
   enableAiThumbnailGeneration Boolean   @default(true) @map("enable_ai_thumbnail_generation")
   enableAiImproveThumbnail    Boolean   @default(true) @map("enable_ai_improve_thumbnail")
@@ -326,4 +341,58 @@ model AiApiSettings {
   updatedAt                   DateTime  @updatedAt @map("updated_at")
 
   @@map("ai_api_settings")
+}
+
+model ThumbnailPrompt {
+  id        String                @id @default(cuid())
+  name      String
+  slug      String                @unique
+  type      ThumbnailPromptType
+  content   String                @default("")
+  status    ThumbnailPromptStatus @default(ENABLED)
+  createdAt DateTime              @default(now()) @map("created_at")
+  updatedAt DateTime              @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@index([status])
+  @@map("thumbnail_prompts")
+}
+
+model SiteSettings {
+  id                     Int      @id @default(1)
+  siteName               String   @default("HelloDownloader") @map("site_name")
+  siteUrl                String   @default("") @map("site_url")
+  titleTemplate          String   @default("%s | HelloDownloader") @map("title_template")
+  defaultMetaTitle       String   @default("") @map("default_meta_title")
+  defaultMetaDescription String   @default("") @map("default_meta_description")
+  defaultKeywords        String   @default("") @map("default_keywords")
+  defaultOgImage         String   @default("") @map("default_og_image")
+  faviconUrl             String   @default("") @map("favicon_url")
+  globalHeadHtml         String   @default("") @map("global_head_html")
+  globalHeadJs           String   @default("") @map("global_head_js")
+  globalCss              String   @default("") @map("global_css")
+  globalBodyJs           String   @default("") @map("global_body_js")
+  googleSiteVerification String   @default("") @map("google_site_verification")
+  bingSiteVerification   String   @default("") @map("bing_site_verification")
+  customHeadSnippet      String   @default("") @map("custom_head_snippet")
+  verificationFiles      Json?    @map("verification_files")
+  routeSeo               Json?    @map("route_seo")
+  googleAuthEnabled      Boolean  @default(false) @map("google_auth_enabled")
+  googleClientId         String   @default("") @map("google_client_id")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
+
+model FourKInterestSurvey {
+  id         String   @id @default(cuid())
+  interested Boolean  @map("interested")
+  userId     String?  @unique @map("user_id")
+  visitorId  String?  @unique @map("visitor_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("four_k_interest_surveys")
 }

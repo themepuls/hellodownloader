@@ -2,15 +2,17 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { apiClient } from '@/lib/api';
-import { saveCompletedFile } from '@/lib/save-file';
+import { extensionForDownloadType, releaseDownloadOnServer, saveCompletedFile } from '@/lib/save-file';
 
 export interface DownloadRecord {
   id: string;
   status: string;
+  type?: string;
   progress: number;
   title?: string | null;
   error?: string | null;
   downloadUrl?: string | null;
+  fileSize?: string | null;
   message?: string;
 }
 
@@ -21,10 +23,14 @@ export function useDownloader(initialUrl = '') {
   const [url, setUrl] = useState(initialUrl);
   const [metadata, setMetadata] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [download, setDownload] = useState<DownloadRecord | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveStarted, setSaveStarted] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const failCountRef = useRef(0);
+  const metadataAbortRef = useRef<AbortController | null>(null);
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
@@ -34,12 +40,38 @@ export function useDownloader(initialUrl = '') {
     failCountRef.current = 0;
   }, []);
 
-  const clearActiveDownload = useCallback(() => {
-    stopPolling();
-    sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
-    sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
-    setDownload(null);
-  }, [stopPolling]);
+  const clearActiveDownload = useCallback(
+    (releaseFile = false) => {
+      const id = sessionStorage.getItem(ACTIVE_DOWNLOAD_KEY);
+      if (releaseFile && id) {
+        releaseDownloadOnServer(id);
+      }
+      stopPolling();
+      sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
+      sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+      setDownload(null);
+    },
+    [stopPolling],
+  );
+
+  const cancelAnalysis = useCallback(() => {
+    metadataAbortRef.current?.abort();
+    metadataAbortRef.current = null;
+    setAnalyzing(false);
+    setError(null);
+  }, []);
+
+  const cancelDownload = useCallback(() => {
+    clearActiveDownload(true);
+    setLoading(false);
+    setError(null);
+  }, [clearActiveDownload]);
+
+  const cancelAll = useCallback(() => {
+    cancelAnalysis();
+    cancelDownload();
+    setMetadata(null);
+  }, [cancelAnalysis, cancelDownload]);
 
   const fetchStatus = useCallback(async (id: string): Promise<DownloadRecord | null> => {
     try {
@@ -109,19 +141,36 @@ export function useDownloader(initialUrl = '') {
     const savedId = sessionStorage.getItem(ACTIVE_DOWNLOAD_KEY);
     const savedUrl = sessionStorage.getItem(ACTIVE_DOWNLOAD_URL_KEY);
 
-    if (!savedId || !savedUrl) {
+    if (!savedId) {
       return () => stopPolling();
     }
 
-    if (initialUrl.trim() && savedUrl.trim() !== initialUrl.trim()) {
-      sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
-      sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
-      return () => stopPolling();
-    }
+    void (async () => {
+      try {
+        const status = (await apiClient.downloads.status(savedId)) as DownloadRecord;
 
-    setUrl(savedUrl);
-    setLoading(true);
-    void fetchStatus(savedId).finally(() => setLoading(false));
+        if (status.status === 'COMPLETED') {
+          releaseDownloadOnServer(savedId);
+          sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
+          sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+          return;
+        }
+
+        if (initialUrl.trim() && savedUrl?.trim() !== initialUrl.trim()) {
+          releaseDownloadOnServer(savedId);
+          sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
+          sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+          return;
+        }
+
+        if (savedUrl) setUrl(savedUrl);
+        pollStatus(savedId, savedUrl ?? undefined);
+      } catch {
+        sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
+        sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+      }
+    })();
+
     return () => stopPolling();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -129,30 +178,47 @@ export function useDownloader(initialUrl = '') {
   const setUrlSafe = useCallback(
     (newUrl: string) => {
       if (url.trim() !== newUrl.trim()) {
-        clearActiveDownload();
+        cancelDownload();
+        cancelAnalysis();
       }
       setUrl(newUrl);
     },
-    [url, clearActiveDownload],
+    [url, cancelDownload, cancelAnalysis],
   );
 
   const fetchMetadata = async () => {
     if (!url) return;
-    clearActiveDownload();
-    setLoading(true);
+    metadataAbortRef.current?.abort();
+    const controller = new AbortController();
+    metadataAbortRef.current = controller;
+
+    clearActiveDownload(true);
+    setMetadata(null);
+    setAnalyzing(true);
     setError(null);
+
     try {
-      const data = await apiClient.downloads.metadata(url);
+      const data = await apiClient.downloads.metadata(url, controller.signal);
+      if (controller.signal.aborted) return;
       setMetadata(data as Record<string, unknown>);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to fetch metadata');
+      if (controller.signal.aborted) return;
+      const message = e instanceof Error ? e.message : 'Failed to fetch metadata';
+      if (message !== 'Cancelled') {
+        setError(message);
+      }
     } finally {
-      setLoading(false);
+      if (metadataAbortRef.current === controller) {
+        metadataAbortRef.current = null;
+      }
+      if (!controller.signal.aborted) {
+        setAnalyzing(false);
+      }
     }
   };
 
   const startDownload = async (type: string, quality?: number, format?: string) => {
-    clearActiveDownload();
+    clearActiveDownload(true);
     setLoading(true);
     setError(null);
     try {
@@ -169,18 +235,36 @@ export function useDownloader(initialUrl = '') {
   const saveToPc = async () => {
     if (!download?.id) return;
     setError(null);
-    setLoading(true);
+    setSaveStarted(false);
+    setSaving(true);
     try {
-      await saveCompletedFile(
+      let fresh = download;
+      if (!download.downloadUrl || !download.fileSize) {
+        fresh = (await apiClient.downloads.status(download.id)) as DownloadRecord;
+        setDownload((prev) => ({ ...prev, ...fresh, progress: 100 }));
+      }
+
+      const downloadType = fresh.type ?? download.type;
+      const fileExtension = extensionForDownloadType(downloadType);
+
+      const result = await saveCompletedFile(
         `/downloads/${download.id}/file`,
-        download.title ? `${download.title}` : `download-${download.id}`,
+        fresh.title ?? download.title ?? `download-${download.id}`,
+        {
+          downloadUrl: fresh.downloadUrl ?? download.downloadUrl,
+          fileSizeBytes: fresh.fileSize ?? download.fileSize,
+          fileExtension,
+          forceExtension: downloadType === 'MP3',
+        },
       );
-      sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
-      sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+
+      if (result === 'started') {
+        setSaveStarted(true);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to save file');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -189,11 +273,17 @@ export function useDownloader(initialUrl = '') {
     setUrl: setUrlSafe,
     metadata,
     loading,
+    analyzing,
+    saving,
+    saveStarted,
     error,
     download,
     fetchMetadata,
     startDownload,
     saveToPc,
     refreshStatus,
+    cancelAnalysis,
+    cancelDownload,
+    cancelAll,
   };
 }

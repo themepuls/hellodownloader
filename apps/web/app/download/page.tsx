@@ -24,7 +24,7 @@ export default function DownloadPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-[60vh] items-center justify-center bg-[#0b0e14]">
+        <div className="flex min-h-[60vh] items-center justify-center bg-background">
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       }

@@ -8,6 +8,9 @@ import {
   DEFAULT_HOME_CONTENT,
   DEFAULT_PRICING_CONTENT,
   DEFAULT_SIMPLE_PAGE,
+  DEFAULT_TERMS_CONTENT,
+  DEFAULT_PRIVACY_CONTENT,
+  DEFAULT_DMCA_CONTENT,
   DEFAULT_TOOLS_CONTENT,
   mergeContent,
   PAGE_DEFAULTS,
@@ -22,11 +25,17 @@ import {
   type ToolsPageContent,
 } from '@hellodownloader/shared-types';
 import { Field, PublishedToggle, SectionBlock, StringListEditor, TextArea } from './ContentFields';
-import { LogoUploadField } from './LogoUploadField';
+import { LogoUploadField } from './ImageUploadField';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const BUILT_IN = new Set(Object.keys(PAGE_DEFAULTS));
+
+const BUILT_IN_PUBLIC_PATHS: Record<string, string> = {
+  terms: '/terms',
+  privacy: '/privacy',
+  dmca: '/dmca',
+};
 
 export function HomePageEditor({
   sections,
@@ -58,7 +67,7 @@ export function HomePageEditor({
         <Field label="Section title" value={sections.features.title} onChange={(v) => set({ features: { ...sections.features, title: v } })} />
         <Field label="Section subtitle" value={sections.features.subtitle} onChange={(v) => set({ features: { ...sections.features, subtitle: v } })} />
         {sections.features.items.map((item, i) => (
-          <div key={i} className="rounded-lg border border-white/10 p-4 space-y-2">
+          <div key={i} className="rounded-lg border border-border p-4 space-y-2">
             <p className="text-xs text-muted-foreground">Feature {i + 1}</p>
             <Field label="Icon key (download, listMusic, music, captions, image, archive)" value={item.icon} onChange={(v) => {
               const items = [...sections.features.items];
@@ -82,7 +91,7 @@ export function HomePageEditor({
       <SectionBlock title="How it works">
         <Field label="Section title" value={sections.steps.title} onChange={(v) => set({ steps: { ...sections.steps, title: v } })} />
         {sections.steps.items.map((item, i) => (
-          <div key={i} className="rounded-lg border border-white/10 p-4 space-y-2">
+          <div key={i} className="rounded-lg border border-border p-4 space-y-2">
             <Field label={`Step ${i + 1} title`} value={item.title} onChange={(v) => {
               const items = [...sections.steps.items];
               items[i] = { ...item, title: v };
@@ -219,6 +228,16 @@ export function ToolsPageEditor({ sections, published, onSectionsChange, onPubli
       <Field label="Pro card title" value={sections.proCardTitle} onChange={(v) => set({ proCardTitle: v })} />
       <TextArea label="Pro locked message" value={sections.proLockedText} onChange={(v) => set({ proLockedText: v })} />
       <Field label="Upgrade button" value={sections.proUpgradeButton} onChange={(v) => set({ proUpgradeButton: v })} />
+      <Field
+        label="Generate coming soon title"
+        value={sections.generateComingSoonTitle}
+        onChange={(v) => set({ generateComingSoonTitle: v })}
+      />
+      <TextArea
+        label="Generate coming soon message"
+        value={sections.generateComingSoonText}
+        onChange={(v) => set({ generateComingSoonText: v })}
+      />
     </div>
   );
 }
@@ -237,7 +256,7 @@ export function FaqPageEditor({ sections, published, onSectionsChange, onPublish
       <Field label="Page title" value={sections.title} onChange={(v) => set({ title: v })} />
       <Field label="Subtitle" value={sections.subtitle} onChange={(v) => set({ subtitle: v })} />
       {sections.items.map((item, i) => (
-        <div key={i} className="rounded-lg border border-white/10 p-4 space-y-2">
+        <div key={i} className="rounded-lg border border-border p-4 space-y-2">
           <Field label="Question" value={item.question} onChange={(v) => {
             const items = [...sections.items];
             items[i] = { ...item, question: v };
@@ -267,11 +286,14 @@ export function SimplePageEditor({ sections, published, onSectionsChange, onPubl
   onPublishedChange: (v: boolean) => void;
   slug: string;
 }) {
+  const publicPath = BUILT_IN_PUBLIC_PATHS[slug] ?? `/p/${slug}`;
+
   return (
     <div className="space-y-4 max-w-2xl">
       <PublishedToggle published={published} onChange={onPublishedChange} />
       <p className="text-xs text-muted-foreground">
-        Public URL: <code>/p/{slug}</code> (publish to make it live)
+        Public URL: <code>{publicPath}</code>
+        {BUILT_IN_PUBLIC_PATHS[slug] ? ' (built-in page)' : ' (publish to make it live)'}
       </p>
       <Field label="Page title" value={sections.title} onChange={(v) => onSectionsChange({ ...sections, title: v })} />
       <TextArea label="Body text" value={sections.body} onChange={(v) => onSectionsChange({ ...sections, body: v })} rows={12} />
@@ -344,7 +366,7 @@ export function HeaderPageEditor({
           Add <strong>dropdown items</strong> under a menu entry, or set a direct link with href (leave children empty).
         </p>
         {sections.menu.map((item, i) => (
-          <div key={i} className="rounded-lg border border-white/10 p-4 space-y-3">
+          <div key={i} className="rounded-lg border border-border p-4 space-y-3">
             <p className="text-xs font-medium text-muted-foreground">Menu item {i + 1}</p>
             <Field label="Label" value={item.label} onChange={(v) => updateMenuItem(i, { label: v })} />
             <Field
@@ -502,7 +524,7 @@ export function FooterPageEditor({
 
       <SectionBlock title="Link columns">
         {sections.columns.map((col, colIndex) => (
-          <div key={colIndex} className="rounded-lg border border-white/10 p-4 space-y-3">
+          <div key={colIndex} className="rounded-lg border border-border p-4 space-y-3">
             <Field label="Column title" value={col.title} onChange={(v) => updateColumn(colIndex, { title: v })} />
             {col.links.map((link, linkIndex) => (
               <div key={linkIndex} className="flex gap-2">
@@ -584,6 +606,9 @@ export function parseSectionsForSlug(slug: string, raw: Record<string, unknown>)
   if (slug === 'download') return mergeContent(DEFAULT_DOWNLOAD_CONTENT, raw) as DownloadPageContent;
   if (slug === 'tools') return mergeContent(DEFAULT_TOOLS_CONTENT, raw) as ToolsPageContent;
   if (slug === 'faq') return mergeContent(DEFAULT_FAQ_CONTENT, raw) as FaqPageContent;
+  if (slug === 'terms') return mergeContent(DEFAULT_TERMS_CONTENT, raw) as SimplePageContent;
+  if (slug === 'privacy') return mergeContent(DEFAULT_PRIVACY_CONTENT, raw) as SimplePageContent;
+  if (slug === 'dmca') return mergeContent(DEFAULT_DMCA_CONTENT, raw) as SimplePageContent;
   return mergeContent(DEFAULT_SIMPLE_PAGE, raw) as SimplePageContent;
 }
 

@@ -32,7 +32,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 mb-8">
-        <div className="rounded-xl border border-white/10 p-4">
+        <div className="rounded-xl border border-border p-4">
           <h2 className="font-semibold mb-3">Downloads by type</h2>
           <ul className="space-y-2 text-sm">
             {data &&
@@ -44,7 +44,7 @@ export default function AdminAnalyticsPage() {
               ))}
           </ul>
         </div>
-        <div className="rounded-xl border border-white/10 p-4">
+        <div className="rounded-xl border border-border p-4">
           <h2 className="font-semibold mb-3">Downloads by status</h2>
           <ul className="space-y-2 text-sm">
             {data &&
@@ -58,7 +58,7 @@ export default function AdminAnalyticsPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/10 p-4 mb-8">
+      <div className="rounded-xl border border-border p-4 mb-8">
         <h2 className="font-semibold mb-4">Downloads last 7 days</h2>
         <div className="flex items-end gap-2 h-32">
           {data?.downloadsPerDay.map((d) => (
@@ -75,7 +75,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {data?.topEvents.length ? (
-        <div className="rounded-xl border border-white/10 p-4">
+        <div className="rounded-xl border border-border p-4">
           <h2 className="font-semibold mb-3">Top events</h2>
           <ul className="space-y-2 text-sm">
             {data.topEvents.map((e) => (

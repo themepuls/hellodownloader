@@ -12,8 +12,11 @@ import {
   Image,
   KeyRound,
   LayoutDashboard,
+  MessageSquareText,
+  Megaphone,
   Settings,
   Shield,
+  Globe,
   Users,
   Wallet,
 } from 'lucide-react';
@@ -27,11 +30,14 @@ const links = [
   { href: '/admin/downloads', label: 'Downloads', icon: Download },
   { href: '/admin/payments', label: 'Payments', icon: Wallet },
   { href: '/admin/thumbnails', label: 'Thumbnails', icon: Image },
+  { href: '/admin/thumbnail-prompts', label: 'Thumbnail Prompts', icon: MessageSquareText },
   { href: '/admin/api-settings', label: 'API Settings', icon: KeyRound },
   { href: '/admin/credits', label: 'Credits', icon: Coins },
   { href: '/admin/storage', label: 'Storage', icon: HardDrive },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/content', label: 'Content', icon: FileText },
+  { href: '/admin/site-settings', label: 'Site Settings', icon: Globe },
+  { href: '/admin/ads', label: 'Ads', icon: Megaphone },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -57,7 +63,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex">
-      <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-white/10 bg-[#0b0e14]/50 p-4 gap-1">
+      <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-border bg-background/50 p-4 gap-1">
         <div className="flex items-center gap-2 px-2 py-3 mb-2 font-semibold text-primary">
           <Shield className="h-5 w-5" />
           Admin
@@ -72,7 +78,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
                 active
                   ? 'bg-primary/15 text-primary font-medium'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-white/5',
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent',
               )}
             >
               <Icon className="h-4 w-4" />
@@ -80,9 +86,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </Link>
           );
         })}
-        <div className="mt-auto pt-4 border-t border-white/10">
+        <div className="mt-auto pt-4 border-t border-border">
           <Link href="/dashboard">
-            <Button variant="outline" size="sm" className="w-full border-white/10">
+            <Button variant="outline" size="sm" className="w-full border-border">
               User dashboard
             </Button>
           </Link>
@@ -147,7 +153,7 @@ export function PaginationBar({
 
 export function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-card p-4">
+    <div className="rounded-xl border border-border bg-card p-4">
       <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
       <p className="text-2xl font-bold mt-1">{value}</p>
       {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}

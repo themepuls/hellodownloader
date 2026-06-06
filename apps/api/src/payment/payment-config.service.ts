@@ -180,6 +180,23 @@ export class PaymentConfigService implements OnModuleInit {
     return rows;
   }
 
+  /** Public API — which checkout methods are available (no secrets). */
+  async getPublicMethods() {
+    const rows = await this.getAll();
+    const stripe = rows.find((r) => r.provider === 'STRIPE')!;
+    const binance = rows.find((r) => r.provider === 'BINANCE')!;
+    const sslcommerz = rows.find((r) => r.provider === 'SSLCOMMERZ')!;
+    const methods = {
+      stripe: stripe.enabled,
+      binance: binance.enabled,
+      sslcommerz: sslcommerz.enabled,
+    };
+    return {
+      ...methods,
+      anyEnabled: methods.stripe || methods.binance || methods.sslcommerz,
+    };
+  }
+
   /** Admin API — secrets masked. */
   async getAllForAdmin() {
     const rows = await this.getAll();

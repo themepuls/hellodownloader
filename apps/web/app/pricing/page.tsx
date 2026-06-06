@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,11 +11,28 @@ import { DEFAULT_PRICING_CONTENT, type PricingPageContent } from '@hellodownload
 
 type PaymentGateway = 'stripe' | 'binance' | 'sslcommerz';
 
+type PaymentMethods = {
+  stripe: boolean;
+  binance: boolean;
+  sslcommerz: boolean;
+  anyEnabled: boolean;
+};
+
 export default function PricingPage() {
   const user = useUserStore((s) => s.user);
   const content = usePageContent<PricingPageContent>('pricing', DEFAULT_PRICING_CONTENT);
   const [loading, setLoading] = useState<PaymentGateway | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethods | null>(null);
+
+  useEffect(() => {
+    apiClient.billing
+      .paymentMethods()
+      .then(setPaymentMethods)
+      .catch(() =>
+        setPaymentMethods({ stripe: false, binance: false, sslcommerz: false, anyEnabled: false }),
+      );
+  }, []);
 
   const handleUpgrade = async (gateway: PaymentGateway) => {
     setLoading(gateway);
@@ -41,7 +58,7 @@ export default function PricingPage() {
   const isPro = user?.plan === 'PRO';
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-16 max-w-4xl">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">{content.header.title}</h1>
         <p className="text-muted-foreground text-lg">{content.header.subtitle}</p>
@@ -98,18 +115,32 @@ export default function PricingPage() {
 
             {!isPro && (
               <div className="space-y-2">
-                <Button className="w-full" onClick={() => handleUpgrade('stripe')} disabled={loading !== null}>
-                  {loading === 'stripe' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Pay with Stripe
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => handleUpgrade('binance')} disabled={loading !== null}>
-                  {loading === 'binance' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Pay with Binance Pay (USDT)
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => handleUpgrade('sslcommerz')} disabled={loading !== null}>
-                  {loading === 'sslcommerz' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Pay with SSLCommerz (BDT)
-                </Button>
+                {!paymentMethods ? null : !paymentMethods.anyEnabled ? (
+                  <Button className="w-full" disabled>
+                    Coming soon
+                  </Button>
+                ) : (
+                  <>
+                    {paymentMethods.stripe && (
+                      <Button className="w-full" onClick={() => handleUpgrade('stripe')} disabled={loading !== null}>
+                        {loading === 'stripe' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                        Pay with Stripe
+                      </Button>
+                    )}
+                    {paymentMethods.binance && (
+                      <Button variant="outline" className="w-full" onClick={() => handleUpgrade('binance')} disabled={loading !== null}>
+                        {loading === 'binance' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                        Pay with Binance Pay (USDT)
+                      </Button>
+                    )}
+                    {paymentMethods.sslcommerz && (
+                      <Button variant="outline" className="w-full" onClick={() => handleUpgrade('sslcommerz')} disabled={loading !== null}>
+                        {loading === 'sslcommerz' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                        Pay with SSLCommerz (BDT)
+                      </Button>
+                    )}
+                  </>
+                )}
               </div>
             )}
             {isPro && <Button variant="outline" className="w-full" disabled>You are on Pro</Button>}

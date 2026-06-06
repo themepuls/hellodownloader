@@ -18,16 +18,19 @@ import {
   SimplePageEditor,
   ToolsPageEditor,
 } from '@/components/admin/content/PageEditors';
+import { SeoFieldsEditor } from '@/components/admin/content/SeoFieldsEditor';
 import type {
   DownloadPageContent,
   FaqPageContent,
   FooterContent,
   HeaderContent,
   HomePageContent,
+  PageSeoContent,
   PricingPageContent,
   SimplePageContent,
   ToolsPageContent,
 } from '@hellodownloader/shared-types';
+import { mergePageSeo } from '@hellodownloader/shared-types';
 
 type ContentPage = {
   slug: string;
@@ -209,7 +212,7 @@ export default function AdminContentPage() {
       {error && <p className="text-sm text-destructive mb-4">{error}</p>}
 
       <div className="grid lg:grid-cols-[240px_1fr] gap-6">
-        <aside className="rounded-xl border border-white/10 bg-card p-4 space-y-2">
+        <aside className="rounded-xl border border-border bg-card p-4 space-y-2">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-2 mb-2">
             Pages
           </p>
@@ -221,7 +224,7 @@ export default function AdminContentPage() {
               className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-left transition ${
                 selected === page.slug
                   ? 'bg-primary/15 text-primary font-medium'
-                  : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
               <FileText className="h-4 w-4 shrink-0" />
@@ -235,7 +238,7 @@ export default function AdminContentPage() {
               New page
             </Button>
           ) : (
-            <div className="mt-2 space-y-2 border-t border-white/10 pt-3">
+            <div className="mt-2 space-y-2 border-t border-border pt-3">
               <Input placeholder="slug (e.g. about)" value={newSlug} onChange={(e) => setNewSlug(e.target.value)} />
               <Input placeholder="Page title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
               <div className="flex gap-2">
@@ -250,7 +253,7 @@ export default function AdminContentPage() {
           )}
         </aside>
 
-        <div className="rounded-xl border border-white/10 bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-6">
           {!selectedPage ? (
             <p className="text-sm text-muted-foreground">Select a page.</p>
           ) : (
@@ -261,12 +264,20 @@ export default function AdminContentPage() {
                   {selected === 'header' || selected === 'footer'
                     ? 'Site-wide on all pages'
                     : BUILT_IN.has(selected) && selected !== 'header' && selected !== 'footer'
-                      ? `Built-in route: /${selected === 'tools' ? 'thumbnail' : selected}`
+                      ? `Built-in route: ${selected === 'tools' ? '/thumbnail' : `/${selected}`}`
                       : `Custom route: /p/${selected}`}
                 </p>
               </div>
               {renderEditor()}
-              <div className="mt-8 pt-6 border-t border-white/10">
+              {selected !== 'header' && selected !== 'footer' && (
+                <div className="mt-8">
+                  <SeoFieldsEditor
+                    seo={mergePageSeo(sections.seo as Partial<PageSeoContent> | undefined)}
+                    onChange={(seo) => setSections((s) => ({ ...s, seo }))}
+                  />
+                </div>
+              )}
+              <div className="mt-8 pt-6 border-t border-border">
                 <Button type="button" onClick={save} disabled={saving}>
                   {saving ? 'Saving…' : 'Save changes'}
                 </Button>
