@@ -84,7 +84,7 @@ export function ThumbnailInfoCard({
             variant="secondary"
           >
             <Download className="h-4 w-4" />
-            {downloading ? 'Downloading…' : 'Download original (free)'}
+            {downloading ? 'Downloading…' : 'Download original thumbnail (free)'}
           </Button>
         )}
       </CardContent>

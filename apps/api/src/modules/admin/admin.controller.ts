@@ -18,6 +18,9 @@ import { AdminService } from './admin.service';
 import { AdsService } from '../ads/ads.service';
 import { ContentService } from '../content/content.service';
 import { SiteSettingsService } from '../site-settings/site-settings.service';
+import { StorageSettingsService } from '../storage-settings/storage-settings.service';
+import { StorageService } from '../../services/storage.service';
+import { UpdateStorageSettingsDto } from '../storage-settings/storage-settings.dto';
 import {
   SaveAiFeaturesDto,
   SaveAiProvidersDto,
@@ -81,6 +84,8 @@ export class AdminController {
     private content: ContentService,
     private ads: AdsService,
     private siteSettings: SiteSettingsService,
+    private storageSettings: StorageSettingsService,
+    private storageService: StorageService,
   ) {}
 
   @Get('stats')
@@ -258,6 +263,21 @@ export class AdminController {
   @Post('storage/cleanup')
   cleanup(@Body() dto: CleanupDto) {
     return this.admin.runCleanup(dto.hours);
+  }
+
+  @Get('storage-settings')
+  getStorageSettings() {
+    return this.storageSettings.getAdmin();
+  }
+
+  @Patch('storage-settings')
+  updateStorageSettings(@Body() dto: UpdateStorageSettingsDto) {
+    return this.storageSettings.updateAdmin(dto);
+  }
+
+  @Post('storage-settings/r2/test')
+  testStorageR2() {
+    return this.storageService.testR2Connection();
   }
 
   @Get('analytics')

@@ -30,6 +30,10 @@ export class SslcommerzWebhookController {
   @HttpCode(200)
   async handleFail(@Body() payload: Record<string, string>) {
     this.logger.warn(`SSLCommerz payment failed: tran_id=${payload['tran_id']}`);
+    if (!(await this.sslcommerz.verifyHashAsync(payload))) {
+      this.logger.warn('SSLCommerz fail webhook hash verification failed');
+      return { status: 'INVALID' };
+    }
     if (payload['tran_id']) {
       await this.sslcommerz.markFailed(payload['tran_id'], 'FAILED');
     }
@@ -41,6 +45,10 @@ export class SslcommerzWebhookController {
   @HttpCode(200)
   async handleCancel(@Body() payload: Record<string, string>) {
     this.logger.log(`SSLCommerz payment cancelled: tran_id=${payload['tran_id']}`);
+    if (!(await this.sslcommerz.verifyHashAsync(payload))) {
+      this.logger.warn('SSLCommerz cancel webhook hash verification failed');
+      return { status: 'INVALID' };
+    }
     if (payload['tran_id']) {
       await this.sslcommerz.markFailed(payload['tran_id'], 'FAILED');
     }

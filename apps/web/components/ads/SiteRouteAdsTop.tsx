@@ -31,7 +31,7 @@ export function SiteRouteAdsTop() {
 
   return (
     <div className="border-b border-border/60 bg-background/60">
-      <div className="container mx-auto max-w-5xl px-4 py-3">
+      <div className="container mx-auto max-w-5xl px-4">
         <PageAdsTop page={page} />
       </div>
     </div>

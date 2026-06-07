@@ -113,12 +113,15 @@ function isH264Codec(vcodec?: string): boolean {
 
 function preferFormat(a: VideoFormat, b: VideoFormat, durationSec: number): VideoFormat {
   const score = (f: VideoFormat) => {
-    const bytes = estimateFormatBytes(f, durationSec);
-    let s = bytes;
+    const direct = formatBytes(f);
+    const est = estimateFormatBytes(f, durationSec);
+    let s = est;
     if (f.ext === 'mp4') s += 1_000_000;
-    if (isCombined(f)) s += 500_000_000;
-    if (isH264Codec(f.vcodec)) s += 50_000_000;
-    if (!bytes) s -= 2_000_000_000;
+    // Prefer progressive/combined streams (video+audio) — avoids silent or broken MP4s.
+    if (isCombined(f)) s += 2_000_000_000;
+    if (isCombined(f) && direct > 0) s += 500_000_000;
+    if (isH264Codec(f.vcodec)) s += 10_000_000;
+    if (!est) s -= 2_000_000_000;
     return s;
   };
   return score(a) >= score(b) ? a : b;

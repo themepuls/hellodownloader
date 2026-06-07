@@ -18,6 +18,15 @@ interface UserState {
   updateUser: (partial: Partial<User>) => void;
 }
 
+function setAuthHintCookie(active: boolean) {
+  if (typeof document === 'undefined') return;
+  if (active) {
+    document.cookie = 'hd-auth-hint=1; path=/; max-age=604800; SameSite=Lax';
+  } else {
+    document.cookie = 'hd-auth-hint=; path=/; max-age=0; SameSite=Lax';
+  }
+}
+
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
@@ -27,6 +36,7 @@ export const useUserStore = create<UserState>()(
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
+          setAuthHintCookie(true);
         }
         set({ user, accessToken });
       },
@@ -34,6 +44,7 @@ export const useUserStore = create<UserState>()(
         if (typeof window !== 'undefined') {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          setAuthHintCookie(false);
         }
         set({ user: null, accessToken: null });
       },
@@ -45,6 +56,7 @@ export const useUserStore = create<UserState>()(
       onRehydrateStorage: () => (state) => {
         if (state?.accessToken && typeof window !== 'undefined') {
           localStorage.setItem('accessToken', state.accessToken);
+          setAuthHintCookie(true);
         }
       },
     },

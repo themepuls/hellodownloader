@@ -31,7 +31,7 @@ function useShowToolAds(page: CustomAdPage) {
   return {
     showTop: hasTopCustom || bannerEnabled,
     showSidebar: hasSidebar,
-    showBottom: hasBottom,
+    showBottom: hasBottom || bannerEnabled,
   };
 }
 
@@ -42,7 +42,7 @@ export function ToolPageAdsTop({ page }: { page: CustomAdPage }) {
 
   return (
     <div className={TOOL_BOX}>
-      <PageAdsTop page={page} className="pb-4" />
+      <PageAdsTop page={page} />
     </div>
   );
 }
@@ -53,7 +53,7 @@ export function ToolPageAdsBottom({ page }: { page: CustomAdPage }) {
   if (!showBottom) return null;
 
   return (
-    <div className={`${TOOL_BOX} pb-8 pt-2`}>
+    <div className={TOOL_BOX}>
       <PageAdsBottom page={page} />
     </div>
   );

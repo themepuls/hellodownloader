@@ -384,6 +384,21 @@ model SiteSettings {
   @@map("site_settings")
 }
 
+model StorageSettings {
+  id                     Int      @id @default(1)
+  r2Enabled              Boolean  @default(false) @map("r2_enabled")
+  r2AccountId            String   @default("") @map("r2_account_id")
+  r2AccessKeyId          String   @default("") @map("r2_access_key_id")
+  r2SecretAccessKey      String   @default("") @map("r2_secret_access_key")
+  r2BucketName           String   @default("hellodownloader") @map("r2_bucket_name")
+  r2PublicUrl            String   @default("") @map("r2_public_url")
+  videoRetentionHours    Int      @default(1) @map("video_retention_hours")
+  thumbnailRetentionDays Int      @default(30) @map("thumbnail_retention_days")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  @@map("storage_settings")
+}
+
 model FourKInterestSurvey {
   id         String   @id @default(cuid())
   interested Boolean  @map("interested")

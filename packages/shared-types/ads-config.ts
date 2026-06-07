@@ -1,6 +1,34 @@
 import type { CustomAdItem } from './custom-ads';
 import { activeCustomAds, normalizeCustomAds } from './custom-ads';
 
+export type AffiliateLinksConfig = {
+  enabled: boolean;
+  download: string;
+  audio: string;
+  subtitle: string;
+  thumbnail: string;
+  playlist: string;
+};
+
+export const DEFAULT_AFFILIATE_LINKS: AffiliateLinksConfig = {
+  enabled: false,
+  download: '',
+  audio: '',
+  subtitle: '',
+  thumbnail: '',
+  playlist: '',
+};
+
+export type AffiliateLinkPage = keyof Omit<AffiliateLinksConfig, 'enabled'>;
+
+/** Ensure affiliate URLs work when admins omit the scheme (e.g. google.com → https://google.com). */
+export function normalizeAffiliateUrl(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed.replace(/^\/+/, '')}`;
+}
+
 export type AdSlotCode = {
   slotId: string;
   enabled: boolean;
@@ -24,6 +52,7 @@ export type AdsPublicConfig = {
     css: string;
   };
   customAds: CustomAdItem[];
+  affiliateLinks: AffiliateLinksConfig | null;
 };
 
 export type AdsAdminConfig = {
@@ -53,6 +82,12 @@ export type AdsAdminConfig = {
   globalHeadJs: string;
   globalCss: string;
   customAds: CustomAdItem[];
+  affiliateLinksEnabled: boolean;
+  affiliateLinkDownload: string;
+  affiliateLinkAudio: string;
+  affiliateLinkSubtitle: string;
+  affiliateLinkThumbnail: string;
+  affiliateLinkPlaylist: string;
 };
 
 export const DEFAULT_ADS_ADMIN_CONFIG: AdsAdminConfig = {
@@ -82,6 +117,12 @@ export const DEFAULT_ADS_ADMIN_CONFIG: AdsAdminConfig = {
   globalHeadJs: '',
   globalCss: '',
   customAds: [],
+  affiliateLinksEnabled: false,
+  affiliateLinkDownload: '',
+  affiliateLinkAudio: '',
+  affiliateLinkSubtitle: '',
+  affiliateLinkThumbnail: '',
+  affiliateLinkPlaylist: '',
 };
 
 function slotFromAdmin(
@@ -94,6 +135,38 @@ function slotFromAdmin(
 ): AdSlotCode | null {
   if (!enabled) return null;
   return { slotId, enabled: true, adTag, html, css, js };
+}
+
+function affiliateLinksFromAdmin(admin: AdsAdminConfig, showAds: boolean): AffiliateLinksConfig | null {
+  if (!showAds || !admin.affiliateLinksEnabled) return null;
+  return {
+    enabled: true,
+    download: normalizeAffiliateUrl(admin.affiliateLinkDownload),
+    audio: normalizeAffiliateUrl(admin.affiliateLinkAudio),
+    subtitle: normalizeAffiliateUrl(admin.affiliateLinkSubtitle),
+    thumbnail: normalizeAffiliateUrl(admin.affiliateLinkThumbnail),
+    playlist: normalizeAffiliateUrl(admin.affiliateLinkPlaylist),
+  };
+}
+
+export function affiliatePageForDownloadType(type?: string | null): AffiliateLinkPage {
+  switch (type) {
+    case 'MP3':
+      return 'audio';
+    case 'SUBTITLE':
+      return 'subtitle';
+    default:
+      return 'download';
+  }
+}
+
+export function affiliateUrlForPage(
+  links: AffiliateLinksConfig | null | undefined,
+  page: AffiliateLinkPage,
+): string | null {
+  if (!links?.enabled) return null;
+  const url = normalizeAffiliateUrl(links[page] ?? '');
+  return url || null;
 }
 
 export function adsAdminToPublic(admin: AdsAdminConfig, showAds: boolean): AdsPublicConfig {
@@ -148,5 +221,6 @@ export function adsAdminToPublic(admin: AdsAdminConfig, showAds: boolean): AdsPu
       showAds && admin.customAdsEnabled
         ? activeCustomAds(normalizeCustomAds(admin.customAds))
         : [],
+    affiliateLinks: affiliateLinksFromAdmin(admin, showAds),
   };
 }

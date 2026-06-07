@@ -21,7 +21,10 @@ if (process.env.STORAGE_PATH && !path.isAbsolute(process.env.STORAGE_PATH)) {
   process.env.STORAGE_PATH = path.join(monorepoRoot, process.env.STORAGE_PATH.replace(/^\.\//, ''));
 }
 
+import { validateEnv } from '@hellodownloader/config';
+
 async function bootstrap() {
+  validateEnv(process.env);
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
     rawBody: true,

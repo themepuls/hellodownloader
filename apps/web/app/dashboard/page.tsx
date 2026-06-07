@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Download, Image, ListMusic, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Image, ListMusic, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api';
@@ -18,25 +18,61 @@ type ActivityItem = {
   fileAvailable?: boolean;
 };
 
+type DashboardStats = {
+  totalDownloads: number;
+  totalVideos: number;
+  totalPlaylists: number;
+  totalThumbnails: number;
+  credits: number;
+  plan: string;
+  historyDays?: number | null;
+  videoRetentionHours?: number;
+  thumbnailRetentionDays?: number;
+  recentActivity: ActivityItem[];
+  hiddenCount?: number;
+  unavailableCount?: number;
+  activityPage?: number;
+  activityTotalPages?: number;
+  activityTotal?: number;
+};
+
+const PAGE_SIZE = 10;
+
+function formatRetentionHours(hours: number): string {
+  return hours === 1 ? '1 hour' : `${hours} hours`;
+}
+
+function formatRetentionDays(days: number): string {
+  return days === 1 ? '1 day' : `${days} days`;
+}
+
 export default function DashboardPage() {
   const user = useUserStore((s) => s.user);
-  const [stats, setStats] = useState<{
-    totalDownloads: number;
-    totalVideos: number;
-    totalPlaylists: number;
-    totalThumbnails: number;
-    credits: number;
-    plan: string;
-    historyDays?: number | null;
-    recentActivity: ActivityItem[];
-  } | null>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [page, setPage] = useState(1);
+  const [loadingActivity, setLoadingActivity] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
-  useEffect(() => {
-    apiClient.users.dashboard().then((d) => setStats(d as NonNullable<typeof stats>)).catch(console.error);
+  const loadDashboard = useCallback(async (pageNum: number) => {
+    setLoadingActivity(true);
+    try {
+      const d = (await apiClient.users.dashboard(pageNum, PAGE_SIZE)) as DashboardStats;
+      setStats(d);
+      if (d.activityPage && d.activityPage !== pageNum) {
+        setPage(d.activityPage);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingActivity(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadDashboard(page);
+  }, [page, loadDashboard]);
 
   const handleSaveAgain = async (item: ActivityItem) => {
     setSavingId(item.id);
@@ -48,19 +84,22 @@ export default function DashboardPage() {
           auth: true,
           fileExtension: '.zip',
         });
-        setSaveNotice('Download started — check your browser downloads.');
       } else if (item.kind === 'VIDEO') {
         await saveCompletedFile(`/downloads/${item.id}/file`, item.title || `download-${item.id}`, {
-          downloadUrl: item.downloadUrl,
-          fileSizeBytes: item.fileSize,
+          auth: true,
         });
-        setSaveNotice('Download started — check your browser downloads.');
+      } else if (item.kind === 'THUMBNAIL') {
+        await saveCompletedFile(`/thumbnails/${item.id}/file`, item.title || `thumbnail-${item.id}`, {
+          auth: true,
+          fileExtension: '.jpg',
+        });
       }
+      setSaveNotice('Download started — check your browser downloads.');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Save failed';
       setSaveError(message);
       if (message.includes('no longer on server') || message.includes('expired')) {
-        void apiClient.users.dashboard().then((d) => setStats(d as NonNullable<typeof stats>));
+        void loadDashboard(page);
       }
     } finally {
       setSavingId(null);
@@ -70,7 +109,13 @@ export default function DashboardPage() {
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <p>Please <Link href="/login" className="text-primary underline">login</Link> to view dashboard.</p>
+        <p>
+          Please{' '}
+          <Link href="/login" className="text-primary underline">
+            login
+          </Link>{' '}
+          to view dashboard.
+        </p>
       </div>
     );
   }
@@ -80,6 +125,13 @@ export default function DashboardPage() {
     PLAYLIST: 'Playlist',
     THUMBNAIL: 'Thumbnail',
   };
+
+  const totalPages = stats?.activityTotalPages ?? 1;
+  const currentPage = stats?.activityPage ?? page;
+  const hiddenCount = stats?.hiddenCount ?? stats?.unavailableCount ?? 0;
+  const hasDownloadableList = (stats?.activityTotal ?? 0) > 0;
+  const videoRetention = formatRetentionHours(stats?.videoRetentionHours ?? 1);
+  const thumbnailRetention = formatRetentionDays(stats?.thumbnailRetentionDays ?? 30);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -102,7 +154,9 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Thumbnails</CardTitle>
             <Image className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent><div className="text-2xl font-bold">{stats?.totalThumbnails ?? 0}</div></CardContent>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.totalThumbnails ?? 0}</div>
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -116,80 +170,133 @@ export default function DashboardPage() {
       </div>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between gap-4">
           <CardTitle>Recent Activity</CardTitle>
-          <Link href="/download"><Button size="sm">New Download</Button></Link>
+          <Link href="/download">
+            <Button size="sm">New Download</Button>
+          </Link>
         </CardHeader>
         <CardContent>
+          <p
+            className={`text-sm rounded-lg px-3 py-2 mb-3 border ${
+              hiddenCount > 0
+                ? 'text-amber-800 dark:text-amber-200 bg-amber-500/10 border-amber-500/30'
+                : 'text-muted-foreground bg-muted/40 border-border'
+            }`}
+          >
+            Videos and playlists are available for {videoRetention} after completion, then they are
+            removed. Thumbnails stay available for {thumbnailRetention}.
+            {hiddenCount > 0 && (
+              <>
+                {' '}
+                {hiddenCount} {hiddenCount === 1 ? 'item' : 'items'} (expired, failed, or no longer
+                stored) {hiddenCount === 1 ? 'was' : 'were'} hidden from this list — start a new
+                download from the same URL if you need the file again.
+              </>
+            )}
+          </p>
           {saveError && <p className="text-sm text-destructive mb-3">{saveError}</p>}
-          {saveNotice && <p className="text-sm text-emerald-600 dark:text-green-400 mb-3">{saveNotice}</p>}
-          {stats?.recentActivity?.length ? (
-            <ul className="space-y-3">
-              {stats.recentActivity.map((item) => {
-                const canSaveAgain =
-                  item.status === 'COMPLETED' &&
-                  item.fileAvailable &&
-                  (item.kind === 'VIDEO' || item.kind === 'PLAYLIST');
-                const isSaving = savingId === item.id;
-
-                return (
-                  <li
-                    key={`${item.kind}-${item.id}`}
-                    className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b pb-3 last:border-0"
-                  >
-                    <div className="min-w-0">
-                      <span className="text-xs uppercase tracking-wide text-primary mr-2">
-                        {kindLabel[item.kind]}
-                      </span>
-                      <span className="truncate">{item.title}</span>
-                      <p className="text-sm text-muted-foreground mt-0.5">
-                        {item.status} · {item.progress}%
-                      </p>
-                    </div>
-                    <div className="shrink-0">
-                      {canSaveAgain ? (
-                        <Button
-                          size="sm"
-                          variant="default"
-                          className="gap-1.5"
-                          disabled={isSaving}
-                          onClick={() => void handleSaveAgain(item)}
-                        >
-                          {isSaving ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Download className="h-3.5 w-3.5" />
-                          )}
-                          Save again
-                        </Button>
-                      ) : item.status === 'COMPLETED' && !item.fileAvailable ? (
-                        <div className="text-right space-y-1">
-                          <span className="text-xs text-muted-foreground block">
-                            File removed from server
-                          </span>
-                          {item.kind === 'PLAYLIST' && (
-                            <Link href="/playlist">
-                              <Button size="sm" variant="outline">Download again</Button>
-                            </Link>
-                          )}
-                        </div>
-                      ) : item.kind === 'THUMBNAIL' ? (
-                        <Link href="/thumbnail">
-                          <Button size="sm" variant="outline">Open thumbnails</Button>
-                        </Link>
-                      ) : null}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p className="text-muted-foreground text-sm">No activity yet.</p>
+          {saveNotice && (
+            <p className="text-sm text-emerald-600 dark:text-green-400 mb-3">{saveNotice}</p>
           )}
+
+          {loadingActivity ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground py-6">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading activity…
+            </div>
+          ) : hasDownloadableList && stats?.recentActivity?.length ? (
+            <>
+              <ul className="space-y-3">
+                {stats.recentActivity.map((item) => {
+                  const canSaveAgain =
+                    item.status === 'COMPLETED' &&
+                    item.fileAvailable &&
+                    (item.kind === 'VIDEO' || item.kind === 'PLAYLIST' || item.kind === 'THUMBNAIL');
+                  const isSaving = savingId === item.id;
+
+                  return (
+                    <li
+                      key={`${item.kind}-${item.id}`}
+                      className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b pb-3 last:border-0"
+                    >
+                      <div className="min-w-0">
+                        <span className="text-xs uppercase tracking-wide text-primary mr-2">
+                          {kindLabel[item.kind]}
+                        </span>
+                        <span className="truncate">{item.title}</span>
+                        <p className="text-sm text-muted-foreground mt-0.5">
+                          {item.status} · {item.progress}%
+                        </p>
+                      </div>
+                      <div className="shrink-0">
+                        {canSaveAgain ? (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="gap-1.5"
+                            disabled={isSaving}
+                            onClick={() => void handleSaveAgain(item)}
+                          >
+                            {isSaving ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Download className="h-3.5 w-3.5" />
+                            )}
+                            Download again
+                          </Button>
+                        ) : item.kind === 'THUMBNAIL' ? (
+                          <Link href="/thumbnail">
+                            <Button size="sm" variant="outline">
+                              Open thumbnails
+                            </Button>
+                          </Link>
+                        ) : null}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between gap-3 mt-4 pt-2 border-t border-border">
+                  <p className="text-xs text-muted-foreground">
+                    Page {currentPage} of {totalPages}
+                    {stats.activityTotal != null && ` · ${stats.activityTotal} available`}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage <= 1}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      Previous
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage >= totalPages}
+                      onClick={() => setPage((p) => p + 1)}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : hiddenCount === 0 ? (
+            <p className="text-muted-foreground text-sm">No activity yet.</p>
+          ) : null}
+
           {stats?.historyDays != null && (
             <p className="text-xs text-muted-foreground mt-4">
-              Free plan shows activity from the last {stats.historyDays} days. Pro keeps full history.
-              Files are removed from the server right after you save them, or after 1 hour if you never download.
+              Activity history: last {stats.historyDays} days on Free, full history on Pro. Download
+              again while files are still within the retention period above.
             </p>
           )}
         </CardContent>

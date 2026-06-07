@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Head,
+  Headers,
   NotFoundException,
   Param,
   Post,
@@ -19,12 +20,36 @@ import { CreateDownloadDto } from './download.dto';
 import { Public } from '../auth/public.decorator';
 import { PlanType } from '@hellodownloader/shared-types';
 import { deliverLocalFile } from '../../utils/file-delivery';
+import { StorageService } from '../../services/storage.service';
+import { fromR2Reference, isR2Reference } from '../../utils/r2-storage';
+import { buildDownloadFilename, contentDispositionAttachment } from '../../utils/download-filename';
 
 type AuthUser = { id: string; plan: string; role?: string };
 
+function readDownloadToken(
+  headerToken: string | undefined,
+  queryToken: string | undefined,
+): string | undefined {
+  return headerToken?.trim() || queryToken?.trim() || undefined;
+}
+
 @Controller('downloads')
 export class DownloadController {
-  constructor(private downloadService: DownloadService) {}
+  constructor(
+    private downloadService: DownloadService,
+    private storage: StorageService,
+  ) {}
+
+  private accessOpts(
+    req: { user?: AuthUser | null },
+    headerToken?: string,
+    queryToken?: string,
+  ) {
+    return {
+      userId: req.user?.id,
+      accessToken: readDownloadToken(headerToken, queryToken),
+    };
+  }
 
   @Public()
   @Get('quality-access')
@@ -52,14 +77,24 @@ export class DownloadController {
 
   @Public()
   @Get(':id/status')
-  getStatus(@Param('id') id: string) {
-    return this.downloadService.getStatusById(id);
+  getStatus(
+    @Req() req: { user?: AuthUser | null },
+    @Param('id') id: string,
+    @Headers('x-download-token') headerToken?: string,
+    @Query('download_token') queryToken?: string,
+  ) {
+    return this.downloadService.getStatusById(id, this.accessOpts(req, headerToken, queryToken));
   }
 
   @Public()
   @Post(':id/release')
-  async releaseFile(@Param('id') id: string) {
-    const record = await this.downloadService.getFilePath(id);
+  async releaseFile(
+    @Req() req: { user?: AuthUser | null },
+    @Param('id') id: string,
+    @Headers('x-download-token') headerToken?: string,
+    @Query('download_token') queryToken?: string,
+  ) {
+    const record = await this.downloadService.getFilePath(id, this.accessOpts(req, headerToken, queryToken));
     if (!record?.filePath) {
       return { ok: true, message: 'File already removed' };
     }
@@ -69,8 +104,13 @@ export class DownloadController {
 
   @Public()
   @Post(':id/confirm-save')
-  async confirmSave(@Param('id') id: string) {
-    const record = await this.downloadService.getFilePath(id);
+  async confirmSave(
+    @Req() req: { user?: AuthUser | null },
+    @Param('id') id: string,
+    @Headers('x-download-token') headerToken?: string,
+    @Query('download_token') queryToken?: string,
+  ) {
+    const record = await this.downloadService.getFilePath(id, this.accessOpts(req, headerToken, queryToken));
     if (!record?.filePath) {
       return { ok: true, message: 'File already removed' };
     }
@@ -80,37 +120,47 @@ export class DownloadController {
 
   @Public()
   @Get(':id/file')
-  async downloadFile(@Param('id') id: string, @Res({ passthrough: true }) res: Response) {
-    return this.serveDownloadFile(id, res);
+  async downloadFile(
+    @Req() req: { user?: AuthUser | null },
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+    @Headers('x-download-token') headerToken?: string,
+    @Query('download_token') queryToken?: string,
+  ) {
+    return this.serveDownloadFile(id, this.accessOpts(req, headerToken, queryToken), res, false);
   }
 
   @Public()
   @Head(':id/file')
-  async headDownloadFile(@Param('id') id: string, @Res({ passthrough: true }) res: Response) {
-    return this.serveDownloadFile(id, res, true);
+  async headDownloadFile(
+    @Req() req: { user?: AuthUser | null },
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+    @Headers('x-download-token') headerToken?: string,
+    @Query('download_token') queryToken?: string,
+  ) {
+    return this.serveDownloadFile(id, this.accessOpts(req, headerToken, queryToken), res, true);
   }
 
-  private serveDownloadFile(id: string, res: Response, headOnly = false) {
+  private serveDownloadFile(
+    id: string,
+    accessOpts: { userId?: string; accessToken?: string },
+    res: Response,
+    headOnly = false,
+  ) {
     return (async () => {
-      const record = await this.downloadService.getFilePath(id);
+      const record = await this.downloadService.getFilePath(id, accessOpts);
       if (!record || record.status !== 'COMPLETED') {
         throw new NotFoundException('File not ready yet');
       }
-      if (!record.filePath || !existsSync(record.filePath)) {
+      if (!record.filePath) {
         throw new NotFoundException(
           'File no longer on server (already saved or expired). Download again from the same URL.',
         );
       }
 
-      utimesSync(record.filePath, new Date(), new Date());
-
-      let filename = path.basename(record.filePath);
       const recordType = (record as { type?: string }).type;
-      if (recordType === 'MP3' && !filename.toLowerCase().endsWith('.mp3')) {
-        filename = `${filename.replace(/\.[^.]+$/, '')}.mp3`;
-      }
-      const safeName = filename.replace(/[^\x20-\x7E]/g, '_').replace(/"/g, '');
-      const stat = statSync(record.filePath);
+      const filename = buildDownloadFilename(record.title, recordType, record.id);
       const ext = path.extname(filename).toLowerCase();
       const contentType =
         ext === '.mp3' || recordType === 'MP3'
@@ -122,10 +172,34 @@ export class DownloadController {
               : ext === '.webm'
                 ? 'video/webm'
                 : 'application/octet-stream';
+
+      if (isR2Reference(record.filePath)) {
+        const { body, size, contentType: r2Type } = await this.storage.openR2Object(
+          fromR2Reference(record.filePath),
+        );
+        res.set({
+          'Content-Type': r2Type || contentType,
+          'Content-Length': String(size),
+          'Content-Disposition': contentDispositionAttachment(filename),
+          'Accept-Ranges': 'bytes',
+        });
+        if (headOnly) return;
+        return new StreamableFile(body);
+      }
+
+      if (!existsSync(record.filePath)) {
+        throw new NotFoundException(
+          'File no longer on server (already saved or expired). Download again from the same URL.',
+        );
+      }
+
+      utimesSync(record.filePath, new Date(), new Date());
+
+      const stat = statSync(record.filePath);
       res.set({
         'Content-Type': contentType,
         'Content-Length': String(stat.size),
-        'Content-Disposition': `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+        'Content-Disposition': contentDispositionAttachment(filename),
         'Accept-Ranges': 'bytes',
       });
 

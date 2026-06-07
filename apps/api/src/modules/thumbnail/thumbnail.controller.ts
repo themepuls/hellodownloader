@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   NotFoundException,
   Param,
   Post,
@@ -19,10 +20,21 @@ import { IsEnum, IsIn, IsOptional, IsString, IsUrl, MaxLength } from 'class-vali
 import { effectivePlan, hasProAccess, PlanType, ThumbnailRatio } from '@hellodownloader/shared-types';
 import { Public } from '../auth/public.decorator';
 import { deliverLocalFile } from '../../utils/file-delivery';
+import { StorageService } from '../../services/storage.service';
+import { fromR2Reference, isR2Reference } from '../../utils/r2-storage';
 
 class OriginalThumbnailDto {
   @IsUrl()
   url!: string;
+
+  @IsOptional()
+  @IsUrl()
+  thumbnailUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  title?: string;
 }
 
 class CreateThumbnailDto {
@@ -91,6 +103,7 @@ export class ThumbnailController {
   constructor(
     private thumbnailService: ThumbnailService,
     private headlineService: ThumbnailHeadlineService,
+    private storage: StorageService,
   ) {}
 
   @Public()
@@ -136,12 +149,16 @@ export class ThumbnailController {
     });
   }
 
+  @Public()
   @Post('original/save')
   recordOriginal(
-    @Req() req: { user: { id: string } },
+    @Req() req: { user?: { id: string } },
     @Body() dto: OriginalThumbnailDto,
   ) {
-    return this.thumbnailService.recordOriginalDownload(req.user.id, dto.url);
+    return this.thumbnailService.recordOriginalDownload(req.user?.id, dto.url, {
+      thumbnailUrl: dto.thumbnailUrl,
+      title: dto.title,
+    });
   }
 
   @Public()
@@ -163,11 +180,30 @@ export class ThumbnailController {
   @Public()
   @Get(':id/file')
   async downloadFile(
+    @Req() req: { user?: { id: string } | null },
     @Param('id') id: string,
-    @Query('download') download: string | undefined,
     @Res({ passthrough: true }) res: Response,
+    @Query('download') download?: string,
+    @Headers('x-download-token') headerToken?: string,
+    @Query('download_token') queryToken?: string,
   ) {
-    const record = await this.thumbnailService.getExportFile(id);
+    const accessOpts = {
+      userId: req.user?.id,
+      accessToken: headerToken?.trim() || queryToken?.trim() || undefined,
+    };
+    const record = await this.thumbnailService.getExportFile(id, accessOpts);
+    if (isR2Reference(record.exportPath)) {
+      const { body } = await this.storage.openR2Object(fromR2Reference(record.exportPath));
+      const filename = `thumbnail-${record.ratio.toLowerCase().replace(/_/g, '-')}.jpg`;
+      const disposition = download === '1' ? 'attachment' : 'inline';
+      res.set({
+        'Content-Type': 'image/jpeg',
+        'Content-Disposition': `${disposition}; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+        'Cache-Control': 'private, max-age=3600',
+      });
+      return new StreamableFile(body);
+    }
+
     if (!existsSync(record.exportPath)) {
       throw new NotFoundException('File no longer on server');
     }

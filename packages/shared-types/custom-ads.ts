@@ -52,6 +52,18 @@ function migrateLegacyPlacement(legacy: string | undefined): Pick<CustomAdItem, 
 
 type CustomAdItemInput = Partial<CustomAdItem> & { placement?: string };
 
+function sanitizeHttpLinkUrl(raw: string | undefined): string {
+  const trimmed = raw?.trim() ?? '';
+  if (!trimmed) return '';
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    return parsed.toString();
+  } catch {
+    return '';
+  }
+}
+
 export function createCustomAdItem(partial: CustomAdItemInput = {}): CustomAdItem {
   const format = partial.format ?? 'square';
   const legacy = migrateLegacyPlacement(partial.placement);
@@ -66,7 +78,7 @@ export function createCustomAdItem(partial: CustomAdItemInput = {}): CustomAdIte
     format,
     title: partial.title ?? '',
     imageUrl: partial.imageUrl ?? '',
-    linkUrl: partial.linkUrl ?? '',
+    linkUrl: sanitizeHttpLinkUrl(partial.linkUrl),
     openInNewTab: partial.openInNewTab ?? true,
     sortOrder: partial.sortOrder ?? 0,
   };

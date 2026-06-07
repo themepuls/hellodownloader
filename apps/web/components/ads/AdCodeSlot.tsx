@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import { hasAdContent, resolveAdSlotContent } from '@/lib/ad-tag-parser';
-import { cleanupAdAssets, injectAdAssets } from '@/lib/inject-ad-scripts';
+import { cleanupAdAssets, injectAdAssets, waitForAdSlotLayout } from '@/lib/inject-ad-scripts';
 
 type AdCodeSlotProps = {
   slotId: string;
@@ -28,31 +28,52 @@ export function AdCodeSlot({
 }: AdCodeSlotProps) {
   const reactId = useId();
   const markerId = `${slotId}-${placement ?? 'default'}-${reactId}`.replace(/:/g, '');
+  const htmlHostRef = useRef<HTMLDivElement>(null);
   const scriptHostRef = useRef<HTMLDivElement>(null);
   const hasCustom = hasAdContent(adTag, html, css, js);
-  const parsed = resolveAdSlotContent(adTag, html, css, js);
+  const contentKey = `${adTag}\0${html}\0${css}\0${js}`;
+  const parsed = useMemo(() => resolveAdSlotContent(adTag, html, css, js), [contentKey]);
 
   useEffect(() => {
-    const host = scriptHostRef.current;
-    if (!host) return;
-    if (parsed.scripts.length === 0 && parsed.stylesheets.length === 0 && !parsed.headHtml) {
-      return;
+    const slotParsed = resolveAdSlotContent(adTag, html, css, js);
+    const htmlHost = htmlHostRef.current;
+    const scriptHost = scriptHostRef.current;
+    if (!htmlHost || !scriptHost) return;
+
+    htmlHost.innerHTML = slotParsed.html;
+
+    const hasScripts =
+      slotParsed.scripts.length > 0 ||
+      slotParsed.stylesheets.length > 0 ||
+      Boolean(slotParsed.headHtml);
+
+    if (!hasScripts) {
+      return () => {
+        htmlHost.innerHTML = '';
+      };
     }
 
     let cancelled = false;
-    void injectAdAssets(parsed, {
-      markerId,
-      htmlHost: host,
-      scriptHost: host,
+    void waitForAdSlotLayout(htmlHost).then(() => {
+      if (cancelled) return;
+      return injectAdAssets(
+        { ...slotParsed, html: '' },
+        {
+          markerId,
+          htmlHost: scriptHost,
+          scriptHost,
+        },
+      );
     }).then(() => {
       if (cancelled) cleanupAdAssets(markerId);
     });
 
     return () => {
       cancelled = true;
+      htmlHost.innerHTML = '';
       cleanupAdAssets(markerId);
     };
-  }, [adTag, html, css, js, markerId, parsed.headHtml, parsed.scripts.length, parsed.stylesheets.length]);
+  }, [contentKey, markerId, adTag, html, css, js]);
 
   if (!hasCustom) return null;
 
@@ -68,9 +89,7 @@ export function AdCodeSlot({
       aria-label="Advertisement"
     >
       {parsed.css ? <style data-ad-style={markerId}>{parsed.css}</style> : null}
-      {parsed.html ? (
-        <div className="ad-slot-html" dangerouslySetInnerHTML={{ __html: parsed.html }} />
-      ) : null}
+      <div ref={htmlHostRef} className="ad-slot-html min-w-0 w-full [&_.adsbygoogle]:block [&_.adsbygoogle]:w-full" />
       <div ref={scriptHostRef} className="ad-slot-scripts" aria-hidden />
     </div>
   );

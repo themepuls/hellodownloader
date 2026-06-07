@@ -82,7 +82,7 @@ export async function processDownload(data: DownloadJobData) {
       '--js-runtimes',
       'node',
       '-o',
-      path.join(outputDir, '%(title).100B.%(ext)s'),
+      path.join(outputDir, 'video.%(ext)s'),
       '-f',
       data.type === 'MP3' ? 'bestaudio/best' : videoFormat,
     ];
@@ -109,7 +109,8 @@ export async function processDownload(data: DownloadJobData) {
     const userFolder = data.plan === 'PRO' ? 'pro-users' : 'free-users';
     const destDir = path.join(storagePath, 'downloads', userFolder, data.userId);
     fs.mkdirSync(destDir, { recursive: true });
-    const destPath = path.join(destDir, path.basename(filePath));
+    const ext = path.extname(filePath) || (data.type === 'MP3' ? '.mp3' : '.mp4');
+    const destPath = path.join(destDir, `${data.downloadId}${ext}`);
     fs.renameSync(filePath, destPath);
 
     await prisma.download.update({

@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { activeCustomAds, hasProAccess } from '@hellodownloader/shared-types';
+import { hasAdContent } from '@/lib/ad-tag-parser';
 import { useAdsConfig } from '@/hooks/useAdsConfig';
 import { useUserStore } from '@/store/userStore';
 import { useClientMounted } from '@/hooks/useClientMounted';
@@ -21,11 +22,16 @@ export function SiteRouteAdsBottom() {
   }
 
   const hasCustomBottom = activeCustomAds(config.customAds, { page, position: 'bottom' }).length > 0;
-  if (!hasCustomBottom) return null;
+  const banner = config.banner;
+  const hasBanner =
+    Boolean(banner?.enabled) &&
+    hasAdContent(banner?.adTag ?? '', banner?.html ?? '', banner?.css ?? '', banner?.js ?? '');
+
+  if (!hasCustomBottom && !hasBanner) return null;
 
   return (
     <div className="border-t border-border/60 bg-background/40">
-      <div className="container mx-auto max-w-5xl px-4 py-6">
+      <div className="container mx-auto max-w-5xl px-4">
         <PageAdsBottom page={page} />
       </div>
     </div>

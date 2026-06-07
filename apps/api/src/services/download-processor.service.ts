@@ -12,6 +12,8 @@ import { MetadataExtractor } from '../download-engine/metadata/metadata-extracto
 import { detectPlatform, isReelUrl, type DownloadJobData } from '@hellodownloader/shared-types';
 import * as fs from 'fs';
 import * as path from 'path';
+import { getThumbnailRetentionCount, removeEmptyDirs, removePathRecursive } from '../utils/fs-utils';
+import { StorageService } from './storage.service';
 
 @Injectable()
 export class DownloadProcessorService {
@@ -29,6 +31,7 @@ export class DownloadProcessorService {
     private mp3Converter: Mp3Converter,
     private metadataExtractor: MetadataExtractor,
     private zipService: ZipService,
+    private storage: StorageService,
   ) {}
 
   async process(data: DownloadJobData) {
@@ -39,6 +42,8 @@ export class DownloadProcessorService {
       where: { id: data.downloadId },
       data: { status: 'PROCESSING', progress: 10 },
     });
+
+    let progressTimer: ReturnType<typeof setTimeout> | null = null;
 
     try {
       const maxHeight =
@@ -52,7 +57,6 @@ export class DownloadProcessorService {
         (existing?.metadata as { duration?: number } | null)?.duration ?? undefined;
 
       let lastReportedProgress = 10;
-      let progressTimer: ReturnType<typeof setTimeout> | null = null;
 
       const flushProgress = async (percent: number) => {
         lastReportedProgress = Math.max(lastReportedProgress, percent);
@@ -119,11 +123,30 @@ export class DownloadProcessorService {
       await flushProgress(85);
 
       const stat = fs.statSync(primaryFilePath);
+      const requestedQuality = data.type === 'VIDEO' ? (data.quality ?? null) : null;
+      let actualHeight: number | null = null;
+      let qualityWarning: string | null = null;
+
+      if (data.type === 'VIDEO') {
+        actualHeight = await this.ytDlp.probeVideoResolution(primaryFilePath);
+        if (
+          requestedQuality &&
+          actualHeight &&
+          actualHeight < Math.floor(requestedQuality * 0.85)
+        ) {
+          qualityWarning = `Downloaded at ${actualHeight}p (${Math.round(stat.size / 1_048_576)} MB) — ${requestedQuality}p was not available from the source. Try again or pick another quality.`;
+        }
+      }
+
+      const priorMeta = (existing?.metadata as Record<string, unknown> | null) ?? {};
+
       const userFolder = data.plan === 'PRO' ? 'pro-users' : 'free-users';
       const destDir = path.join(this.storagePath, 'downloads', userFolder, data.userId);
       fs.mkdirSync(destDir, { recursive: true });
-      const destPath = path.join(destDir, path.basename(primaryFilePath));
+      const ext = path.extname(primaryFilePath) || (data.type === 'MP3' ? '.mp3' : '.mp4');
+      const destPath = path.join(destDir, `${data.downloadId}${ext}`);
       if (primaryFilePath !== destPath) fs.renameSync(primaryFilePath, destPath);
+      const r2Key = `downloads/${userFolder}/${data.userId}/${data.downloadId}${ext}`;
 
       await this.prisma.download.update({
         where: { id: data.downloadId },
@@ -134,10 +157,23 @@ export class DownloadProcessorService {
           fileUrl: `/api/v1/downloads/${data.downloadId}/file`,
           fileSize: BigInt(stat.size),
           completedAt: new Date(),
+          metadata: {
+            ...priorMeta,
+            actualHeight,
+            requestedQuality,
+            qualityWarning,
+          },
         },
       });
 
-      this.logger.log(`Download ${data.downloadId} completed: ${destPath}`);
+      this.logger.log(`Download ${data.downloadId} ready locally: ${destPath}`);
+      this.storage.scheduleBackgroundR2Persist(destPath, r2Key, async (storedPath) => {
+        await this.prisma.download.update({
+          where: { id: data.downloadId },
+          data: { filePath: storedPath },
+        });
+        this.logger.log(`Download ${data.downloadId} mirrored to R2: ${storedPath}`);
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Download failed';
       this.logger.error(`Download ${data.downloadId} failed: ${message}`);
@@ -145,6 +181,9 @@ export class DownloadProcessorService {
         where: { id: data.downloadId },
         data: { status: 'FAILED', error: message, progress: 0 },
       });
+    } finally {
+      if (progressTimer) clearTimeout(progressTimer);
+      removePathRecursive(outputDir);
     }
   }
 }

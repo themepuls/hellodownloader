@@ -17,6 +17,12 @@ export function getThumbnailSrc(thumbnailUrl: string): string {
   return thumbnailUrl;
 }
 
+/** Same-origin proxy — required for programmatic download (avoids CDN CORS blocks). */
+export function getThumbnailDownloadSrc(thumbnailUrl: string): string {
+  if (!thumbnailUrl) return '';
+  return `/api/v1/downloads/thumbnail-proxy?url=${encodeURIComponent(thumbnailUrl)}`;
+}
+
 export function thumbnailExportUrl(id: string): string {
   const base =
     typeof window !== 'undefined'

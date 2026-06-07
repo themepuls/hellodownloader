@@ -94,6 +94,11 @@ export type ThumbnailPrompt = $Result.DefaultSelection<Prisma.$ThumbnailPromptPa
  */
 export type SiteSettings = $Result.DefaultSelection<Prisma.$SiteSettingsPayload>
 /**
+ * Model StorageSettings
+ * 
+ */
+export type StorageSettings = $Result.DefaultSelection<Prisma.$StorageSettingsPayload>
+/**
  * Model FourKInterestSurvey
  * 
  */
@@ -547,6 +552,16 @@ export class PrismaClient<
     * ```
     */
   get siteSettings(): Prisma.SiteSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.storageSettings`: Exposes CRUD operations for the **StorageSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StorageSettings
+    * const storageSettings = await prisma.storageSettings.findMany()
+    * ```
+    */
+  get storageSettings(): Prisma.StorageSettingsDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.fourKInterestSurvey`: Exposes CRUD operations for the **FourKInterestSurvey** model.
@@ -1014,6 +1029,7 @@ export namespace Prisma {
     AiApiSettings: 'AiApiSettings',
     ThumbnailPrompt: 'ThumbnailPrompt',
     SiteSettings: 'SiteSettings',
+    StorageSettings: 'StorageSettings',
     FourKInterestSurvey: 'FourKInterestSurvey'
   };
 
@@ -1033,7 +1049,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "download" | "playlist" | "thumbnail" | "subscription" | "transaction" | "payment" | "creditLog" | "analytics" | "paymentProviderConfig" | "contentPage" | "aiImageProviderConfig" | "thumbnailAiSettings" | "aiApiSettings" | "thumbnailPrompt" | "siteSettings" | "fourKInterestSurvey"
+      modelProps: "user" | "download" | "playlist" | "thumbnail" | "subscription" | "transaction" | "payment" | "creditLog" | "analytics" | "paymentProviderConfig" | "contentPage" | "aiImageProviderConfig" | "thumbnailAiSettings" | "aiApiSettings" | "thumbnailPrompt" | "siteSettings" | "storageSettings" | "fourKInterestSurvey"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2221,6 +2237,80 @@ export namespace Prisma {
           }
         }
       }
+      StorageSettings: {
+        payload: Prisma.$StorageSettingsPayload<ExtArgs>
+        fields: Prisma.StorageSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StorageSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StorageSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.StorageSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StorageSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.StorageSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.StorageSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.StorageSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StorageSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.StorageSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>
+          }
+          update: {
+            args: Prisma.StorageSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.StorageSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StorageSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.StorageSettingsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>[]
+          }
+          upsert: {
+            args: Prisma.StorageSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StorageSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.StorageSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStorageSettings>
+          }
+          groupBy: {
+            args: Prisma.StorageSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StorageSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StorageSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<StorageSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
       FourKInterestSurvey: {
         payload: Prisma.$FourKInterestSurveyPayload<ExtArgs>
         fields: Prisma.FourKInterestSurveyFieldRefs
@@ -2407,6 +2497,7 @@ export namespace Prisma {
     aiApiSettings?: AiApiSettingsOmit
     thumbnailPrompt?: ThumbnailPromptOmit
     siteSettings?: SiteSettingsOmit
+    storageSettings?: StorageSettingsOmit
     fourKInterestSurvey?: FourKInterestSurveyOmit
   }
 
@@ -20981,6 +21072,1106 @@ export namespace Prisma {
 
 
   /**
+   * Model StorageSettings
+   */
+
+  export type AggregateStorageSettings = {
+    _count: StorageSettingsCountAggregateOutputType | null
+    _avg: StorageSettingsAvgAggregateOutputType | null
+    _sum: StorageSettingsSumAggregateOutputType | null
+    _min: StorageSettingsMinAggregateOutputType | null
+    _max: StorageSettingsMaxAggregateOutputType | null
+  }
+
+  export type StorageSettingsAvgAggregateOutputType = {
+    id: number | null
+    videoRetentionHours: number | null
+    thumbnailRetentionDays: number | null
+  }
+
+  export type StorageSettingsSumAggregateOutputType = {
+    id: number | null
+    videoRetentionHours: number | null
+    thumbnailRetentionDays: number | null
+  }
+
+  export type StorageSettingsMinAggregateOutputType = {
+    id: number | null
+    r2Enabled: boolean | null
+    r2AccountId: string | null
+    r2AccessKeyId: string | null
+    r2SecretAccessKey: string | null
+    r2BucketName: string | null
+    r2PublicUrl: string | null
+    videoRetentionHours: number | null
+    thumbnailRetentionDays: number | null
+    updatedAt: Date | null
+  }
+
+  export type StorageSettingsMaxAggregateOutputType = {
+    id: number | null
+    r2Enabled: boolean | null
+    r2AccountId: string | null
+    r2AccessKeyId: string | null
+    r2SecretAccessKey: string | null
+    r2BucketName: string | null
+    r2PublicUrl: string | null
+    videoRetentionHours: number | null
+    thumbnailRetentionDays: number | null
+    updatedAt: Date | null
+  }
+
+  export type StorageSettingsCountAggregateOutputType = {
+    id: number
+    r2Enabled: number
+    r2AccountId: number
+    r2AccessKeyId: number
+    r2SecretAccessKey: number
+    r2BucketName: number
+    r2PublicUrl: number
+    videoRetentionHours: number
+    thumbnailRetentionDays: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type StorageSettingsAvgAggregateInputType = {
+    id?: true
+    videoRetentionHours?: true
+    thumbnailRetentionDays?: true
+  }
+
+  export type StorageSettingsSumAggregateInputType = {
+    id?: true
+    videoRetentionHours?: true
+    thumbnailRetentionDays?: true
+  }
+
+  export type StorageSettingsMinAggregateInputType = {
+    id?: true
+    r2Enabled?: true
+    r2AccountId?: true
+    r2AccessKeyId?: true
+    r2SecretAccessKey?: true
+    r2BucketName?: true
+    r2PublicUrl?: true
+    videoRetentionHours?: true
+    thumbnailRetentionDays?: true
+    updatedAt?: true
+  }
+
+  export type StorageSettingsMaxAggregateInputType = {
+    id?: true
+    r2Enabled?: true
+    r2AccountId?: true
+    r2AccessKeyId?: true
+    r2SecretAccessKey?: true
+    r2BucketName?: true
+    r2PublicUrl?: true
+    videoRetentionHours?: true
+    thumbnailRetentionDays?: true
+    updatedAt?: true
+  }
+
+  export type StorageSettingsCountAggregateInputType = {
+    id?: true
+    r2Enabled?: true
+    r2AccountId?: true
+    r2AccessKeyId?: true
+    r2SecretAccessKey?: true
+    r2BucketName?: true
+    r2PublicUrl?: true
+    videoRetentionHours?: true
+    thumbnailRetentionDays?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type StorageSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StorageSettings to aggregate.
+     */
+    where?: StorageSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StorageSettings to fetch.
+     */
+    orderBy?: StorageSettingsOrderByWithRelationInput | StorageSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StorageSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StorageSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StorageSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StorageSettings
+    **/
+    _count?: true | StorageSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: StorageSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: StorageSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StorageSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StorageSettingsMaxAggregateInputType
+  }
+
+  export type GetStorageSettingsAggregateType<T extends StorageSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateStorageSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStorageSettings[P]>
+      : GetScalarType<T[P], AggregateStorageSettings[P]>
+  }
+
+
+
+
+  export type StorageSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StorageSettingsWhereInput
+    orderBy?: StorageSettingsOrderByWithAggregationInput | StorageSettingsOrderByWithAggregationInput[]
+    by: StorageSettingsScalarFieldEnum[] | StorageSettingsScalarFieldEnum
+    having?: StorageSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StorageSettingsCountAggregateInputType | true
+    _avg?: StorageSettingsAvgAggregateInputType
+    _sum?: StorageSettingsSumAggregateInputType
+    _min?: StorageSettingsMinAggregateInputType
+    _max?: StorageSettingsMaxAggregateInputType
+  }
+
+  export type StorageSettingsGroupByOutputType = {
+    id: number
+    r2Enabled: boolean
+    r2AccountId: string
+    r2AccessKeyId: string
+    r2SecretAccessKey: string
+    r2BucketName: string
+    r2PublicUrl: string
+    videoRetentionHours: number
+    thumbnailRetentionDays: number
+    updatedAt: Date
+    _count: StorageSettingsCountAggregateOutputType | null
+    _avg: StorageSettingsAvgAggregateOutputType | null
+    _sum: StorageSettingsSumAggregateOutputType | null
+    _min: StorageSettingsMinAggregateOutputType | null
+    _max: StorageSettingsMaxAggregateOutputType | null
+  }
+
+  type GetStorageSettingsGroupByPayload<T extends StorageSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StorageSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StorageSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StorageSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], StorageSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StorageSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    r2Enabled?: boolean
+    r2AccountId?: boolean
+    r2AccessKeyId?: boolean
+    r2SecretAccessKey?: boolean
+    r2BucketName?: boolean
+    r2PublicUrl?: boolean
+    videoRetentionHours?: boolean
+    thumbnailRetentionDays?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["storageSettings"]>
+
+  export type StorageSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    r2Enabled?: boolean
+    r2AccountId?: boolean
+    r2AccessKeyId?: boolean
+    r2SecretAccessKey?: boolean
+    r2BucketName?: boolean
+    r2PublicUrl?: boolean
+    videoRetentionHours?: boolean
+    thumbnailRetentionDays?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["storageSettings"]>
+
+  export type StorageSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    r2Enabled?: boolean
+    r2AccountId?: boolean
+    r2AccessKeyId?: boolean
+    r2SecretAccessKey?: boolean
+    r2BucketName?: boolean
+    r2PublicUrl?: boolean
+    videoRetentionHours?: boolean
+    thumbnailRetentionDays?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["storageSettings"]>
+
+  export type StorageSettingsSelectScalar = {
+    id?: boolean
+    r2Enabled?: boolean
+    r2AccountId?: boolean
+    r2AccessKeyId?: boolean
+    r2SecretAccessKey?: boolean
+    r2BucketName?: boolean
+    r2PublicUrl?: boolean
+    videoRetentionHours?: boolean
+    thumbnailRetentionDays?: boolean
+    updatedAt?: boolean
+  }
+
+  export type StorageSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "r2Enabled" | "r2AccountId" | "r2AccessKeyId" | "r2SecretAccessKey" | "r2BucketName" | "r2PublicUrl" | "videoRetentionHours" | "thumbnailRetentionDays" | "updatedAt", ExtArgs["result"]["storageSettings"]>
+
+  export type $StorageSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StorageSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      r2Enabled: boolean
+      r2AccountId: string
+      r2AccessKeyId: string
+      r2SecretAccessKey: string
+      r2BucketName: string
+      r2PublicUrl: string
+      videoRetentionHours: number
+      thumbnailRetentionDays: number
+      updatedAt: Date
+    }, ExtArgs["result"]["storageSettings"]>
+    composites: {}
+  }
+
+  type StorageSettingsGetPayload<S extends boolean | null | undefined | StorageSettingsDefaultArgs> = $Result.GetResult<Prisma.$StorageSettingsPayload, S>
+
+  type StorageSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StorageSettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StorageSettingsCountAggregateInputType | true
+    }
+
+  export interface StorageSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StorageSettings'], meta: { name: 'StorageSettings' } }
+    /**
+     * Find zero or one StorageSettings that matches the filter.
+     * @param {StorageSettingsFindUniqueArgs} args - Arguments to find a StorageSettings
+     * @example
+     * // Get one StorageSettings
+     * const storageSettings = await prisma.storageSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StorageSettingsFindUniqueArgs>(args: SelectSubset<T, StorageSettingsFindUniqueArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one StorageSettings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StorageSettingsFindUniqueOrThrowArgs} args - Arguments to find a StorageSettings
+     * @example
+     * // Get one StorageSettings
+     * const storageSettings = await prisma.storageSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StorageSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, StorageSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StorageSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StorageSettingsFindFirstArgs} args - Arguments to find a StorageSettings
+     * @example
+     * // Get one StorageSettings
+     * const storageSettings = await prisma.storageSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StorageSettingsFindFirstArgs>(args?: SelectSubset<T, StorageSettingsFindFirstArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StorageSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StorageSettingsFindFirstOrThrowArgs} args - Arguments to find a StorageSettings
+     * @example
+     * // Get one StorageSettings
+     * const storageSettings = await prisma.storageSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StorageSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, StorageSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StorageSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StorageSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StorageSettings
+     * const storageSettings = await prisma.storageSettings.findMany()
+     * 
+     * // Get first 10 StorageSettings
+     * const storageSettings = await prisma.storageSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const storageSettingsWithIdOnly = await prisma.storageSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StorageSettingsFindManyArgs>(args?: SelectSubset<T, StorageSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a StorageSettings.
+     * @param {StorageSettingsCreateArgs} args - Arguments to create a StorageSettings.
+     * @example
+     * // Create one StorageSettings
+     * const StorageSettings = await prisma.storageSettings.create({
+     *   data: {
+     *     // ... data to create a StorageSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends StorageSettingsCreateArgs>(args: SelectSubset<T, StorageSettingsCreateArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many StorageSettings.
+     * @param {StorageSettingsCreateManyArgs} args - Arguments to create many StorageSettings.
+     * @example
+     * // Create many StorageSettings
+     * const storageSettings = await prisma.storageSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StorageSettingsCreateManyArgs>(args?: SelectSubset<T, StorageSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many StorageSettings and returns the data saved in the database.
+     * @param {StorageSettingsCreateManyAndReturnArgs} args - Arguments to create many StorageSettings.
+     * @example
+     * // Create many StorageSettings
+     * const storageSettings = await prisma.storageSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many StorageSettings and only return the `id`
+     * const storageSettingsWithIdOnly = await prisma.storageSettings.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends StorageSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, StorageSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a StorageSettings.
+     * @param {StorageSettingsDeleteArgs} args - Arguments to delete one StorageSettings.
+     * @example
+     * // Delete one StorageSettings
+     * const StorageSettings = await prisma.storageSettings.delete({
+     *   where: {
+     *     // ... filter to delete one StorageSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StorageSettingsDeleteArgs>(args: SelectSubset<T, StorageSettingsDeleteArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one StorageSettings.
+     * @param {StorageSettingsUpdateArgs} args - Arguments to update one StorageSettings.
+     * @example
+     * // Update one StorageSettings
+     * const storageSettings = await prisma.storageSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StorageSettingsUpdateArgs>(args: SelectSubset<T, StorageSettingsUpdateArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more StorageSettings.
+     * @param {StorageSettingsDeleteManyArgs} args - Arguments to filter StorageSettings to delete.
+     * @example
+     * // Delete a few StorageSettings
+     * const { count } = await prisma.storageSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StorageSettingsDeleteManyArgs>(args?: SelectSubset<T, StorageSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StorageSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StorageSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StorageSettings
+     * const storageSettings = await prisma.storageSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StorageSettingsUpdateManyArgs>(args: SelectSubset<T, StorageSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StorageSettings and returns the data updated in the database.
+     * @param {StorageSettingsUpdateManyAndReturnArgs} args - Arguments to update many StorageSettings.
+     * @example
+     * // Update many StorageSettings
+     * const storageSettings = await prisma.storageSettings.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more StorageSettings and only return the `id`
+     * const storageSettingsWithIdOnly = await prisma.storageSettings.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends StorageSettingsUpdateManyAndReturnArgs>(args: SelectSubset<T, StorageSettingsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one StorageSettings.
+     * @param {StorageSettingsUpsertArgs} args - Arguments to update or create a StorageSettings.
+     * @example
+     * // Update or create a StorageSettings
+     * const storageSettings = await prisma.storageSettings.upsert({
+     *   create: {
+     *     // ... data to create a StorageSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StorageSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StorageSettingsUpsertArgs>(args: SelectSubset<T, StorageSettingsUpsertArgs<ExtArgs>>): Prisma__StorageSettingsClient<$Result.GetResult<Prisma.$StorageSettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of StorageSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StorageSettingsCountArgs} args - Arguments to filter StorageSettings to count.
+     * @example
+     * // Count the number of StorageSettings
+     * const count = await prisma.storageSettings.count({
+     *   where: {
+     *     // ... the filter for the StorageSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends StorageSettingsCountArgs>(
+      args?: Subset<T, StorageSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StorageSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StorageSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StorageSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StorageSettingsAggregateArgs>(args: Subset<T, StorageSettingsAggregateArgs>): Prisma.PrismaPromise<GetStorageSettingsAggregateType<T>>
+
+    /**
+     * Group by StorageSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StorageSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StorageSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StorageSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: StorageSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StorageSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStorageSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StorageSettings model
+   */
+  readonly fields: StorageSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StorageSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StorageSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StorageSettings model
+   */
+  interface StorageSettingsFieldRefs {
+    readonly id: FieldRef<"StorageSettings", 'Int'>
+    readonly r2Enabled: FieldRef<"StorageSettings", 'Boolean'>
+    readonly r2AccountId: FieldRef<"StorageSettings", 'String'>
+    readonly r2AccessKeyId: FieldRef<"StorageSettings", 'String'>
+    readonly r2SecretAccessKey: FieldRef<"StorageSettings", 'String'>
+    readonly r2BucketName: FieldRef<"StorageSettings", 'String'>
+    readonly r2PublicUrl: FieldRef<"StorageSettings", 'String'>
+    readonly videoRetentionHours: FieldRef<"StorageSettings", 'Int'>
+    readonly thumbnailRetentionDays: FieldRef<"StorageSettings", 'Int'>
+    readonly updatedAt: FieldRef<"StorageSettings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StorageSettings findUnique
+   */
+  export type StorageSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which StorageSettings to fetch.
+     */
+    where: StorageSettingsWhereUniqueInput
+  }
+
+  /**
+   * StorageSettings findUniqueOrThrow
+   */
+  export type StorageSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which StorageSettings to fetch.
+     */
+    where: StorageSettingsWhereUniqueInput
+  }
+
+  /**
+   * StorageSettings findFirst
+   */
+  export type StorageSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which StorageSettings to fetch.
+     */
+    where?: StorageSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StorageSettings to fetch.
+     */
+    orderBy?: StorageSettingsOrderByWithRelationInput | StorageSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StorageSettings.
+     */
+    cursor?: StorageSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StorageSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StorageSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StorageSettings.
+     */
+    distinct?: StorageSettingsScalarFieldEnum | StorageSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * StorageSettings findFirstOrThrow
+   */
+  export type StorageSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which StorageSettings to fetch.
+     */
+    where?: StorageSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StorageSettings to fetch.
+     */
+    orderBy?: StorageSettingsOrderByWithRelationInput | StorageSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StorageSettings.
+     */
+    cursor?: StorageSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StorageSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StorageSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StorageSettings.
+     */
+    distinct?: StorageSettingsScalarFieldEnum | StorageSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * StorageSettings findMany
+   */
+  export type StorageSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which StorageSettings to fetch.
+     */
+    where?: StorageSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StorageSettings to fetch.
+     */
+    orderBy?: StorageSettingsOrderByWithRelationInput | StorageSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StorageSettings.
+     */
+    cursor?: StorageSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StorageSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StorageSettings.
+     */
+    skip?: number
+    distinct?: StorageSettingsScalarFieldEnum | StorageSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * StorageSettings create
+   */
+  export type StorageSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a StorageSettings.
+     */
+    data: XOR<StorageSettingsCreateInput, StorageSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * StorageSettings createMany
+   */
+  export type StorageSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StorageSettings.
+     */
+    data: StorageSettingsCreateManyInput | StorageSettingsCreateManyInput[]
+  }
+
+  /**
+   * StorageSettings createManyAndReturn
+   */
+  export type StorageSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to create many StorageSettings.
+     */
+    data: StorageSettingsCreateManyInput | StorageSettingsCreateManyInput[]
+  }
+
+  /**
+   * StorageSettings update
+   */
+  export type StorageSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a StorageSettings.
+     */
+    data: XOR<StorageSettingsUpdateInput, StorageSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which StorageSettings to update.
+     */
+    where: StorageSettingsWhereUniqueInput
+  }
+
+  /**
+   * StorageSettings updateMany
+   */
+  export type StorageSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StorageSettings.
+     */
+    data: XOR<StorageSettingsUpdateManyMutationInput, StorageSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which StorageSettings to update
+     */
+    where?: StorageSettingsWhereInput
+    /**
+     * Limit how many StorageSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StorageSettings updateManyAndReturn
+   */
+  export type StorageSettingsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to update StorageSettings.
+     */
+    data: XOR<StorageSettingsUpdateManyMutationInput, StorageSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which StorageSettings to update
+     */
+    where?: StorageSettingsWhereInput
+    /**
+     * Limit how many StorageSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StorageSettings upsert
+   */
+  export type StorageSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the StorageSettings to update in case it exists.
+     */
+    where: StorageSettingsWhereUniqueInput
+    /**
+     * In case the StorageSettings found by the `where` argument doesn't exist, create a new StorageSettings with this data.
+     */
+    create: XOR<StorageSettingsCreateInput, StorageSettingsUncheckedCreateInput>
+    /**
+     * In case the StorageSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StorageSettingsUpdateInput, StorageSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * StorageSettings delete
+   */
+  export type StorageSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+    /**
+     * Filter which StorageSettings to delete.
+     */
+    where: StorageSettingsWhereUniqueInput
+  }
+
+  /**
+   * StorageSettings deleteMany
+   */
+  export type StorageSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StorageSettings to delete
+     */
+    where?: StorageSettingsWhereInput
+    /**
+     * Limit how many StorageSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StorageSettings without action
+   */
+  export type StorageSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StorageSettings
+     */
+    select?: StorageSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StorageSettings
+     */
+    omit?: StorageSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model FourKInterestSurvey
    */
 
@@ -22347,6 +23538,22 @@ export namespace Prisma {
   };
 
   export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[keyof typeof SiteSettingsScalarFieldEnum]
+
+
+  export const StorageSettingsScalarFieldEnum: {
+    id: 'id',
+    r2Enabled: 'r2Enabled',
+    r2AccountId: 'r2AccountId',
+    r2AccessKeyId: 'r2AccessKeyId',
+    r2SecretAccessKey: 'r2SecretAccessKey',
+    r2BucketName: 'r2BucketName',
+    r2PublicUrl: 'r2PublicUrl',
+    videoRetentionHours: 'videoRetentionHours',
+    thumbnailRetentionDays: 'thumbnailRetentionDays',
+    updatedAt: 'updatedAt'
+  };
+
+  export type StorageSettingsScalarFieldEnum = (typeof StorageSettingsScalarFieldEnum)[keyof typeof StorageSettingsScalarFieldEnum]
 
 
   export const FourKInterestSurveyScalarFieldEnum: {
@@ -23931,6 +25138,85 @@ export namespace Prisma {
     googleAuthEnabled?: BoolWithAggregatesFilter<"SiteSettings"> | boolean
     googleClientId?: StringWithAggregatesFilter<"SiteSettings"> | string
     updatedAt?: DateTimeWithAggregatesFilter<"SiteSettings"> | Date | string
+  }
+
+  export type StorageSettingsWhereInput = {
+    AND?: StorageSettingsWhereInput | StorageSettingsWhereInput[]
+    OR?: StorageSettingsWhereInput[]
+    NOT?: StorageSettingsWhereInput | StorageSettingsWhereInput[]
+    id?: IntFilter<"StorageSettings"> | number
+    r2Enabled?: BoolFilter<"StorageSettings"> | boolean
+    r2AccountId?: StringFilter<"StorageSettings"> | string
+    r2AccessKeyId?: StringFilter<"StorageSettings"> | string
+    r2SecretAccessKey?: StringFilter<"StorageSettings"> | string
+    r2BucketName?: StringFilter<"StorageSettings"> | string
+    r2PublicUrl?: StringFilter<"StorageSettings"> | string
+    videoRetentionHours?: IntFilter<"StorageSettings"> | number
+    thumbnailRetentionDays?: IntFilter<"StorageSettings"> | number
+    updatedAt?: DateTimeFilter<"StorageSettings"> | Date | string
+  }
+
+  export type StorageSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    r2Enabled?: SortOrder
+    r2AccountId?: SortOrder
+    r2AccessKeyId?: SortOrder
+    r2SecretAccessKey?: SortOrder
+    r2BucketName?: SortOrder
+    r2PublicUrl?: SortOrder
+    videoRetentionHours?: SortOrder
+    thumbnailRetentionDays?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StorageSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: StorageSettingsWhereInput | StorageSettingsWhereInput[]
+    OR?: StorageSettingsWhereInput[]
+    NOT?: StorageSettingsWhereInput | StorageSettingsWhereInput[]
+    r2Enabled?: BoolFilter<"StorageSettings"> | boolean
+    r2AccountId?: StringFilter<"StorageSettings"> | string
+    r2AccessKeyId?: StringFilter<"StorageSettings"> | string
+    r2SecretAccessKey?: StringFilter<"StorageSettings"> | string
+    r2BucketName?: StringFilter<"StorageSettings"> | string
+    r2PublicUrl?: StringFilter<"StorageSettings"> | string
+    videoRetentionHours?: IntFilter<"StorageSettings"> | number
+    thumbnailRetentionDays?: IntFilter<"StorageSettings"> | number
+    updatedAt?: DateTimeFilter<"StorageSettings"> | Date | string
+  }, "id">
+
+  export type StorageSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    r2Enabled?: SortOrder
+    r2AccountId?: SortOrder
+    r2AccessKeyId?: SortOrder
+    r2SecretAccessKey?: SortOrder
+    r2BucketName?: SortOrder
+    r2PublicUrl?: SortOrder
+    videoRetentionHours?: SortOrder
+    thumbnailRetentionDays?: SortOrder
+    updatedAt?: SortOrder
+    _count?: StorageSettingsCountOrderByAggregateInput
+    _avg?: StorageSettingsAvgOrderByAggregateInput
+    _max?: StorageSettingsMaxOrderByAggregateInput
+    _min?: StorageSettingsMinOrderByAggregateInput
+    _sum?: StorageSettingsSumOrderByAggregateInput
+  }
+
+  export type StorageSettingsScalarWhereWithAggregatesInput = {
+    AND?: StorageSettingsScalarWhereWithAggregatesInput | StorageSettingsScalarWhereWithAggregatesInput[]
+    OR?: StorageSettingsScalarWhereWithAggregatesInput[]
+    NOT?: StorageSettingsScalarWhereWithAggregatesInput | StorageSettingsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"StorageSettings"> | number
+    r2Enabled?: BoolWithAggregatesFilter<"StorageSettings"> | boolean
+    r2AccountId?: StringWithAggregatesFilter<"StorageSettings"> | string
+    r2AccessKeyId?: StringWithAggregatesFilter<"StorageSettings"> | string
+    r2SecretAccessKey?: StringWithAggregatesFilter<"StorageSettings"> | string
+    r2BucketName?: StringWithAggregatesFilter<"StorageSettings"> | string
+    r2PublicUrl?: StringWithAggregatesFilter<"StorageSettings"> | string
+    videoRetentionHours?: IntWithAggregatesFilter<"StorageSettings"> | number
+    thumbnailRetentionDays?: IntWithAggregatesFilter<"StorageSettings"> | number
+    updatedAt?: DateTimeWithAggregatesFilter<"StorageSettings"> | Date | string
   }
 
   export type FourKInterestSurveyWhereInput = {
@@ -25578,6 +26864,97 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type StorageSettingsCreateInput = {
+    id?: number
+    r2Enabled?: boolean
+    r2AccountId?: string
+    r2AccessKeyId?: string
+    r2SecretAccessKey?: string
+    r2BucketName?: string
+    r2PublicUrl?: string
+    videoRetentionHours?: number
+    thumbnailRetentionDays?: number
+    updatedAt?: Date | string
+  }
+
+  export type StorageSettingsUncheckedCreateInput = {
+    id?: number
+    r2Enabled?: boolean
+    r2AccountId?: string
+    r2AccessKeyId?: string
+    r2SecretAccessKey?: string
+    r2BucketName?: string
+    r2PublicUrl?: string
+    videoRetentionHours?: number
+    thumbnailRetentionDays?: number
+    updatedAt?: Date | string
+  }
+
+  export type StorageSettingsUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    r2Enabled?: BoolFieldUpdateOperationsInput | boolean
+    r2AccountId?: StringFieldUpdateOperationsInput | string
+    r2AccessKeyId?: StringFieldUpdateOperationsInput | string
+    r2SecretAccessKey?: StringFieldUpdateOperationsInput | string
+    r2BucketName?: StringFieldUpdateOperationsInput | string
+    r2PublicUrl?: StringFieldUpdateOperationsInput | string
+    videoRetentionHours?: IntFieldUpdateOperationsInput | number
+    thumbnailRetentionDays?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StorageSettingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    r2Enabled?: BoolFieldUpdateOperationsInput | boolean
+    r2AccountId?: StringFieldUpdateOperationsInput | string
+    r2AccessKeyId?: StringFieldUpdateOperationsInput | string
+    r2SecretAccessKey?: StringFieldUpdateOperationsInput | string
+    r2BucketName?: StringFieldUpdateOperationsInput | string
+    r2PublicUrl?: StringFieldUpdateOperationsInput | string
+    videoRetentionHours?: IntFieldUpdateOperationsInput | number
+    thumbnailRetentionDays?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StorageSettingsCreateManyInput = {
+    id?: number
+    r2Enabled?: boolean
+    r2AccountId?: string
+    r2AccessKeyId?: string
+    r2SecretAccessKey?: string
+    r2BucketName?: string
+    r2PublicUrl?: string
+    videoRetentionHours?: number
+    thumbnailRetentionDays?: number
+    updatedAt?: Date | string
+  }
+
+  export type StorageSettingsUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    r2Enabled?: BoolFieldUpdateOperationsInput | boolean
+    r2AccountId?: StringFieldUpdateOperationsInput | string
+    r2AccessKeyId?: StringFieldUpdateOperationsInput | string
+    r2SecretAccessKey?: StringFieldUpdateOperationsInput | string
+    r2BucketName?: StringFieldUpdateOperationsInput | string
+    r2PublicUrl?: StringFieldUpdateOperationsInput | string
+    videoRetentionHours?: IntFieldUpdateOperationsInput | number
+    thumbnailRetentionDays?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StorageSettingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    r2Enabled?: BoolFieldUpdateOperationsInput | boolean
+    r2AccountId?: StringFieldUpdateOperationsInput | string
+    r2AccessKeyId?: StringFieldUpdateOperationsInput | string
+    r2SecretAccessKey?: StringFieldUpdateOperationsInput | string
+    r2BucketName?: StringFieldUpdateOperationsInput | string
+    r2PublicUrl?: StringFieldUpdateOperationsInput | string
+    videoRetentionHours?: IntFieldUpdateOperationsInput | number
+    thumbnailRetentionDays?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type FourKInterestSurveyCreateInput = {
     id?: string
     interested: boolean
@@ -26969,6 +28346,57 @@ export namespace Prisma {
 
   export type SiteSettingsSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type StorageSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    r2Enabled?: SortOrder
+    r2AccountId?: SortOrder
+    r2AccessKeyId?: SortOrder
+    r2SecretAccessKey?: SortOrder
+    r2BucketName?: SortOrder
+    r2PublicUrl?: SortOrder
+    videoRetentionHours?: SortOrder
+    thumbnailRetentionDays?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StorageSettingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+    videoRetentionHours?: SortOrder
+    thumbnailRetentionDays?: SortOrder
+  }
+
+  export type StorageSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    r2Enabled?: SortOrder
+    r2AccountId?: SortOrder
+    r2AccessKeyId?: SortOrder
+    r2SecretAccessKey?: SortOrder
+    r2BucketName?: SortOrder
+    r2PublicUrl?: SortOrder
+    videoRetentionHours?: SortOrder
+    thumbnailRetentionDays?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StorageSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    r2Enabled?: SortOrder
+    r2AccountId?: SortOrder
+    r2AccessKeyId?: SortOrder
+    r2SecretAccessKey?: SortOrder
+    r2BucketName?: SortOrder
+    r2PublicUrl?: SortOrder
+    videoRetentionHours?: SortOrder
+    thumbnailRetentionDays?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StorageSettingsSumOrderByAggregateInput = {
+    id?: SortOrder
+    videoRetentionHours?: SortOrder
+    thumbnailRetentionDays?: SortOrder
   }
 
   export type FourKInterestSurveyCountOrderByAggregateInput = {

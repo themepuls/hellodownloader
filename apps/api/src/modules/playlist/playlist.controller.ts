@@ -73,7 +73,7 @@ export class PlaylistController {
   ) {
     const userId = this.playlistService.resolveRequestUserId(req.user, accessToken);
     const record = await this.playlistService.getFileForUser(userId, id);
-    const { stream, filename, safeName } = this.playlistService.getFileStream(record.zipPath!);
+    const { stream, filename, safeName } = await this.playlistService.getFileStream(record.zipPath!);
 
     res.set({
       'Content-Type': 'application/zip',

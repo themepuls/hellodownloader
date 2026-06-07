@@ -3,7 +3,6 @@ import { DownloadController } from './download.controller';
 import { DownloadService } from './download.service';
 import { YtDlpService } from '../../services/yt-dlp.service';
 import { FfmpegService } from '../../services/ffmpeg.service';
-import { StorageService } from '../../services/storage.service';
 import { ZipService } from '../../services/zip.service';
 import { DownloadProcessorService } from '../../services/download-processor.service';
 import { YouTubeDownloader } from '../../download-engine/youtube/youtube-downloader';
@@ -21,7 +20,6 @@ import { MetadataExtractor } from '../../download-engine/metadata/metadata-extra
     DownloadProcessorService,
     YtDlpService,
     FfmpegService,
-    StorageService,
     ZipService,
     YouTubeDownloader,
     FacebookDownloader,

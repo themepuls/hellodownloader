@@ -12,7 +12,10 @@ export interface SaveFileOptions {
   fileExtension?: string;
   /** When true, always apply fileExtension even if filename already has one. */
   forceExtension?: boolean;
+  /** Use JWT Authorization header (logged-in dashboard re-downloads). */
   auth?: boolean;
+  /** Per-job access token for guest downloads (never put JWT in URLs). */
+  downloadToken?: string | null;
 }
 
 function getAccessToken(): string | null {
@@ -47,7 +50,7 @@ function parseFilenameFromDisposition(header: string | null): string | null {
 }
 
 function sanitizeFilename(name: string): string {
-  return name.replace(/[/\\?%*:|"<>]/g, '_').trim() || 'download';
+  return name.replace(/[/\\?%*:|"<>|\x00-\x1f]/g, '_').replace(/\s+/g, ' ').trim() || 'download';
 }
 
 function ensureFileExtension(filename: string, ext: string, force = false): string {
@@ -95,15 +98,12 @@ async function resolveDownloadFilename(
   return ensureFileExtension(sanitizeFilename(fallbackFilename), ext);
 }
 
-function appendAccessToken(url: string, auth: boolean): string {
-  if (!auth) return url;
-  const token = getAccessToken();
-  if (!token) {
-    throw new Error('Please log in again to download this file.');
-  }
+function appendDownloadToken(url: string, downloadToken?: string | null): string {
+  if (!downloadToken) return url;
   const sep = url.includes('?') ? '&' : '?';
-  return `${url}${sep}access_token=${encodeURIComponent(token)}`;
+  return `${url}${sep}download_token=${encodeURIComponent(downloadToken)}`;
 }
+
 function buildAuthHeaders(auth: boolean): Record<string, string> {
   if (!auth) return {};
   const token = getAccessToken();
@@ -120,14 +120,18 @@ function resolveProxiedDownloadUrl(path: string): string {
   return apiPath;
 }
 
-/** Pick download URL: authenticated routes use the Next.js proxy; public files may use direct API. */
-function resolveDownloadUrl(
+/** In the browser, use same-origin proxy for auth; direct API URL for guest file handoff. */
+function resolveBrowserDownloadUrl(
   path: string,
   downloadUrl: string | null | undefined,
   auth: boolean,
+  downloadToken?: string | null,
 ): string {
-  if (auth) return resolveProxiedDownloadUrl(path);
-  return resolveDirectDownloadUrl(path, downloadUrl);
+  if (typeof window === 'undefined') {
+    return resolveDirectDownloadUrl(path, downloadUrl);
+  }
+  const base = auth ? resolveProxiedDownloadUrl(path) : resolveDirectDownloadUrl(path, downloadUrl);
+  return appendDownloadToken(base, downloadToken);
 }
 
 /** Match page hostname (localhost vs 127.0.0.1) so CORS stays consistent. */
@@ -184,10 +188,11 @@ async function probeFileSize(url: string, authHeaders: Record<string, string> = 
 }
 
 /** Ask server to remove a completed download file (refresh, new URL, tab close). */
-export function releaseDownloadOnServer(id: string): void {
+export function releaseDownloadOnServer(id: string, downloadToken?: string | null): void {
   if (typeof window === 'undefined' || !id) return;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? '/api/v1';
-  const url = `${apiUrl}/downloads/${id}/release`;
+  const qs = downloadToken ? `?download_token=${encodeURIComponent(downloadToken)}` : '';
+  const url = `${apiUrl}/downloads/${id}/release${qs}`;
   try {
     if (navigator.sendBeacon) {
       navigator.sendBeacon(url, '');
@@ -214,29 +219,94 @@ async function triggerNativeDownload(url: string, filename: string): Promise<voi
   anchor.remove();
 }
 
+async function probeDownloadSize(url: string, headers: Record<string, string> = {}): Promise<number> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8_000);
+  try {
+    const res = await fetch(url, { method: 'HEAD', signal: controller.signal, headers });
+    if (res.ok) return Number(res.headers.get('content-length') || 0);
+  } catch {
+    // HEAD may fail — fall through
+  } finally {
+    clearTimeout(timer);
+  }
+  return 0;
+}
+
+/** Fetch same-origin file and save with exact Unicode filename (Safari ignores download= on URL navigations). */
+async function saveViaFetchBlob(
+  url: string,
+  filename: string,
+  headers: Record<string, string> = {},
+): Promise<void> {
+  const res = await fetch(url, { headers });
+  if (!res.ok) {
+    const message =
+      res.status === 403
+        ? 'Access denied. Start a new download from the same URL.'
+        : res.status === 404
+          ? 'File no longer on server (may have expired). Start a new download from the same URL.'
+          : `Could not download file (${res.status})`;
+    throw new Error(message);
+  }
+  const blob = await res.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  await triggerNativeDownload(objectUrl, filename);
+  URL.revokeObjectURL(objectUrl);
+}
+
+async function saveFileInBrowser(
+  url: string,
+  filename: string,
+  headers: Record<string, string>,
+  knownSizeBytes: number,
+): Promise<SaveFileResult> {
+  const size =
+    knownSizeBytes > 0 ? knownSizeBytes : await probeDownloadSize(url, headers);
+
+  // Blob save keeps Bengali/Unicode titles; URL handoff may use ASCII Content-Disposition only.
+  if (size === 0 || size <= LARGE_FILE_BYTES) {
+    await saveViaFetchBlob(url, filename, headers);
+    return 'saved';
+  }
+
+  await triggerNativeDownload(url, filename);
+  return 'started';
+}
+
 export async function saveCompletedFile(
   path: string,
   fallbackFilename: string,
   options: SaveFileOptions = {},
 ): Promise<SaveFileResult> {
-  const { downloadUrl, fileSizeBytes, fileExtension = '.mp4', forceExtension = false, auth = false } =
-    options;
+  const {
+    downloadUrl,
+    fileExtension = '.mp4',
+    forceExtension = false,
+    auth = false,
+    downloadToken,
+    fileSizeBytes,
+  } = options;
 
-  // Authenticated files (playlists): stream via browser download manager with a token in the URL.
-  // Loading large ZIPs into memory via fetch would hang or crash the tab.
-  if (auth) {
-    const url = appendAccessToken(resolveDownloadUrl(path, downloadUrl, true), true);
+  // Browser: fetch+blob for correct Unicode filenames; URL handoff only for very large files.
+  if (typeof window !== 'undefined') {
     const filename = ensureFileExtension(
       sanitizeFilename(fallbackFilename),
       fileExtension,
       forceExtension,
     );
-    await triggerNativeDownload(url, filename);
-    return 'started';
+    const authHeaders = buildAuthHeaders(auth);
+    const url = appendDownloadToken(resolveProxiedDownloadUrl(path), downloadToken);
+    const knownSize =
+      typeof fileSizeBytes === 'string'
+        ? Number.parseInt(fileSizeBytes, 10)
+        : fileSizeBytes ?? 0;
+
+    return saveFileInBrowser(url, filename, authHeaders, knownSize);
   }
 
   const authHeaders = buildAuthHeaders(auth);
-  const downloadUrlResolved = resolveDownloadUrl(path, downloadUrl, auth);
+  const downloadUrlResolved = resolveBrowserDownloadUrl(path, downloadUrl, auth, downloadToken);
   const knownSize =
     typeof fileSizeBytes === 'string'
       ? Number.parseInt(fileSizeBytes, 10)

@@ -11,6 +11,7 @@ import {
 import { useAdsConfig } from '@/hooks/useAdsConfig';
 import { useClientMounted } from '@/hooks/useClientMounted';
 import { useUserStore } from '@/store/userStore';
+import { BANNER_AD_MARGIN } from './ad-banner-styles';
 
 type CustomAdsSlotProps = {
   page: CustomAdPage;
@@ -48,7 +49,7 @@ export function CustomAdsSlot({ page, position, className }: CustomAdsSlotProps)
 function CustomAdCard({ ad }: { ad: CustomAdItem }) {
   const isBanner = ad.format === 'banner';
   const frameClass = isBanner
-    ? 'relative w-full overflow-hidden rounded-xl border border-border bg-card/80 aspect-[728/90] min-h-[72px]'
+    ? `${BANNER_AD_MARGIN} relative w-full overflow-hidden rounded-xl border border-border bg-card/80 aspect-[728/90] min-h-[72px]`
     : 'relative w-full overflow-hidden rounded-xl border border-border bg-card/80 aspect-square max-w-[320px] mx-auto lg:mx-0';
 
   const image = (

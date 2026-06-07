@@ -15,6 +15,7 @@ import { JobStatusPanel } from '@/components/downloader/JobStatusPanel';
 import { AuthDivider, GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
 import { isGoogleAuthConfigured } from '@/components/providers/GoogleAuthProvider';
 import { saveCompletedFile } from '@/lib/save-file';
+import { useAffiliateOnSave } from '@/hooks/useAffiliateOnSave';
 import { useUserStore } from '@/store/userStore';
 import Link from 'next/link';
 
@@ -41,6 +42,7 @@ export default function PlaylistPage() {
   const [saving, setSaving] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const createAbortRef = useRef<AbortController | null>(null);
+  const openAffiliate = useAffiliateOnSave('playlist');
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
@@ -126,6 +128,7 @@ export default function PlaylistPage() {
 
   const saveZip = async () => {
     if (!playlistId) return;
+    openAffiliate();
     setSaving(true);
     setError(null);
     try {

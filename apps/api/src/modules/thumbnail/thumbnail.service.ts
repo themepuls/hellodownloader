@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { ThumbnailQueueService } from '../../queues/thumbnail.queue';
 import { ThumbnailProcessorService } from '../../services/thumbnail-processor.service';
@@ -9,12 +9,28 @@ import { AiApiSettingsService } from '../ai-api-settings/ai-api-settings.service
 import { CREDIT_COSTS, formatThumbnailResolution, PLAN_LIMITS, validateThumbnailAiCredentials } from '@hellodownloader/shared-types';
 import type { PlanType } from '@hellodownloader/shared-types';
 import { ThumbnailRatio } from '@hellodownloader/shared-types';
+import { existsSync } from 'fs';
+import { pruneUserThumbnails } from '../../utils/thumbnail-retention';
+import { isR2Reference } from '../../utils/r2-storage';
+import { getOrCreateGuestUser } from '../../utils/guest-user';
+import { StorageService } from '../../services/storage.service';
+import * as fs from 'fs';
+import * as path from 'path';
+import {
+  generateResourceAccessToken,
+  hashResourceAccessToken,
+  readAccessTokenHash,
+  verifyResourceAccessToken,
+  withAccessTokenHash,
+} from '../../utils/resource-access';
+import { assertAllowedThumbnailUrl, assertSafeVideoUrl } from '../../utils/safe-url';
 
 export type ThumbnailMode = 'adjust' | 'generate';
 
 @Injectable()
 export class ThumbnailService {
   private readonly logger = new Logger(ThumbnailService.name);
+  private readonly storagePath = process.env.STORAGE_PATH ?? './storage';
 
   constructor(
     private prisma: PrismaService,
@@ -24,15 +40,59 @@ export class ThumbnailService {
     private ytDlp: YtDlpService,
     private aiApiSettings: AiApiSettingsService,
     private thumbnailPrompts: ThumbnailPromptsService,
+    private storage: StorageService,
   ) {}
 
+  private async deleteThumbnailFiles(row: {
+    exportPath: string | null;
+    originalPath: string | null;
+    resizedPath: string | null;
+  }) {
+    for (const ref of [row.exportPath, row.originalPath, row.resizedPath]) {
+      if (ref && isR2Reference(ref)) {
+        await this.storage.deleteR2Reference(ref);
+      }
+    }
+  }
+
+  private async persistThumbnailImage(
+    userId: string,
+    thumbnailId: string,
+    imageUrl: string,
+  ): Promise<{ originalPath: string; exportPath: string }> {
+    const safeImageUrl = assertAllowedThumbnailUrl(imageUrl);
+    const destDir = path.join(this.storagePath, 'thumbnails', userId, thumbnailId);
+    fs.mkdirSync(destDir, { recursive: true });
+    const localPath = path.join(destDir, 'original.jpg');
+
+    const imageFetchUrl = new URL(safeImageUrl);
+    const referer = /ytimg|youtube/i.test(imageFetchUrl.hostname)
+      ? 'https://www.youtube.com/'
+      : imageFetchUrl.origin;
+
+    const res = await fetch(safeImageUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        Referer: referer,
+        Accept: 'image/*,*/*;q=0.8',
+      },
+    });
+    if (!res.ok) {
+      throw new BadRequestException('Could not download thumbnail image');
+    }
+    fs.writeFileSync(localPath, Buffer.from(await res.arrayBuffer()));
+    return { originalPath: localPath, exportPath: localPath };
+  }
+
   async getOriginalThumbnail(url: string) {
-    const meta = await this.ytDlp.extractMetadata(url);
+    const safeUrl = assertSafeVideoUrl(url);
+    const meta = await this.ytDlp.extractMetadata(safeUrl);
     if (!meta.thumbnail) {
       throw new BadRequestException('No thumbnail found for this video');
     }
 
-    const best = await this.ytDlp.resolveBestThumbnail(url, {
+    const best = await this.ytDlp.resolveBestThumbnail(safeUrl, {
       videoId: meta.id,
       fallbackUrl: meta.thumbnail,
       fallbackWidth: meta.thumbnailWidth,
@@ -40,7 +100,7 @@ export class ThumbnailService {
     });
 
     const resolution = formatThumbnailResolution(best.width, best.height);
-    const isYouTube = /youtube\.com|youtu\.be/i.test(url);
+    const isYouTube = /youtube\.com|youtu\.be/i.test(safeUrl);
     const maxQualityNote = isYouTube
       ? best.width >= 1280
         ? 'Maximum YouTube upload thumbnail (1280×720). Video resolution (4K/HD) does not increase thumbnail size.'
@@ -120,10 +180,12 @@ export class ThumbnailService {
     const adjustPrompt =
       mode === 'adjust' ? await this.thumbnailPrompts.composeAdjustPrompt(categorySlug) : undefined;
 
+    const safeVideoUrl = assertSafeVideoUrl(videoUrl);
+
     const thumbnail = await this.prisma.thumbnail.create({
       data: {
         userId,
-        videoUrl,
+        videoUrl: safeVideoUrl,
         ratio,
         status: 'PENDING',
         creditsUsed: creditCost,
@@ -150,7 +212,7 @@ export class ThumbnailService {
     const jobData = {
       thumbnailId: thumbnail.id,
       userId,
-      videoUrl,
+      videoUrl: safeVideoUrl,
       ratio,
       upscale: false,
       mode,
@@ -181,21 +243,71 @@ export class ThumbnailService {
     };
   }
 
-  async recordOriginalDownload(userId: string, url: string) {
-    const meta = await this.getOriginalThumbnail(url);
+  async recordOriginalDownload(
+    userId: string | undefined,
+    url: string,
+    hints?: { thumbnailUrl?: string; title?: string },
+  ) {
+    const safeUrl = assertSafeVideoUrl(url);
+    const meta =
+      hints?.thumbnailUrl
+        ? {
+            thumbnail: assertAllowedThumbnailUrl(hints.thumbnailUrl),
+            title: hints.title ?? 'Video thumbnail',
+            channel: undefined,
+            width: 480,
+            height: 360,
+            resolution: undefined,
+            maxQualityNote: undefined,
+          }
+        : await this.getOriginalThumbnail(safeUrl);
+    const ownerId = userId ?? (await getOrCreateGuestUser(this.prisma)).id;
+    const accessToken = generateResourceAccessToken();
+    const accessTokenHash = hashResourceAccessToken(accessToken);
 
-    await this.prisma.thumbnail.create({
+    const thumbnail = await this.prisma.thumbnail.create({
       data: {
-        userId,
-        videoUrl: url,
+        userId: ownerId,
+        videoUrl: safeUrl,
         ratio: ThumbnailRatio.YOUTUBE_16_9,
-        status: 'COMPLETED',
+        status: 'PROCESSING',
         creditsUsed: 0,
-        ocrData: { mode: 'original', title: meta.title },
+        ocrData: withAccessTokenHash(
+          { mode: 'original', title: meta.title },
+          accessTokenHash,
+        ),
       },
     });
 
-    return meta;
+    try {
+      const stored = await this.persistThumbnailImage(ownerId, thumbnail.id, meta.thumbnail);
+      await this.prisma.thumbnail.update({
+        where: { id: thumbnail.id },
+        data: {
+          status: 'COMPLETED',
+          originalPath: stored.originalPath,
+          exportPath: stored.exportPath,
+          exportUrl: `/api/v1/thumbnails/${thumbnail.id}/file`,
+        },
+      });
+
+      const r2Key = `thumbnails/${ownerId}/${thumbnail.id}/original.jpg`;
+      this.storage.scheduleBackgroundR2Persist(stored.exportPath, r2Key, async (storedPath) => {
+        await this.prisma.thumbnail.update({
+          where: { id: thumbnail.id },
+          data: { originalPath: storedPath, exportPath: storedPath },
+        });
+      });
+
+      await pruneUserThumbnails(this.prisma, this.storagePath, ownerId, (row) =>
+        this.deleteThumbnailFiles(row),
+      );
+
+      return { ...meta, thumbnailId: thumbnail.id, storedOnR2: false, accessToken };
+    } catch (err) {
+      await this.prisma.thumbnail.delete({ where: { id: thumbnail.id } });
+      throw err;
+    }
   }
 
   async findAll(userId: string) {
@@ -215,10 +327,35 @@ export class ThumbnailService {
     return row;
   }
 
-  async getExportFile(id: string) {
+  async assertThumbnailAccess(
+    id: string,
+    opts: { userId?: string; accessToken?: string },
+  ) {
     const row = await this.prisma.thumbnail.findUnique({ where: { id } });
-    if (!row || row.status !== 'COMPLETED' || !row.exportPath) {
+    if (!row) throw new NotFoundException('Thumbnail not found');
+
+    if (opts.userId && row.userId === opts.userId) {
+      return row;
+    }
+
+    const storedHash = readAccessTokenHash(row.ocrData);
+    if (verifyResourceAccessToken(storedHash, opts.accessToken)) {
+      return row;
+    }
+
+    throw new ForbiddenException('Access denied');
+  }
+
+  async getExportFile(
+    id: string,
+    opts: { userId?: string; accessToken?: string } = {},
+  ) {
+    const row = await this.assertThumbnailAccess(id, opts);
+    if (row.status !== 'COMPLETED' || !row.exportPath) {
       throw new NotFoundException('File not ready yet');
+    }
+    if (!isR2Reference(row.exportPath) && !existsSync(row.exportPath)) {
+      throw new NotFoundException('File no longer on server');
     }
     return { exportPath: row.exportPath, ratio: row.ratio };
   }

@@ -88,6 +88,26 @@ function jsFieldToScripts(js: string): ParsedAdScript[] {
   return [{ text: trimmed }];
 }
 
+function isAdsByGooglePushScript(spec: ParsedAdScript): boolean {
+  return Boolean(spec.text && /adsbygoogle/i.test(spec.text) && /\.push\s*\(/.test(spec.text));
+}
+
+/**
+ * Global snippets should only load network scripts/meta — not render display units.
+ * Strips ins.adsbygoogle and push() calls so units stay in banner/popup slots only.
+ */
+export function stripAdSenseDisplayUnits(parsed: ParsedAdTag): ParsedAdTag {
+  let html = parsed.html;
+  if (html.includes('adsbygoogle')) {
+    const doc = new DOMParser().parseFromString(`<div data-ad-root="1">${html}</div>`, 'text/html');
+    doc.querySelectorAll('ins.adsbygoogle').forEach((el) => el.remove());
+    html = doc.querySelector('[data-ad-root]')?.innerHTML.trim() ?? '';
+  }
+
+  const scripts = parsed.scripts.filter((s) => !isAdsByGooglePushScript(s));
+  return { ...parsed, html, scripts };
+}
+
 /** Prefer full ad tag; fall back to split HTML / CSS / JS fields. */
 export function resolveAdSlotContent(
   adTag: string,

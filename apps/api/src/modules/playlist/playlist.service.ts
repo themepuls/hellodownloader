@@ -9,6 +9,8 @@ import { DownloadType, type PlanType } from '@hellodownloader/shared-types';
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { deliverLocalFile } from '../../utils/file-delivery';
+import { StorageService } from '../../services/storage.service';
+import { fromR2Reference, isR2Reference } from '../../utils/r2-storage';
 
 @Injectable()
 export class PlaylistService {
@@ -20,6 +22,7 @@ export class PlaylistService {
     private playlistProcessor: PlaylistProcessorService,
     private ytDlp: YtDlpService,
     private jwtService: JwtService,
+    private storage: StorageService,
   ) {}
 
   resolveRequestUserId(
@@ -104,7 +107,12 @@ export class PlaylistService {
     if (!playlist || playlist.status !== 'COMPLETED') {
       throw new BadRequestException('ZIP not ready yet');
     }
-    if (!playlist.zipPath || !existsSync(playlist.zipPath)) {
+    if (!playlist.zipPath) {
+      throw new BadRequestException(
+        'File no longer on server (already saved or expired). Start a new download from the playlist page.',
+      );
+    }
+    if (!isR2Reference(playlist.zipPath) && !existsSync(playlist.zipPath)) {
       throw new BadRequestException(
         'File no longer on server (already saved or expired). Start a new download from the playlist page.',
       );
@@ -112,9 +120,13 @@ export class PlaylistService {
     return playlist;
   }
 
-  getFileStream(filePath: string) {
-    const filename = path.basename(filePath);
+  async getFileStream(filePath: string) {
+    const filename = path.basename(fromR2Reference(filePath));
     const safeName = filename.replace(/[^\x20-\x7E]/g, '_').replace(/"/g, '');
+    if (isR2Reference(filePath)) {
+      const { body } = await this.storage.openR2Object(fromR2Reference(filePath));
+      return { stream: body, filename, safeName };
+    }
     return {
       stream: deliverLocalFile(filePath),
       filename,
@@ -127,12 +139,16 @@ export class PlaylistService {
     if (!shouldDeleteAfterDownload()) return;
 
     try {
+      if (isR2Reference(zipPath)) {
+        this.logger.log(`Playlist ${playlistId} kept on R2 (${fromR2Reference(zipPath)})`);
+        return;
+      }
       deleteLocalFile(zipPath);
       await this.prisma.playlist.update({
         where: { id: playlistId },
         data: { zipPath: null, zipUrl: null },
       });
-      this.logger.log(`Removed delivered ZIP for playlist ${playlistId}`);
+      this.logger.log(`Removed delivered local ZIP for playlist ${playlistId}`);
     } catch (err) {
       this.logger.warn(
         `Failed to remove ZIP after delivery ${playlistId}: ${err instanceof Error ? err.message : err}`,

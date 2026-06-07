@@ -158,7 +158,7 @@ export class SslcommerzService {
   async verifyHashAsync(payload: Record<string, string>): Promise<boolean> {
     const config = await this.paymentConfig.get('SSLCOMMERZ');
     const creds = this.paymentConfig.getSslcommerzCredentials(config);
-    if (!creds.storePass) return true;
+    if (!creds.storePass) return false;
     const { verify_sign, verify_key } = payload;
     if (!verify_sign || !verify_key) return false;
     const keys = verify_key.split(',');

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { hasProAccess } from '@hellodownloader/shared-types';
 import { useAdsConfig } from '@/hooks/useAdsConfig';
 import { useUserStore } from '@/store/userStore';
-import { parseAdTag } from '@/lib/ad-tag-parser';
+import { parseAdTag, stripAdSenseDisplayUnits } from '@/lib/ad-tag-parser';
 import { cleanupAdAssets, injectAdAssets } from '@/lib/inject-ad-scripts';
 
 /** Injects global ad code from any network (loaders, verification tags, site-wide CSS). */
@@ -19,19 +19,21 @@ export function AdGlobalScripts() {
     const markerId = 'hd-global-ad';
     const tag = global.adTag.trim();
 
-    const parsed = tag
-      ? parseAdTag(tag)
-      : {
-          html: '',
-          css: global.css,
-          scripts: global.headJs.trim()
-            ? /^https?:\/\//i.test(global.headJs.trim())
-              ? [{ src: global.headJs.trim(), async: true }]
-              : [{ text: global.headJs.trim() }]
-            : [],
-          stylesheets: [] as string[],
-          headHtml: global.headHtml,
-        };
+    const parsed = stripAdSenseDisplayUnits(
+      tag
+        ? parseAdTag(tag)
+        : {
+            html: '',
+            css: global.css,
+            scripts: global.headJs.trim()
+              ? /^https?:\/\//i.test(global.headJs.trim())
+                ? [{ src: global.headJs.trim(), async: true }]
+                : [{ text: global.headJs.trim() }]
+              : [],
+            stylesheets: [] as string[],
+            headHtml: global.headHtml,
+          },
+    );
 
     const styleId = 'hd-global-ad-css';
     if (parsed.css.trim()) {

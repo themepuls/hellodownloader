@@ -21,9 +21,10 @@ import {
 } from '@/components/ads/ToolPageAds';
 import { ToastStack, useToast } from '@/components/ui/toast';
 import { apiClient } from '@/lib/api';
-import { getThumbnailSrc } from '@/lib/thumbnail';
+import { getThumbnailDownloadSrc, getThumbnailSrc } from '@/lib/thumbnail';
 import { useUserStore } from '@/store/userStore';
 import { usePageContent } from '@/hooks/usePageContent';
+import { useAffiliateOnSave } from '@/hooks/useAffiliateOnSave';
 import {
   buildThumbnailGeneratePrompt,
   DEFAULT_AI_API_SETTINGS,
@@ -70,6 +71,7 @@ export default function ThumbnailPage() {
   const isPro = hasProAccess(user?.plan, user?.role);
   const isAdmin = user?.role === 'ADMIN';
   const { toasts, dismiss, success, error: toastError } = useToast();
+  const openAffiliate = useAffiliateOnSave('thumbnail');
 
   const [aiFeatures, setAiFeatures] = useState<AiApiFeatureToggles>(
     DEFAULT_AI_API_SETTINGS.features,
@@ -155,14 +157,18 @@ export default function ThumbnailPage() {
 
   const saveOriginal = async () => {
     if (!preview?.thumbnail || !url) return;
+    openAffiliate();
     setLoading((s) => ({ ...s, download: true }));
     try {
       await apiClient.thumbnails.saveOriginal(url);
     } catch {
       // still allow save even if history logging fails
     }
-    const src = getThumbnailSrc(preview.thumbnail);
+    const src = getThumbnailDownloadSrc(preview.thumbnail);
     const res = await fetch(src);
+    if (!res.ok) {
+      throw new Error('Could not download thumbnail');
+    }
     const blob = await res.blob();
     const objectUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');

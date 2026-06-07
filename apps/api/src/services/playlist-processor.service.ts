@@ -5,6 +5,8 @@ import { ZipService } from './zip.service';
 import type { PlanType } from '@hellodownloader/shared-types';
 import * as fs from 'fs';
 import * as path from 'path';
+import { removePathRecursive } from '../utils/fs-utils';
+import { StorageService } from './storage.service';
 
 export interface PlaylistJobData {
   playlistId: string;
@@ -29,6 +31,7 @@ export class PlaylistProcessorService {
     private prisma: PrismaService,
     private playlistDownloader: PlaylistDownloader,
     private zipService: ZipService,
+    private storage: StorageService,
   ) {}
 
   async process(data: PlaylistJobData) {
@@ -119,6 +122,9 @@ export class PlaylistProcessorService {
       const destPath = path.join(destDir, path.basename(primaryFilePath));
       if (primaryFilePath !== destPath) fs.renameSync(primaryFilePath, destPath);
 
+      const zipExt = path.extname(destPath) || '.zip';
+      const r2Key = `playlists/${userFolder}/${data.userId}/${data.playlistId}${zipExt}`;
+
       const skipped =
         expectedTotal && expectedTotal > files.length ? expectedTotal - files.length : 0;
       const skipNotice =
@@ -139,7 +145,14 @@ export class PlaylistProcessorService {
         },
       });
 
-      this.logger.log(`Playlist ${data.playlistId} completed: ${destPath} (${files.length} videos)`);
+      this.logger.log(`Playlist ${data.playlistId} ready locally: ${destPath} (${files.length} videos)`);
+      this.storage.scheduleBackgroundR2Persist(destPath, r2Key, async (storedPath) => {
+        await this.prisma.playlist.update({
+          where: { id: data.playlistId },
+          data: { zipPath: storedPath },
+        });
+        this.logger.log(`Playlist ${data.playlistId} mirrored to R2: ${storedPath}`);
+      });
     } catch (err) {
       if (progressTimer) clearTimeout(progressTimer);
       clearInterval(filePoll);
@@ -149,6 +162,10 @@ export class PlaylistProcessorService {
         where: { id: data.playlistId },
         data: { status: 'FAILED', error: message, progress: 0 },
       });
+    } finally {
+      if (progressTimer) clearTimeout(progressTimer);
+      clearInterval(filePoll);
+      removePathRecursive(outputDir);
     }
   }
 }

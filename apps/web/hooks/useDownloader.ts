@@ -3,21 +3,36 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { extensionForDownloadType, releaseDownloadOnServer, saveCompletedFile } from '@/lib/save-file';
+import { openAffiliateForPage } from '@/lib/affiliate-link';
+import { useAdsConfig } from '@/hooks/useAdsConfig';
+import { useUserStore } from '@/store/userStore';
+import { affiliatePageForDownloadType } from '@hellodownloader/shared-types';
+import { getOptimisticYouTubePreview } from '@/lib/youtube-preview';
 
 export interface DownloadRecord {
   id: string;
   status: string;
   type?: string;
+  quality?: number | null;
+  actualHeight?: number | null;
   progress: number;
   title?: string | null;
   error?: string | null;
+  warning?: string | null;
   downloadUrl?: string | null;
   fileSize?: string | null;
   message?: string;
+  accessToken?: string;
 }
 
 const ACTIVE_DOWNLOAD_KEY = 'hellodownloader-active-download-id';
 const ACTIVE_DOWNLOAD_URL_KEY = 'hellodownloader-active-download-url';
+const ACTIVE_DOWNLOAD_TOKEN_KEY = 'hellodownloader-active-download-token';
+
+function readStoredDownloadToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return sessionStorage.getItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
+}
 
 export function useDownloader(initialUrl = '') {
   const [url, setUrl] = useState(initialUrl);
@@ -31,6 +46,21 @@ export function useDownloader(initialUrl = '') {
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const failCountRef = useRef(0);
   const metadataAbortRef = useRef<AbortController | null>(null);
+  const { config: adsConfig, loaded: adsLoaded } = useAdsConfig();
+  const user = useUserStore((s) => s.user);
+
+  const openAffiliateForType = useCallback(
+    (type?: string | null) => {
+      if (!adsLoaded) return;
+      openAffiliateForPage(
+        adsConfig,
+        affiliatePageForDownloadType(type),
+        user?.plan,
+        user?.role,
+      );
+    },
+    [adsConfig, adsLoaded, user?.plan, user?.role],
+  );
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
@@ -43,12 +73,14 @@ export function useDownloader(initialUrl = '') {
   const clearActiveDownload = useCallback(
     (releaseFile = false) => {
       const id = sessionStorage.getItem(ACTIVE_DOWNLOAD_KEY);
+      const token = readStoredDownloadToken();
       if (releaseFile && id) {
-        releaseDownloadOnServer(id);
+        releaseDownloadOnServer(id, token);
       }
       stopPolling();
       sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
       sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+      sessionStorage.removeItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
       setDownload(null);
     },
     [stopPolling],
@@ -75,7 +107,8 @@ export function useDownloader(initialUrl = '') {
 
   const fetchStatus = useCallback(async (id: string): Promise<DownloadRecord | null> => {
     try {
-      const status = (await apiClient.downloads.status(id)) as DownloadRecord;
+      const token = readStoredDownloadToken();
+      const status = (await apiClient.downloads.status(id, token ?? undefined)) as DownloadRecord;
       failCountRef.current = 0;
       const normalized = {
         ...status,
@@ -96,6 +129,16 @@ export function useDownloader(initialUrl = '') {
       return status;
     } catch (e) {
       failCountRef.current += 1;
+      const message = e instanceof Error ? e.message : '';
+      if (message.includes('Access denied') || message.includes('403')) {
+        stopPolling();
+        setLoading(false);
+        sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
+        sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+        sessionStorage.removeItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
+        setError('Session expired. Paste the URL again and start a new download.');
+        return null;
+      }
       if (failCountRef.current >= 5) {
         stopPolling();
         setLoading(false);
@@ -110,16 +153,19 @@ export function useDownloader(initialUrl = '') {
   }, [stopPolling]);
 
   const pollStatus = useCallback(
-    (id: string, downloadUrl?: string) => {
+    (id: string, downloadUrl?: string, accessToken?: string) => {
       stopPolling();
       sessionStorage.setItem(ACTIVE_DOWNLOAD_KEY, id);
       if (downloadUrl) {
         sessionStorage.setItem(ACTIVE_DOWNLOAD_URL_KEY, downloadUrl.trim());
       }
+      if (accessToken) {
+        sessionStorage.setItem(ACTIVE_DOWNLOAD_TOKEN_KEY, accessToken);
+      }
       void fetchStatus(id);
       pollRef.current = setInterval(() => {
         void fetchStatus(id);
-      }, 2000);
+      }, 1000);
     },
     [stopPolling, fetchStatus],
   );
@@ -147,27 +193,37 @@ export function useDownloader(initialUrl = '') {
 
     void (async () => {
       try {
-        const status = (await apiClient.downloads.status(savedId)) as DownloadRecord;
+        const token = readStoredDownloadToken();
+        const status = (await apiClient.downloads.status(savedId, token ?? undefined)) as DownloadRecord;
 
         if (status.status === 'COMPLETED') {
-          releaseDownloadOnServer(savedId);
-          sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
-          sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+          if (initialUrl.trim() && savedUrl?.trim() !== initialUrl.trim()) {
+            releaseDownloadOnServer(savedId, token);
+            sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
+            sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+            sessionStorage.removeItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
+            return;
+          }
+          if (savedUrl) setUrl(savedUrl);
+          setDownload({ ...status, progress: 100 });
+          setLoading(false);
           return;
         }
 
         if (initialUrl.trim() && savedUrl?.trim() !== initialUrl.trim()) {
-          releaseDownloadOnServer(savedId);
+          releaseDownloadOnServer(savedId, token);
           sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
           sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+          sessionStorage.removeItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
           return;
         }
 
         if (savedUrl) setUrl(savedUrl);
-        pollStatus(savedId, savedUrl ?? undefined);
+        pollStatus(savedId, savedUrl ?? undefined, token ?? undefined);
       } catch {
         sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
         sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
+        sessionStorage.removeItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
       }
     })();
 
@@ -193,9 +249,11 @@ export function useDownloader(initialUrl = '') {
     metadataAbortRef.current = controller;
 
     clearActiveDownload(true);
-    setMetadata(null);
-    setAnalyzing(true);
     setError(null);
+
+    const preview = getOptimisticYouTubePreview(url);
+    setMetadata(preview);
+    setAnalyzing(true);
 
     try {
       const data = await apiClient.downloads.metadata(url, controller.signal);
@@ -222,9 +280,30 @@ export function useDownloader(initialUrl = '') {
     setLoading(true);
     setError(null);
     try {
-      const data = (await apiClient.downloads.create({ url, type, quality, format })) as DownloadRecord;
+      const cachedMeta =
+        metadata && metadata.title && metadata.thumbnail
+          ? {
+              id: metadata.id as string | undefined,
+              title: metadata.title as string,
+              thumbnail: metadata.thumbnail as string,
+              uploader: metadata.uploader as string | undefined,
+              duration: metadata.duration as number | undefined,
+              formats: metadata.formats as unknown[] | undefined,
+            }
+          : undefined;
+
+      const data = (await apiClient.downloads.create({
+        url,
+        type,
+        quality,
+        format,
+        metadata: cachedMeta,
+      })) as DownloadRecord;
+      if (data.accessToken) {
+        sessionStorage.setItem(ACTIVE_DOWNLOAD_TOKEN_KEY, data.accessToken);
+      }
       setDownload(data);
-      pollStatus(data.id, url);
+      pollStatus(data.id, url, data.accessToken);
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Download failed';
       setError(msg);
@@ -234,13 +313,15 @@ export function useDownloader(initialUrl = '') {
 
   const saveToPc = async () => {
     if (!download?.id) return;
+    openAffiliateForType(download.type);
     setError(null);
     setSaveStarted(false);
     setSaving(true);
     try {
       let fresh = download;
+      const downloadToken = readStoredDownloadToken();
       if (!download.downloadUrl || !download.fileSize) {
-        fresh = (await apiClient.downloads.status(download.id)) as DownloadRecord;
+        fresh = (await apiClient.downloads.status(download.id, downloadToken ?? undefined)) as DownloadRecord;
         setDownload((prev) => ({ ...prev, ...fresh, progress: 100 }));
       }
 
@@ -249,12 +330,13 @@ export function useDownloader(initialUrl = '') {
 
       const result = await saveCompletedFile(
         `/downloads/${download.id}/file`,
-        fresh.title ?? download.title ?? `download-${download.id}`,
+        fresh.title ?? download.title ?? metadata?.title ?? `download-${download.id}`,
         {
           downloadUrl: fresh.downloadUrl ?? download.downloadUrl,
           fileSizeBytes: fresh.fileSize ?? download.fileSize,
           fileExtension,
           forceExtension: downloadType === 'MP3',
+          downloadToken,
         },
       );
 
@@ -285,5 +367,6 @@ export function useDownloader(initialUrl = '') {
     cancelAnalysis,
     cancelDownload,
     cancelAll,
+    setError,
   };
 }

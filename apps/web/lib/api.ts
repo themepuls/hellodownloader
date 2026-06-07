@@ -90,10 +90,15 @@ export async function api<T>(
       throw new Error('Please log in to continue, or try again as a guest.');
     }
     if (res.status === 403) {
-      throw new Error('Admin access required.');
+      throw new Error(message.includes('Admin') ? message : 'Access denied.');
     }
     if (res.status === 404) {
       throw new Error('API route not found. Restart the API server (pnpm --filter @hellodownloader/api dev).');
+    }
+    if (res.status >= 500) {
+      throw new Error(
+        'API server error. Restart it with: pnpm --filter @hellodownloader/api dev — then refresh this page.',
+      );
     }
     throw new Error(message);
   }
@@ -125,11 +130,33 @@ export const apiClient = {
     qualityAccess: () => api('/downloads/quality-access'),
     metadata: (url: string, signal?: AbortSignal) =>
       api('/downloads/metadata', { method: 'POST', body: JSON.stringify({ url }), signal }),
-    create: (data: { url: string; type: string; quality?: number; format?: string }) =>
-      api('/downloads', { method: 'POST', body: JSON.stringify(data) }),
-    status: (id: string) => api(`/downloads/${id}/status`),
-    release: (id: string) =>
-      api(`/downloads/${id}/release`, { method: 'POST' }),
+    create: (data: {
+      url: string;
+      type: string;
+      quality?: number;
+      format?: string;
+      metadata?: {
+        id?: string;
+        title: string;
+        thumbnail: string;
+        uploader?: string;
+        duration?: number;
+        formats?: unknown[];
+      };
+    }) => api('/downloads', { method: 'POST', body: JSON.stringify(data) }),
+    status: (id: string, downloadToken?: string) =>
+      api(
+        `/downloads/${id}/status${
+          downloadToken ? `?download_token=${encodeURIComponent(downloadToken)}` : ''
+        }`,
+      ),
+    release: (id: string, downloadToken?: string) =>
+      api(
+        `/downloads/${id}/release${
+          downloadToken ? `?download_token=${encodeURIComponent(downloadToken)}` : ''
+        }`,
+        { method: 'POST' },
+      ),
     list: (page = 1) => api(`/downloads?page=${page}`),
     get: (id: string) => api(`/downloads/${id}`),
   },
@@ -143,8 +170,11 @@ export const apiClient = {
     original: (url: string, signal?: AbortSignal) =>
       api('/thumbnails/original', { method: 'POST', body: JSON.stringify({ url }), signal }),
     features: () => api('/thumbnails/features'),
-    saveOriginal: (url: string) =>
-      api('/thumbnails/original/save', { method: 'POST', body: JSON.stringify({ url }) }),
+    saveOriginal: (url: string, hints?: { thumbnailUrl?: string; title?: string }) =>
+      api('/thumbnails/original/save', {
+        method: 'POST',
+        body: JSON.stringify({ url, ...hints }),
+      }),
     createAi: (data: {
       videoUrl: string;
       ratio: string;
@@ -186,7 +216,8 @@ export const apiClient = {
     payments: () => api('/billing/payments'),
   },
   users: {
-    dashboard: () => api('/users/dashboard'),
+    dashboard: (page = 1, limit = 10) =>
+      api(`/users/dashboard?page=${page}&limit=${limit}`),
   },
   admin: {
     stats: () => api('/admin/stats'),
@@ -243,6 +274,11 @@ export const apiClient = {
     listCredits: (p: Record<string, string | number | undefined> = {}) =>
       api(`/admin/credits${adminQs(p)}`),
     storage: () => api('/admin/storage'),
+    getStorageSettings: () => api('/admin/storage-settings'),
+    updateStorageSettings: (data: Record<string, unknown>) =>
+      api('/admin/storage-settings', { method: 'PATCH', body: JSON.stringify(data) }),
+    testStorageR2: () =>
+      api<{ ok: boolean; message: string }>('/admin/storage-settings/r2/test', { method: 'POST' }),
     cleanup: (hours?: number) =>
       api('/admin/storage/cleanup', { method: 'POST', body: JSON.stringify({ hours }) }),
     analytics: () => api('/admin/analytics'),

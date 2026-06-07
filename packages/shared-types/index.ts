@@ -8,6 +8,7 @@ export * from './thumbnail-image';
 export * from './thumbnail-adjust-vision';
 export * from './thumbnail-categories';
 export * from './plan-access';
+export * from './storage-settings';
 export * from './download-quality-access';
 export * from './ads-config';
 export * from './custom-ads';

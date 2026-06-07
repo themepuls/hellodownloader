@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient } from '@/lib/api';
 import { saveCompletedFile } from '@/lib/save-file';
+import { useAffiliateOnSave } from '@/hooks/useAffiliateOnSave';
 import { thumbnailExportUrl } from '@/lib/thumbnail';
 import {
   ThumbnailStatus,
@@ -46,6 +47,7 @@ export function ThumbnailJobResultCard({ job: initialJob, onComplete, onCancel }
   const [job, setJob] = useState(initialJob);
   const [downloading, setDownloading] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
+  const openAffiliate = useAffiliateOnSave('thumbnail');
 
   const mode = resolveMode(job.ocrData);
   const modeLabel = MODE_LABELS[mode] ?? 'AI Thumbnail';
@@ -88,11 +90,13 @@ export function ThumbnailJobResultCard({ job: initialJob, onComplete, onCancel }
   }, [initialJob.id, processing]);
 
   const handleDownload = async () => {
+    openAffiliate();
     setDownloading(true);
     try {
       await saveCompletedFile(
         `/thumbnails/${job.id}/file?download=1`,
         `thumbnail-${job.ratio.toLowerCase()}.jpg`,
+        { auth: true, fileExtension: '.jpg' },
       );
     } finally {
       setDownloading(false);

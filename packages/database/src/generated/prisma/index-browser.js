@@ -340,6 +340,19 @@ exports.Prisma.SiteSettingsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.StorageSettingsScalarFieldEnum = {
+  id: 'id',
+  r2Enabled: 'r2Enabled',
+  r2AccountId: 'r2AccountId',
+  r2AccessKeyId: 'r2AccessKeyId',
+  r2SecretAccessKey: 'r2SecretAccessKey',
+  r2BucketName: 'r2BucketName',
+  r2PublicUrl: 'r2PublicUrl',
+  videoRetentionHours: 'videoRetentionHours',
+  thumbnailRetentionDays: 'thumbnailRetentionDays',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.FourKInterestSurveyScalarFieldEnum = {
   id: 'id',
   interested: 'interested',
@@ -473,6 +486,7 @@ exports.Prisma.ModelName = {
   AiApiSettings: 'AiApiSettings',
   ThumbnailPrompt: 'ThumbnailPrompt',
   SiteSettings: 'SiteSettings',
+  StorageSettings: 'StorageSettings',
   FourKInterestSurvey: 'FourKInterestSurvey'
 };
 

@@ -8,9 +8,18 @@ import { ContentModule } from '../content/content.module';
 import { SurveyModule } from '../survey/survey.module';
 import { AdsModule } from '../ads/ads.module';
 import { SiteSettingsModule } from '../site-settings/site-settings.module';
+import { StorageSettingsModule } from '../storage-settings/storage-settings.module';
 
 @Module({
-  imports: [DownloadModule, QueueModule, ContentModule, SurveyModule, AdsModule, SiteSettingsModule],
+  imports: [
+    DownloadModule,
+    QueueModule,
+    ContentModule,
+    SurveyModule,
+    AdsModule,
+    SiteSettingsModule,
+    StorageSettingsModule,
+  ],
   controllers: [AdminController],
   providers: [AdminGuard, AdminService],
 })

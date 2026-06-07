@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getThumbnailSrc } from '@/lib/thumbnail';
+import { getThumbnailDownloadSrc, getThumbnailSrc } from '@/lib/thumbnail';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -24,6 +24,7 @@ import {
 } from '@/components/ads/ToolPageAds';
 import { Button } from '@/components/ui/button';
 import { useDownloader } from '@/hooks/useDownloader';
+import { useAffiliateOnSave } from '@/hooks/useAffiliateOnSave';
 import { apiClient } from '@/lib/api';
 import { useUserStore } from '@/store/userStore';
 import {
@@ -63,6 +64,7 @@ export function DownloadWorkspace({
   );
   const [tab, setTab] = useState<Tab>('video');
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
+  const [thumbnailSaving, setThumbnailSaving] = useState(false);
   const autoAnalyzed = useRef(false);
 
   const {
@@ -81,7 +83,9 @@ export function DownloadWorkspace({
     refreshStatus,
     cancelAnalysis,
     cancelDownload,
+    setError,
   } = useDownloader(initialUrl);
+  const openDownloadAffiliate = useAffiliateOnSave('download');
 
   useEffect(() => {
     void apiClient.downloads
@@ -122,6 +126,41 @@ export function DownloadWorkspace({
     void startDownload('VIDEO', height, formatId);
   };
 
+  const saveOriginalThumbnail = async () => {
+    if (!meta?.thumbnail || !url.trim() || thumbnailSaving) return;
+    setThumbnailSaving(true);
+    openDownloadAffiliate();
+    try {
+      void apiClient.thumbnails
+        .saveOriginal(url.trim(), {
+          thumbnailUrl: meta.thumbnail,
+          title: meta.title,
+        })
+        .catch(() => undefined);
+
+      const res = await fetch(getThumbnailDownloadSrc(meta.thumbnail));
+      if (!res.ok) {
+        throw new Error('Could not download thumbnail');
+      }
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const safeTitle =
+        meta.title.replace(/[/\\?%*:|"<>|\x00-\x1f]/g, '_').replace(/\s+/g, ' ').trim().slice(0, 80) ||
+        'thumbnail';
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = `${safeTitle}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      setError('Could not download thumbnail. Try again.');
+    } finally {
+      setThumbnailSaving(false);
+    }
+  };
+
   const renderQualityRow = (
     q: (typeof qualities)[number],
     options: { locked?: boolean },
@@ -147,7 +186,9 @@ export function DownloadWorkspace({
           {q.badge}
         </span>
         <span className="text-xs text-muted-foreground">{q.ext}</span>
-        <span className="text-xs text-muted-foreground">{formatFileSize(q.filesize)}</span>
+        <span className="text-xs text-muted-foreground">
+          {q.filesize ? `~${formatFileSize(q.filesize)} est.` : '—'}
+        </span>
       </div>
       {options.locked ? (
         <span className="shrink-0 text-xs text-muted-foreground">Soon</span>
@@ -236,9 +277,21 @@ export function DownloadWorkspace({
                       <p className="text-sm text-red-700 dark:text-red-200">{error}</p>
                     )}
                     {saveStarted ? (
-                      <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                        Download started — check your browser&apos;s download panel.
-                      </p>
+                      <div className="space-y-2">
+                        <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                          Download started — check your browser&apos;s download panel.
+                        </p>
+                        <Button
+                          variant="outline"
+                          className="w-full gap-2"
+                          size="lg"
+                          onClick={saveToPc}
+                          disabled={saving}
+                        >
+                          <Download className="h-4 w-4" />
+                          {saving ? 'Starting download…' : 'Try again'}
+                        </Button>
+                      </div>
                     ) : (
                       <Button
                         onClick={saveToPc}
@@ -300,29 +353,11 @@ export function DownloadWorkspace({
                       variant="outline"
                       size="sm"
                       className="mt-4 w-full gap-2"
-                      onClick={async () => {
-                        if (url.trim()) {
-                          try {
-                            await apiClient.thumbnails.saveOriginal(url.trim());
-                          } catch {
-                            // continue with file save
-                          }
-                        }
-                        const src = getThumbnailSrc(meta.thumbnail);
-                        const res = await fetch(src);
-                        const blob = await res.blob();
-                        const objectUrl = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = objectUrl;
-                        a.download = `${meta.title.slice(0, 40)}.jpg`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        URL.revokeObjectURL(objectUrl);
-                      }}
+                      disabled={thumbnailSaving}
+                      onClick={() => void saveOriginalThumbnail()}
                     >
                       <Download className="h-3.5 w-3.5" />
-                      Download original thumbnail (free)
+                      {thumbnailSaving ? 'Saving…' : 'Download original thumbnail (free)'}
                     </Button>
                   )}
                 </div>
@@ -429,6 +464,7 @@ export function DownloadWorkspace({
                   status={download.status as 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'}
                   progress={download.progress ?? 10}
                   error={download.error}
+                  warning={download.warning}
                   onRefresh={refreshStatus}
                   onCancel={
                     download.status === 'QUEUED' || download.status === 'PROCESSING'
@@ -441,7 +477,11 @@ export function DownloadWorkspace({
                         {download.progress ?? 0}% —{' '}
                         {(download.progress ?? 0) < 30
                           ? 'preparing download on server'
-                          : 'downloading on server'}
+                          : (download.progress ?? 0) >= 90
+                            ? 'finishing on server'
+                            : (download.progress ?? 0) >= 85
+                              ? 'saving file on server'
+                              : 'downloading on server'}
                         {(meta?.duration ?? 0) >= 1800
                           ? ' · long videos may take 10–30+ minutes'
                           : ''}
@@ -462,11 +502,21 @@ export function DownloadWorkspace({
                       {saveStarted ? (
                         <div className="space-y-2">
                           <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                            Download started — check your browser&apos;s download panel
-                            {download.fileSize
-                              ? ` (${formatFileSize(Number(download.fileSize))})`
-                              : ''}
-                            .
+                            {(() => {
+                              const res = download.actualHeight ?? download.quality;
+                              const size = download.fileSize
+                                ? formatFileSize(Number(download.fileSize))
+                                : null;
+                              const detail =
+                                res && size
+                                  ? ` (${res}p, ${size})`
+                                  : size
+                                    ? ` (${size})`
+                                    : res
+                                      ? ` (${res}p)`
+                                      : '';
+                              return `Download started — check your browser's download panel${detail}.`;
+                            })()}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             Large files can take several minutes. Keep this tab open until the
@@ -480,7 +530,7 @@ export function DownloadWorkspace({
                             disabled={saving}
                           >
                             <Download className="h-4 w-4" />
-                            Download again
+                            {saving ? 'Starting download…' : 'Try again'}
                           </Button>
                         </div>
                       ) : (

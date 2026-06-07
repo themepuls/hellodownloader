@@ -6,6 +6,9 @@ import { execa } from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
 import sharp from '../utils/load-sharp';
+import { pruneUserThumbnails } from '../utils/thumbnail-retention';
+import { isR2Reference } from '../utils/r2-storage';
+import { StorageService } from './storage.service';
 import { detectTextForAdjust } from '../thumbnail-engine/detect/text-detect';
 import { smartAdjustResize } from '../thumbnail-engine/resize/smart-adjust';
 import { ThumbnailImageService } from './thumbnail-image.service';
@@ -28,7 +31,36 @@ export class ThumbnailProcessorService {
     private prisma: PrismaService,
     private thumbnailImage: ThumbnailImageService,
     private aiSettings: AiApiSettingsService,
+    private storage: StorageService,
   ) {}
+
+  private mirrorThumbnailFilesToR2(
+    userId: string,
+    thumbnailId: string,
+    paths: { exportPath: string; originalPath: string; resizedPath: string },
+  ) {
+    const prefix = `thumbnails/${userId}/${thumbnailId}`;
+    this.storage.scheduleBackgroundR2Persist(paths.exportPath, `${prefix}/upload-ready.jpg`, async (stored) => {
+      await this.prisma.thumbnail.update({
+        where: { id: thumbnailId },
+        data: { exportPath: stored },
+      });
+    });
+    this.storage.scheduleBackgroundR2Persist(paths.originalPath, `${prefix}/original.jpg`, async (stored) => {
+      await this.prisma.thumbnail.update({
+        where: { id: thumbnailId },
+        data: { originalPath: stored },
+      });
+    });
+    if (fs.existsSync(paths.resizedPath) && paths.resizedPath !== paths.exportPath) {
+      this.storage.scheduleBackgroundR2Persist(paths.resizedPath, `${prefix}/resized.jpg`, async (stored) => {
+        await this.prisma.thumbnail.update({
+          where: { id: thumbnailId },
+          data: { resizedPath: stored },
+        });
+      });
+    }
+  }
 
   async process(data: ThumbnailJobData) {
     const baseDir = path.join(this.storagePath, 'thumbnails', data.userId, data.thumbnailId);
@@ -142,7 +174,7 @@ export class ThumbnailProcessorService {
           originalPath,
           resizedPath,
           exportPath,
-          exportUrl: `/storage/thumbnails/${data.userId}/${data.thumbnailId}/upload-ready.jpg`,
+          exportUrl: `/api/v1/thumbnails/${data.thumbnailId}/file`,
           ocrData: JSON.parse(
             JSON.stringify({
               regions: scaledRegions,
@@ -153,7 +185,20 @@ export class ThumbnailProcessorService {
         },
       });
 
-      this.logger.log(`Thumbnail ${data.thumbnailId} completed`);
+      this.logger.log(`Thumbnail ${data.thumbnailId} ready locally`);
+      void this.mirrorThumbnailFilesToR2(data.userId, data.thumbnailId, {
+        exportPath,
+        originalPath,
+        resizedPath,
+      });
+
+      await pruneUserThumbnails(this.prisma, this.storagePath, data.userId, async (row) => {
+        for (const ref of [row.exportPath, row.originalPath, row.resizedPath]) {
+          if (ref && isR2Reference(ref)) {
+            await this.storage.deleteR2Reference(ref);
+          }
+        }
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Thumbnail processing failed';
       this.logger.error(`Thumbnail ${data.thumbnailId} failed: ${message}`);

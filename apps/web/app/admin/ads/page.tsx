@@ -13,7 +13,7 @@ import {
   type AdsAdminConfig,
 } from '@hellodownloader/shared-types';
 
-type Tab = 'custom' | 'banner' | 'popup' | 'rewarded' | 'global';
+type Tab = 'custom' | 'banner' | 'popup' | 'rewarded' | 'global' | 'affiliate';
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'custom', label: 'Custom ads' },
@@ -21,6 +21,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'popup', label: 'Popup' },
   { id: 'rewarded', label: 'Rewarded' },
   { id: 'global', label: 'Global' },
+  { id: 'affiliate', label: 'Affiliate links' },
 ];
 
 const SUPPORTED_NETWORKS =
@@ -245,6 +246,68 @@ export default function AdminAdsPage() {
                     placeholder="https://cdn.example.com/ad-loader.js"
                   />
                 </AdvancedFields>
+              </>
+            )}
+            {tab === 'affiliate' && (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  When a free user clicks a download or save button, the file download starts and your
+                  affiliate link opens in a new tab. The current page is not reloaded. Pro and admin
+                  users are skipped. URLs without <code className="text-xs">https://</code> get it added
+                  automatically on save.
+                </p>
+                <ToggleRow
+                  label="Enable affiliate links on save"
+                  checked={config.affiliateLinksEnabled}
+                  onChange={(affiliateLinksEnabled) => patch({ affiliateLinksEnabled })}
+                />
+                <div className="space-y-4 pt-2">
+                  <Field label="Video download — Video tab (/download)">
+                    <input
+                      type="url"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      value={config.affiliateLinkDownload}
+                      onChange={(e) => patch({ affiliateLinkDownload: e.target.value })}
+                      placeholder="google.com or https://example.com/offer"
+                    />
+                  </Field>
+                  <Field label="Audio download — MP3 tab (/download)">
+                    <input
+                      type="url"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      value={config.affiliateLinkAudio}
+                      onChange={(e) => patch({ affiliateLinkAudio: e.target.value })}
+                      placeholder="spotify.com or https://example.com/audio-offer"
+                    />
+                  </Field>
+                  <Field label="Subtitle download — Subtitles tab (/download)">
+                    <input
+                      type="url"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      value={config.affiliateLinkSubtitle}
+                      onChange={(e) => patch({ affiliateLinkSubtitle: e.target.value })}
+                      placeholder="example.com or https://example.com/subtitle-offer"
+                    />
+                  </Field>
+                  <Field label="Thumbnail download page (/thumbnail)">
+                    <input
+                      type="url"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      value={config.affiliateLinkThumbnail}
+                      onChange={(e) => patch({ affiliateLinkThumbnail: e.target.value })}
+                      placeholder="fb.com or https://example.com/thumbnail"
+                    />
+                  </Field>
+                  <Field label="Playlist download page (/playlist)">
+                    <input
+                      type="url"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      value={config.affiliateLinkPlaylist}
+                      onChange={(e) => patch({ affiliateLinkPlaylist: e.target.value })}
+                      placeholder="youtube.com or https://example.com/playlist"
+                    />
+                  </Field>
+                </div>
               </>
             )}
           </div>

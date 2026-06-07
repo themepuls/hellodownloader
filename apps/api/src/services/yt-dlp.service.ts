@@ -3,7 +3,7 @@ import { detectPlatform, isSocialPlatform } from '@hellodownloader/shared-types'
 import { execa } from 'execa';
 import * as path from 'path';
 import * as fs from 'fs';
-import sharp from 'sharp';
+import sharp from '../utils/load-sharp';
 import * as os from 'os';
 
 export interface VideoMetadata {
@@ -39,6 +39,8 @@ export interface DownloadOptions {
   onProgress?: (percent: number) => void;
   onItemsProgress?: (completed: number, total: number | null) => void;
   isPlaylist?: boolean;
+  /** When true, skip H.264 transcode during download — run finishCompatTranscode after COMPLETED. */
+  deferCompatTranscode?: boolean;
 }
 
 export interface PlaylistDownloadOptions {
@@ -288,15 +290,22 @@ export class YtDlpService {
     }
   }
 
-  /** Height-capped fallbacks — prefer H.264 for broad player compatibility. */
+  /**
+   * Height-capped fallbacks — cap by the shorter video edge (landscape: height, portrait: width).
+   * Do not require both width AND height <= max — that rejects 854×480 and 1080×1920 streams.
+   */
   private buildHeightCappedFallbacks(maxHeight: number): string {
+    // Merge DASH first — combined 360p MP4 (format 18) must not win over 720p video+audio.
     return [
-      `bestvideo[vcodec^=avc1][height<=${maxHeight}][ext=mp4]+bestaudio[acodec^=mp4a]/` +
-        `bestvideo[vcodec^=avc1][height<=${maxHeight}]+bestaudio/`,
       `bestvideo[height<=${maxHeight}][ext=mp4]+bestaudio[ext=m4a]/`,
+      `bestvideo[width<=${maxHeight}][ext=mp4]+bestaudio[ext=m4a]/`,
       `bestvideo[height<=${maxHeight}]+bestaudio/`,
+      `bestvideo[width<=${maxHeight}]+bestaudio/`,
       `best[height<=${maxHeight}][ext=mp4][acodec!=none]/`,
-      `best[height<=${maxHeight}]`,
+      `best[width<=${maxHeight}][ext=mp4][acodec!=none]/`,
+      `best[height<=${maxHeight}][acodec!=none]/`,
+      `best[width<=${maxHeight}][acodec!=none]/`,
+      `best[acodec!=none]/best`,
     ].join('/');
   }
 
@@ -304,16 +313,18 @@ export class YtDlpService {
   private buildSocialFormatSelector(options: DownloadOptions): string {
     const { format, maxHeight } = options;
     if (format) {
-      return `${format}+bestaudio/${format}/hd/sd/best`;
+      return `best[format_id=${format}][acodec!=none]/${format}+bestaudio/${format}/hd/sd/best`;
     }
     if (maxHeight) {
       return [
         'hd',
         'sd',
-        `bestvideo[vcodec^=avc1][width<=${maxHeight}][height<=${maxHeight}]+bestaudio/`,
-        `bestvideo[width<=${maxHeight}][height<=${maxHeight}]+bestaudio/`,
+        `bestvideo[vcodec^=avc1][height<=${maxHeight}]+bestaudio/`,
+        `bestvideo[vcodec^=avc1][width<=${maxHeight}]+bestaudio/`,
         `bestvideo[height<=${maxHeight}]+bestaudio/`,
-        `best[width<=${maxHeight}][height<=${maxHeight}]`,
+        `bestvideo[width<=${maxHeight}]+bestaudio/`,
+        `best[height<=${maxHeight}]/`,
+        `best[width<=${maxHeight}]/`,
         'best',
       ].join('/');
     }
@@ -332,8 +343,9 @@ export class YtDlpService {
       : 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best';
 
     if (format) {
-      // Exact format from metadata first; if unavailable on this client, fall back within height cap.
-      return `${format}+bestaudio/${format}/best[format_id=${format}]/${heightFallback}`;
+      const cap = maxHeight ?? 4320;
+      // Never request a bare video-only format id — always merge audio or use combined streams.
+      return `best[format_id=${format}][acodec!=none]/${format}+bestaudio/bestvideo[format_id=${format}]+bestaudio/${this.buildHeightCappedFallbacks(cap)}`;
     }
     if (maxHeight) {
       return this.buildHeightCappedFallbacks(maxHeight);
@@ -463,6 +475,49 @@ export class YtDlpService {
   }
 
   /** Re-encode VP9/AV1/HEVC MP4 to H.264+AAC for QuickTime, Photos, etc. */
+  async finishCompatTranscode(filePath: string): Promise<string> {
+    return this.ensurePlayableMp4(filePath);
+  }
+
+  async probeVideoResolution(filePath: string): Promise<number | null> {
+    return this.probeVideoShortEdge(filePath);
+  }
+
+  /** Ensure MP4 has audio and plays in QuickTime (H.264+AAC or faststart remux). */
+  async ensurePlayableMp4(filePath: string): Promise<string> {
+    if (!this.ffmpegPath || path.extname(filePath).toLowerCase() !== '.mp4') {
+      return filePath;
+    }
+
+    const codecs = await this.probeStreamCodecs(filePath);
+    if (!codecs.audio) {
+      throw new Error('Downloaded file has no audio track');
+    }
+
+    if (this.needsCompatTranscode(codecs)) {
+      return this.ensureCompatibleMp4(filePath);
+    }
+
+    const dir = path.dirname(filePath);
+    const base = path.basename(filePath, '.mp4');
+    const tempPath = path.join(dir, `${base}.faststart.mp4`);
+    try {
+      await execa(
+        this.ffmpegPath,
+        ['-i', filePath, '-c', 'copy', '-movflags', '+faststart', '-y', tempPath],
+        { timeout: 600_000 },
+      );
+      fs.rmSync(filePath, { force: true });
+      fs.renameSync(tempPath, filePath);
+    } catch (err) {
+      fs.rmSync(tempPath, { force: true });
+      this.logger.warn(
+        `faststart remux skipped for ${path.basename(filePath)}: ${err instanceof Error ? err.message : err}`,
+      );
+    }
+    return filePath;
+  }
+
   private async ensureCompatibleMp4(filePath: string): Promise<string> {
     if (!this.ffmpegPath || path.extname(filePath).toLowerCase() !== '.mp4') {
       return filePath;
@@ -532,7 +587,11 @@ export class YtDlpService {
     }
   }
 
-  private buildArgVariants(url: string, mode: 'metadata' | 'download', downloadArgs: string[] = []): string[][] {
+  private buildArgVariants(
+    url: string,
+    mode: 'metadata' | 'download',
+    downloadArgs: string[] = [],
+  ): string[][] {
     const variants: string[][] = [];
     const cookieSets = this.cookieArgSets();
     const isYoutube = /youtube\.com|youtu\.be/i.test(url);
@@ -544,7 +603,7 @@ export class YtDlpService {
           this.pushVariant(variants, url, mode, [], client, downloadArgs);
         }
       } else {
-        // Default yt-dlp client (android VR) first — full DASH ladder including 4K
+        // Default yt-dlp client first — web/mweb often expose only 360p (format 18).
         this.pushVariant(variants, url, mode, [], undefined, downloadArgs);
         for (const client of YOUTUBE_DOWNLOAD_CLIENTS) {
           this.pushVariant(variants, url, mode, [], client, downloadArgs);
@@ -808,7 +867,7 @@ export class YtDlpService {
     parse: (stdout: string) => T,
     downloadOpts?: Pick<
       DownloadOptions,
-      'onProgress' | 'onItemsProgress' | 'durationSeconds' | 'maxHeight' | 'url' | 'isPlaylist'
+      'onProgress' | 'onItemsProgress' | 'durationSeconds' | 'maxHeight' | 'url' | 'isPlaylist' | 'format'
     >,
   ): Promise<T> {
     const variants = this.buildArgVariants(url, mode, downloadArgs);
@@ -824,7 +883,7 @@ export class YtDlpService {
     const skipQualityProbe = isSocialPlatform(platform);
     const minHeight =
       !skipQualityProbe && downloadOpts?.maxHeight && downloadOpts.maxHeight >= 480
-        ? Math.floor(downloadOpts.maxHeight * 0.75)
+        ? Math.floor(downloadOpts.maxHeight * 0.85)
         : undefined;
 
     for (const args of variants) {
@@ -850,11 +909,7 @@ export class YtDlpService {
               const edge = await this.probeVideoShortEdge(file);
               if (edge && edge < minHeight) {
                 this.logger.warn(
-                  `Download resolved to ${edge}p but ${downloadOpts!.maxHeight}p was requested — trying next client`,
-                );
-                this.cleanOutputDir(outputDir);
-                lastError = new Error(
-                  `Download quality too low (${edge}p, expected at least ${minHeight}p)`,
+                  `Download resolved to ${edge}p (requested ~${downloadOpts!.maxHeight}p) — trying next client`,
                 );
                 continue;
               }
@@ -872,7 +927,7 @@ export class YtDlpService {
           bestFormatCount = count;
           bestMeta = result;
         }
-        if (count >= 12) return result;
+        if (count >= 2) return result;
       } catch (err) {
         lastError = err;
         this.logger.warn(`yt-dlp attempt failed: ${YtDlpService.parseError(err)}`);
@@ -1041,6 +1096,17 @@ export class YtDlpService {
     options: { videoId?: string; fallbackUrl?: string; fallbackWidth?: number; fallbackHeight?: number },
   ): Promise<{ url: string; width: number; height: number; source: 'youtube-maxres' | 'metadata' | 'yt-dlp' }> {
     const videoId = this.extractYouTubeVideoId(pageUrl, options.videoId);
+
+    // YouTube: use CDN URL immediately — probing every candidate adds 10–60s.
+    if (videoId && /youtube\.com|youtu\.be/i.test(pageUrl)) {
+      return {
+        url: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+        width: 480,
+        height: 360,
+        source: 'youtube-maxres',
+      };
+    }
+
     const candidates: string[] = [];
 
     if (videoId && /youtube\.com|youtu\.be/i.test(pageUrl)) {
@@ -1122,12 +1188,18 @@ export class YtDlpService {
     return this.runWithFallback(url, 'metadata', [], (stdout) => {
       const data = JSON.parse(stdout);
       const thumb = this.resolveThumbnail(data);
+      const videoId = typeof data.id === 'string' ? data.id : '';
+      const isYoutube = /youtube\.com|youtu\.be/i.test(url);
+      const thumbnail =
+        isYoutube && videoId
+          ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+          : thumb.url;
       return {
         id: data.id,
         title: data.title ?? 'Unknown title',
-        thumbnail: thumb.url,
-        thumbnailWidth: thumb.width,
-        thumbnailHeight: thumb.height,
+        thumbnail,
+        thumbnailWidth: isYoutube ? 480 : thumb.width,
+        thumbnailHeight: isYoutube ? 360 : thumb.height,
         duration: data.duration ?? 0,
         uploader: data.uploader ?? data.channel ?? data.uploader_id ?? 'Unknown',
         formats: this.mapVideoFormats(data.formats ?? [], url),
@@ -1137,7 +1209,7 @@ export class YtDlpService {
 
   async downloadVideo(url: string, outputDir: string, options: DownloadOptions = {}): Promise<string> {
     fs.mkdirSync(outputDir, { recursive: true });
-    const outputTemplate = path.join(outputDir, '%(title).100B.%(ext)s');
+    const outputTemplate = path.join(outputDir, 'video.%(ext)s');
 
     const formatArgs: string[] = [
       '-o',
@@ -1187,12 +1259,45 @@ export class YtDlpService {
       );
     }
 
-    await this.runWithFallback(url, 'download', formatArgs, () => undefined, {
-      onProgress: options.onProgress,
-      durationSeconds: options.durationSeconds,
-      maxHeight: options.maxHeight,
-      url,
-    });
+    const runDownload = (opts: DownloadOptions) => {
+      const args = [...formatArgs];
+      const fIndex = args.indexOf('-f');
+      if (fIndex !== -1) {
+        args[fIndex + 1] = this.buildVideoFormatSelector(url, opts);
+      }
+      return this.runWithFallback(url, 'download', args, () => undefined, {
+        onProgress: options.onProgress,
+        durationSeconds: options.durationSeconds,
+        maxHeight: opts.maxHeight,
+        format: opts.format,
+        url,
+      });
+    };
+
+    try {
+      await runDownload(options);
+    } catch (err) {
+      const msg = YtDlpService.parseError(err);
+      if (
+        options.format &&
+        /not available|quality too low/i.test(msg)
+      ) {
+        this.logger.warn(
+          `Format ${options.format} unavailable at ${options.maxHeight ?? '?'}p — retrying with height cap only`,
+        );
+        await runDownload({ ...options, format: undefined });
+      } else if (
+        options.maxHeight &&
+        /not available|quality too low/i.test(msg)
+      ) {
+        this.logger.warn(
+          `Quality cap ${options.maxHeight}p unavailable — retrying with best available format`,
+        );
+        await runDownload({ ...options, format: undefined, maxHeight: undefined });
+      } else {
+        throw err;
+      }
+    }
 
     const preferredExts = options.audioOnly ? ['mp3', 'm4a', 'opus', 'webm', 'aac', 'mp4'] : [];
     let filePath = this.findDownloadedFile(outputDir, preferredExts);
@@ -1202,7 +1307,24 @@ export class YtDlpService {
       filePath = await this.ensureMp3Output(filePath);
       return filePath;
     }
-    return this.ensureCompatibleMp4(filePath);
+
+    options.onProgress?.(90);
+    try {
+      filePath = await this.ensurePlayableMp4(filePath);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/no audio track/i.test(msg) && (options.format || options.maxHeight)) {
+        this.logger.warn('Download missing audio — retrying without format id');
+        await runDownload({ ...options, format: undefined });
+        filePath = this.findDownloadedFile(outputDir, preferredExts);
+        if (!filePath) throw new Error('Download produced no files');
+        filePath = await this.ensurePlayableMp4(filePath);
+      } else {
+        throw err;
+      }
+    }
+    options.onProgress?.(98);
+    return filePath;
   }
 
   async getPlaylistEntryCount(url: string): Promise<number | null> {
