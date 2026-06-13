@@ -8,6 +8,13 @@ import {
 } from '@hellodownloader/shared-types';
 import { fetchPageContent } from '@/lib/fetch-content';
 import { fetchSiteSettings } from '@/lib/fetch-site-settings';
+import { resolveSiteBaseUrl } from '@/lib/sitemap';
+import { normalizeStoredAssetUrl } from '@hellodownloader/shared-types';
+import {
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
+  resolvePublicAssetUrl,
+} from '@/lib/seo/public-asset-url';
 
 type BuildMetadataInput = {
   contentSlug?: string;
@@ -17,28 +24,16 @@ type BuildMetadataInput = {
   fallbackDescription?: string;
 };
 
-function resolveAssetUrl(assetPath: string, metadataBase?: URL): string | undefined {
-  const trimmed = assetPath.trim();
-  if (!trimmed) return undefined;
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
-  if (metadataBase) {
-    return new URL(trimmed.replace(/^\//, ''), metadataBase).toString();
-  }
-  return trimmed;
-}
-
 function resolveSiteUrl(settings: SiteSettingsPublic): URL | undefined {
-  const raw = settings.siteUrl.trim() || process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!raw) return undefined;
   try {
-    return new URL(raw.endsWith('/') ? raw : `${raw}/`);
+    return new URL(`${resolveSiteBaseUrl(settings.siteUrl)}/`);
   } catch {
     return undefined;
   }
 }
 
-function buildIcons(settings: SiteSettingsPublic, metadataBase?: URL): Metadata['icons'] {
-  const favicon = resolveAssetUrl(settings.faviconUrl, metadataBase);
+function buildIcons(settings: SiteSettingsPublic, siteUrl: string): Metadata['icons'] {
+  const favicon = resolvePublicAssetUrl(settings.faviconUrl, siteUrl);
   if (favicon) {
     return { icon: favicon, shortcut: favicon, apple: favicon };
   }
@@ -78,8 +73,8 @@ function buildFromSeo(
   const ogTitle = seo.ogTitle || title;
   const ogDescription = seo.ogDescription || description;
   const metadataBase = resolveSiteUrl(settings);
-  const ogImageRaw = seo.ogImage || settings.defaultOgImage;
-  const ogImage = resolveAssetUrl(ogImageRaw, metadataBase);
+  const ogImageRaw = normalizeStoredAssetUrl(seo.ogImage || settings.defaultOgImage);
+  const ogImage = resolvePublicAssetUrl(ogImageRaw, settings.siteUrl);
   const canonicalPath = seo.canonicalUrl.trim() || path || '';
   const canonical =
     canonicalPath && metadataBase
@@ -96,7 +91,7 @@ function buildFromSeo(
 
   return {
     metadataBase,
-    icons: buildIcons(settings, metadataBase),
+    icons: buildIcons(settings, settings.siteUrl),
     title: applyTitleTemplate(settings.titleTemplate, title, siteName),
     description,
     keywords: keywords ? keywords.split(',').map((k) => k.trim()).filter(Boolean) : undefined,
@@ -107,7 +102,18 @@ function buildFromSeo(
       description: ogDescription,
       siteName,
       type: 'website',
-      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+      ...(ogImage
+        ? {
+            images: [
+              {
+                url: ogImage,
+                width: OG_IMAGE_WIDTH,
+                height: OG_IMAGE_HEIGHT,
+                alt: ogTitle,
+              },
+            ],
+          }
+        : {}),
       ...(canonical ? { url: canonical } : {}),
     },
     twitter: {

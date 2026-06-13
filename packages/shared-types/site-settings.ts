@@ -50,6 +50,20 @@ export function normalizeRobotsDisallow(paths: string[] | undefined | null): str
   return paths.map((p) => p.trim()).filter(Boolean);
 }
 
+/** Prefer /uploads/... paths — strip localhost absolute URLs saved from local admin. */
+export function normalizeStoredAssetUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+  if (trimmed.startsWith('/')) return trimmed;
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.pathname.startsWith('/uploads/')) return parsed.pathname;
+  } catch {
+    // not a URL
+  }
+  return trimmed;
+}
+
 export type VerificationFile = {
   filename: string;
   content: string;

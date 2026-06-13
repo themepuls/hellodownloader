@@ -17,6 +17,7 @@ import {
   type SiteSettingsAdmin,
   type VerificationFile,
 } from '@hellodownloader/shared-types';
+import { normalizeStoredAssetUrl } from '@hellodownloader/shared-types';
 
 type Tab = 'seo' | 'robots' | 'code' | 'verification' | 'routes' | 'auth';
 
@@ -61,7 +62,12 @@ export default function AdminSiteSettingsPage() {
   const save = async () => {
     setSaving(true);
     try {
-      const data = (await apiClient.admin.updateSiteSettings(config)) as SiteSettingsAdmin;
+      const payload = normalizeSiteSettings({
+        ...config,
+        defaultOgImage: normalizeStoredAssetUrl(config.defaultOgImage),
+        faviconUrl: normalizeStoredAssetUrl(config.faviconUrl),
+      });
+      const data = (await apiClient.admin.updateSiteSettings(payload)) as SiteSettingsAdmin;
       setConfig(normalizeSiteSettings(data));
       toastSuccess('Site settings saved');
     } catch (e) {
@@ -177,6 +183,12 @@ export default function AdminSiteSettingsPage() {
                   accept="image/png,image/jpeg,image/webp"
                   previewClassName="h-16 w-28"
                 />
+                {/localhost|127\.0\.0\.1/i.test(config.defaultOgImage) && (
+                  <p className="text-xs text-amber-600 dark:text-amber-400 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2">
+                    This image URL points to localhost — Facebook cannot load it. Remove and re-upload
+                    on the live site, then Save.
+                  </p>
+                )}
               </>
             )}
 

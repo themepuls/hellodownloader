@@ -36,7 +36,7 @@ export function ImageUploadField({
     setError(null);
     try {
       const res = (await apiClient.admin.uploadBranding(file)) as { url: string };
-      onChange(res.url);
+      onChange(res.url.startsWith('/') ? res.url : `/${res.url.replace(/^\/+/, '')}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Upload failed');
     } finally {
