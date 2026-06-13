@@ -26,6 +26,11 @@ grep -q '^NEXT_PUBLIC_SITE_URL=' apps/web/.env.production || \
   echo 'NEXT_PUBLIC_SITE_URL=https://hellodownloader.com' >> apps/web/.env.production
 
 pnpm --filter @hellodownloader/api build
+
+echo "==> Stop web + clean .next before build (prevents ChunkLoadError on live)..."
+pm2 stop hd-web 2>/dev/null || true
+rm -rf apps/web/.next
+
 pnpm --filter @hellodownloader/web build
 pnpm db:push
 

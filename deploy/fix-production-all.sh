@@ -116,6 +116,11 @@ pnpm --filter @hellodownloader/config build
 pnpm --filter @hellodownloader/auth-utils build
 pnpm --filter @hellodownloader/queue-utils build
 pnpm --filter @hellodownloader/api build
+
+echo "==> Stop web + clean .next before build (prevents ChunkLoadError on live)..."
+pm2 stop hd-web 2>/dev/null || true
+rm -rf apps/web/.next
+
 pnpm --filter @hellodownloader/web build
 
 if [[ ! -f apps/web/.next/BUILD_ID ]]; then
