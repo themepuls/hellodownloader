@@ -11,7 +11,7 @@ echo "==> Pull latest..."
 git pull
 
 echo "==> Install & build..."
-pnpm install --ignore-scripts --frozen-lockfile 2>/dev/null || pnpm install --ignore-scripts
+NODE_ENV=development pnpm install --ignore-scripts --frozen-lockfile 2>/dev/null || NODE_ENV=development pnpm install --ignore-scripts
 pnpm db:generate
 pnpm --filter @hellodownloader/shared-types build
 pnpm --filter @hellodownloader/config build

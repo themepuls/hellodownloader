@@ -17,7 +17,7 @@ source .env
 set +a
 
 echo "==> Install dependencies (skip postinstall db:push)..."
-pnpm install --ignore-scripts
+NODE_ENV=development pnpm install --ignore-scripts
 
 echo "==> Database schema..."
 pnpm db:generate
