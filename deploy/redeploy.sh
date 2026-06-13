@@ -25,7 +25,7 @@ cp .env apps/web/.env.production
 
 pnpm --filter @hellodownloader/api build
 pnpm --filter @hellodownloader/web build
-pnpm db:migrate:deploy
+pnpm db:push
 
 echo "==> Restart PM2..."
 pm2 restart deploy/ecosystem.config.cjs

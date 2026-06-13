@@ -82,7 +82,7 @@ pnpm --filter @hellodownloader/queue-utils build
 cp .env apps/web/.env.production
 pnpm --filter @hellodownloader/api build
 pnpm --filter @hellodownloader/web build
-pnpm db:migrate:deploy
+pnpm db:push
 mkdir -p storage/downloads storage/playlists storage/thumbnails storage/branding
 
 echo "==> [7/8] Nginx + firewall..."

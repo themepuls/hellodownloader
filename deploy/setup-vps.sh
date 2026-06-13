@@ -105,7 +105,7 @@ pnpm --filter @hellodownloader/api build
 pnpm --filter @hellodownloader/web build
 
 echo "==> Running database migrations..."
-pnpm db:migrate:deploy
+pnpm db:push
 
 echo "==> Creating storage dirs..."
 mkdir -p storage/downloads storage/playlists storage/thumbnails storage/branding
