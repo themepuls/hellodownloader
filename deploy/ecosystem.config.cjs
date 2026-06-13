@@ -48,25 +48,35 @@ const apps = [
 ];
 
 if (useWorkers && env.USE_BULLMQ_DOWNLOADS === 'true') {
-  apps.push({
-    name: 'hd-worker-download',
-    cwd: path.join(root, 'apps/worker-download'),
-    script: 'dist/index.js',
-    env,
-    max_memory_restart: '1500M',
-    kill_timeout: 600000,
-  });
+  const workerScript = path.join(root, 'apps/worker-download/dist/index.js');
+  if (fs.existsSync(workerScript)) {
+    apps.push({
+      name: 'hd-worker-download',
+      cwd: path.join(root, 'apps/worker-download'),
+      script: 'dist/index.js',
+      env,
+      max_memory_restart: '1500M',
+      kill_timeout: 600000,
+    });
+  } else {
+    console.warn('[pm2] Skipping hd-worker-download — run: pnpm --filter @hellodownloader/worker-download build');
+  }
 }
 
 if (useWorkers && env.USE_BULLMQ_THUMBNAILS === 'true') {
-  apps.push({
-    name: 'hd-worker-thumbnail',
-    cwd: path.join(root, 'apps/worker-thumbnail'),
-    script: 'dist/index.js',
-    env,
-    max_memory_restart: '1200M',
-    kill_timeout: 600000,
-  });
+  const workerScript = path.join(root, 'apps/worker-thumbnail/dist/index.js');
+  if (fs.existsSync(workerScript)) {
+    apps.push({
+      name: 'hd-worker-thumbnail',
+      cwd: path.join(root, 'apps/worker-thumbnail'),
+      script: 'dist/index.js',
+      env,
+      max_memory_restart: '1200M',
+      kill_timeout: 600000,
+    });
+  } else {
+    console.warn('[pm2] Skipping hd-worker-thumbnail — worker not built yet');
+  }
 }
 
 module.exports = { apps };
