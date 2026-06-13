@@ -24,14 +24,59 @@ if [[ ! -f "${SITE}" ]]; then
   exit 1
 fi
 
+echo "==> Remove duplicate location blocks from site config..."
+python3 <<'PY'
+import re
+from pathlib import Path
+
+site = Path("/etc/nginx/sites-available/hellodownloader")
+text = site.read_text()
+
+def strip_location_blocks(source: str, prefix: str) -> str:
+    pattern = re.compile(
+        rf"[ \t]*location {re.escape(prefix)}[^\{{]*\{{",
+        re.MULTILINE,
+    )
+    out = []
+    i = 0
+    while i < len(source):
+        m = pattern.search(source, i)
+        if not m:
+            out.append(source[i:])
+            break
+        out.append(source[i : m.start()])
+        depth = 0
+        j = m.start()
+        while j < len(source):
+            if source[j] == "{":
+                depth += 1
+            elif source[j] == "}":
+                depth -= 1
+                if depth == 0:
+                    j += 1
+                    break
+            j += 1
+        i = j
+    return "".join(out)
+
+for loc in ("/uploads/", "/api/v1/"):
+    text = strip_location_blocks(text, loc)
+
+site.write_text(text)
+print("Removed old /uploads/ and /api/v1/ blocks from site file")
+PY
+
 INCLUDE='include /etc/nginx/snippets/hellodownloader-hd-locations.conf;'
 
 if ! grep -q 'hellodownloader-hd-locations.conf' "${SITE}"; then
-  # Add include after each hellodownloader.com server_name line
   sed -i "/server_name hellodownloader.com;/a\\    ${INCLUDE}" "${SITE}"
   echo "Added nginx include for API + uploads"
 else
   echo "Nginx include already present"
+fi
+
+if ! grep -q 'client_header_buffer_size 32k' "${SITE}"; then
+  sed -i '/server_name hellodownloader.com;/a\    client_header_buffer_size 32k;\n    large_client_header_buffers 4 32k;' "${SITE}"
 fi
 
 nginx -t
