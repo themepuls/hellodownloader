@@ -10,6 +10,7 @@ import { useUserStore } from '@/store/userStore';
 import { usePageContent } from '@/hooks/usePageContent';
 import {
   DEFAULT_HEADER_CONTENT,
+  filterRemovedNavLinks,
   mergeContent,
   type HeaderContent,
 } from '@hellodownloader/shared-types';
@@ -26,13 +27,15 @@ function normalizeHeader(raw: HeaderContent): HeaderContent {
     ...base,
     logo: { ...DEFAULT_HEADER_CONTENT.logo, ...base.logo },
     auth: { ...DEFAULT_HEADER_CONTENT.auth, ...base.auth },
-    menu: (base.menu ?? []).map((item) => {
-      const children = (item.children ?? []).filter((c) => c.label?.trim() && c.href?.trim());
-      if (children.length > 0) {
-        return { label: item.label, children, href: undefined };
-      }
-      return { label: item.label, href: item.href || '/', children: undefined };
-    }),
+    menu: filterRemovedNavLinks(
+      (base.menu ?? []).map((item) => {
+        const children = (item.children ?? []).filter((c) => c.label?.trim() && c.href?.trim());
+        if (children.length > 0) {
+          return { label: item.label, children, href: undefined };
+        }
+        return { label: item.label, href: item.href || '/', children: undefined };
+      }),
+    ),
   };
 }
 

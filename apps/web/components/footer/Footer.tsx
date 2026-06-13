@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePageContent } from '@/hooks/usePageContent';
 import {
   DEFAULT_FOOTER_CONTENT,
+  filterRemovedFooterLinks,
   mergeContent,
   type FooterContent,
 } from '@hellodownloader/shared-types';
@@ -15,7 +16,7 @@ function normalizeFooter(raw: FooterContent): FooterContent {
     brand: { ...DEFAULT_FOOTER_CONTENT.brand, ...base.brand },
     columns: (base.columns ?? DEFAULT_FOOTER_CONTENT.columns).map((col) => ({
       title: col.title,
-      links: (col.links ?? []).filter((l) => l.label?.trim() && l.href?.trim()),
+      links: filterRemovedFooterLinks(col.links ?? []),
     })),
     copyright: base.copyright || DEFAULT_FOOTER_CONTENT.copyright,
   };

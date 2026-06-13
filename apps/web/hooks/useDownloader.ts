@@ -28,6 +28,7 @@ export interface DownloadRecord {
 const ACTIVE_DOWNLOAD_KEY = 'hellodownloader-active-download-id';
 const ACTIVE_DOWNLOAD_URL_KEY = 'hellodownloader-active-download-url';
 const ACTIVE_DOWNLOAD_TOKEN_KEY = 'hellodownloader-active-download-token';
+const AUTO_SAVED_DOWNLOAD_KEY = 'hellodownloader-auto-saved-id';
 
 function readStoredDownloadToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -81,6 +82,7 @@ export function useDownloader(initialUrl = '') {
       sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
       sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
       sessionStorage.removeItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
+      sessionStorage.removeItem(AUTO_SAVED_DOWNLOAD_KEY);
       setDownload(null);
     },
     [stopPolling],
@@ -314,7 +316,7 @@ export function useDownloader(initialUrl = '') {
     }
   };
 
-  const saveToPc = async () => {
+  const saveToPc = useCallback(async () => {
     if (!download?.id) return;
     openAffiliateForType(download.type);
     setError(null);
@@ -357,7 +359,15 @@ export function useDownloader(initialUrl = '') {
     } finally {
       setSaving(false);
     }
-  };
+  }, [download, metadata?.title, openAffiliateForType]);
+
+  // Auto-save when server finishes — user already clicked Download (user gesture).
+  useEffect(() => {
+    if (download?.status !== 'COMPLETED' || !download.id || saving) return;
+    if (sessionStorage.getItem(AUTO_SAVED_DOWNLOAD_KEY) === download.id) return;
+    sessionStorage.setItem(AUTO_SAVED_DOWNLOAD_KEY, download.id);
+    void saveToPc();
+  }, [download?.status, download?.id, saving, saveToPc]);
 
   return {
     url,

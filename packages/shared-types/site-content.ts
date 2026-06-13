@@ -133,6 +133,37 @@ export type NavLinkItem = {
   href: string;
 };
 
+/** Paths removed from the site — filter from CMS/header/footer so Link prefetch does not 404. */
+export const REMOVED_SITE_PATHS = ['/blog'] as const;
+
+function normalizePath(href: string): string {
+  const path = href.split('?')[0].split('#')[0].replace(/\/$/, '') || '/';
+  return path;
+}
+
+export function isRemovedSitePath(href?: string): boolean {
+  if (!href?.trim()) return false;
+  return (REMOVED_SITE_PATHS as readonly string[]).includes(normalizePath(href));
+}
+
+export function filterRemovedNavLinks(items: NavMenuItem[]): NavMenuItem[] {
+  return items
+    .map((item) => {
+      if (item.children?.length) {
+        const children = item.children.filter((c) => !isRemovedSitePath(c.href));
+        if (!children.length) return null;
+        return { label: item.label, children, href: undefined };
+      }
+      if (isRemovedSitePath(item.href)) return null;
+      return item;
+    })
+    .filter((item): item is NavMenuItem => item !== null);
+}
+
+export function filterRemovedFooterLinks(links: NavLinkItem[]): NavLinkItem[] {
+  return links.filter((l) => l.label?.trim() && l.href?.trim() && !isRemovedSitePath(l.href));
+}
+
 export type NavMenuItem = {
   label: string;
   href?: string;
@@ -436,7 +467,6 @@ export const DEFAULT_HEADER_CONTENT: HeaderContent = {
     },
     { label: 'Thumbnail Tools', href: '/thumbnail' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Blog', href: '/blog' },
     { label: 'FAQ', href: '/faq' },
   ],
   auth: {
@@ -475,7 +505,6 @@ export const DEFAULT_FOOTER_CONTENT: FooterContent = {
     {
       title: 'Company',
       links: [
-        { label: 'Blog', href: '/blog' },
         { label: 'FAQ', href: '/faq' },
         { label: 'Dashboard', href: '/dashboard' },
       ],

@@ -27,7 +27,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'auth', label: 'Authentication' },
 ];
 
-const ROUTE_KEYS = ['playlist', 'login', 'register', 'dashboard', 'blog'] as const;
+const ROUTE_KEYS = ['playlist', 'login', 'register', 'dashboard'] as const;
 
 export default function AdminSiteSettingsPage() {
   const { toasts, dismiss, error: toastError, success: toastSuccess } = useToast();
