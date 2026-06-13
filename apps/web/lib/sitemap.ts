@@ -47,6 +47,13 @@ export function resolvePublicPath(slug: string): string | null {
 }
 
 export function resolveSiteBaseUrl(siteUrl: string): string {
-  const raw = siteUrl.trim() || process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000';
+  const candidates = [
+    siteUrl.trim(),
+    process.env.NEXT_PUBLIC_SITE_URL?.trim(),
+    process.env.WEB_URL?.trim(),
+    process.env.CORS_ORIGIN?.split(',')[0]?.trim(),
+  ].filter((v): v is string => Boolean(v && v.startsWith('http')));
+
+  const raw = candidates[0] ?? 'http://localhost:3000';
   return raw.replace(/\/$/, '');
 }

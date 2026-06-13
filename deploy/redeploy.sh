@@ -22,6 +22,8 @@ set -a
 source .env
 set +a
 cp .env apps/web/.env.production
+grep -q '^NEXT_PUBLIC_SITE_URL=' apps/web/.env.production || \
+  echo 'NEXT_PUBLIC_SITE_URL=https://hellodownloader.com' >> apps/web/.env.production
 
 pnpm --filter @hellodownloader/api build
 pnpm --filter @hellodownloader/web build

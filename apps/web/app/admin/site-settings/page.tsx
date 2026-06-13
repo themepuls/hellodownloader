@@ -11,16 +11,18 @@ import { Switch } from '@/components/ui/switch';
 import { ToastStack, useToast } from '@/components/ui/toast';
 import { ImageUploadField } from '@/components/admin/content/ImageUploadField';
 import {
+  DEFAULT_ROBOTS_DISALLOW,
   DEFAULT_SITE_SETTINGS,
   normalizeSiteSettings,
   type SiteSettingsAdmin,
   type VerificationFile,
 } from '@hellodownloader/shared-types';
 
-type Tab = 'seo' | 'code' | 'verification' | 'routes' | 'auth';
+type Tab = 'seo' | 'robots' | 'code' | 'verification' | 'routes' | 'auth';
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'seo', label: 'Global SEO' },
+  { id: 'robots', label: 'Robots & Sitemap' },
   { id: 'code', label: 'Custom code' },
   { id: 'verification', label: 'Verification' },
   { id: 'routes', label: 'Route SEO' },
@@ -125,16 +127,19 @@ export default function AdminSiteSettingsPage() {
           <div className="p-4 space-y-4">
             {tab === 'seo' && (
               <>
-                <p className="text-xs text-muted-foreground rounded-lg border border-border px-3 py-2">
-                  Sitemap: <code>/sitemap.xml</code> · Robots: <code>/robots.txt</code> — auto-generated
-                  from published Content pages. Pages with &quot;noindex&quot; are excluded.
-                </p>
                 <Field label="Site name" value={config.siteName} onChange={(v) => patch({ siteName: v })} />
                 <Field
                   label="Site URL (https://yoursite.com)"
                   value={config.siteUrl}
                   onChange={(v) => patch({ siteUrl: v })}
+                  placeholder="https://hellodownloader.com"
                 />
+                {!config.siteUrl.trim() && (
+                  <p className="text-xs text-amber-600 dark:text-amber-400 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2">
+                    Set your live Site URL — otherwise sitemap.xml and robots.txt will use localhost
+                    URLs.
+                  </p>
+                )}
                 <Field
                   label="Title template (%s = page title)"
                   value={config.titleTemplate}
@@ -172,6 +177,68 @@ export default function AdminSiteSettingsPage() {
                   accept="image/png,image/jpeg,image/webp"
                   previewClassName="h-16 w-28"
                 />
+              </>
+            )}
+
+            {tab === 'robots' && (
+              <>
+                <p className="text-xs text-muted-foreground rounded-lg border border-border px-3 py-2">
+                  Auto-generated at <code>/robots.txt</code> and <code>/sitemap.xml</code> after you
+                  save. Sitemap lists published Content pages (excluding noindex). Edit disallow paths
+                  below to block crawlers from private areas.
+                </p>
+                <Field
+                  label="Site URL (used in sitemap & robots)"
+                  value={config.siteUrl}
+                  onChange={(v) => patch({ siteUrl: v })}
+                  placeholder="https://hellodownloader.com"
+                />
+                <TextArea
+                  label="Robots.txt — Disallow paths (one per line)"
+                  hint="Paths search engines should not crawl. Must start with /"
+                  rows={10}
+                  value={config.robotsDisallow.join('\n')}
+                  onChange={(v) =>
+                    patch({
+                      robotsDisallow: v
+                        .split('\n')
+                        .map((line) => line.trim())
+                        .filter(Boolean),
+                    })
+                  }
+                />
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => patch({ robotsDisallow: [...DEFAULT_ROBOTS_DISALLOW] })}
+                  >
+                    Reset to defaults
+                  </Button>
+                </div>
+                {config.siteUrl.trim() ? (
+                  <p className="text-xs text-muted-foreground">
+                    Preview after save:{' '}
+                    <a
+                      href={`${config.siteUrl.replace(/\/$/, '')}/robots.txt`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary underline"
+                    >
+                      robots.txt
+                    </a>
+                    {' · '}
+                    <a
+                      href={`${config.siteUrl.replace(/\/$/, '')}/sitemap.xml`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary underline"
+                    >
+                      sitemap.xml
+                    </a>
+                  </p>
+                ) : null}
               </>
             )}
 

@@ -30,7 +30,25 @@ export type SiteSettingsPublic = {
   verificationFiles: VerificationFile[];
   /** SEO for routes without a CMS content page (e.g. playlist, login). */
   routeSeo: Record<string, Partial<PageSeoContent>>;
+  /** Paths blocked in robots.txt (one rule set for all crawlers). */
+  robotsDisallow: string[];
 };
+
+export const DEFAULT_ROBOTS_DISALLOW = [
+  '/admin/',
+  '/dashboard/',
+  '/login',
+  '/register',
+  '/billing/',
+  '/settings/',
+  '/profile/',
+  '/credits/',
+] as const;
+
+export function normalizeRobotsDisallow(paths: string[] | undefined | null): string[] {
+  if (!paths?.length) return [...DEFAULT_ROBOTS_DISALLOW];
+  return paths.map((p) => p.trim()).filter(Boolean);
+}
 
 export type VerificationFile = {
   filename: string;
@@ -92,6 +110,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettingsPublic = {
       noIndex: true,
     },
   },
+  robotsDisallow: [...DEFAULT_ROBOTS_DISALLOW],
 };
 
 export function mergePageSeo(partial?: Partial<PageSeoContent> | null): PageSeoContent {
@@ -123,6 +142,7 @@ export function normalizeSiteSettings(
     ...base,
     verificationFiles: normalizeVerificationFiles(base.verificationFiles),
     routeSeo: base.routeSeo ?? DEFAULT_SITE_SETTINGS.routeSeo,
+    robotsDisallow: normalizeRobotsDisallow(base.robotsDisallow),
     googleAuthEnabled: Boolean(base.googleAuthEnabled),
     googleClientId: (base.googleClientId ?? '').trim(),
   };

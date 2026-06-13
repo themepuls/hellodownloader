@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import {
   DEFAULT_SITE_SETTINGS,
   normalizeSiteSettings,
+  normalizeRobotsDisallow,
   normalizeVerificationFiles,
   toSiteSettingsPublic,
   type SiteSettingsAdmin,
@@ -41,6 +42,7 @@ export class SiteSettingsService implements OnModuleInit {
         customHeadSnippet: defaults.customHeadSnippet,
         verificationFiles: defaults.verificationFiles as object,
         routeSeo: defaults.routeSeo as object,
+        robotsDisallow: defaults.robotsDisallow as object,
         googleAuthEnabled: false,
         googleClientId: '',
       },
@@ -66,6 +68,7 @@ export class SiteSettingsService implements OnModuleInit {
     customHeadSnippet: string;
     verificationFiles: unknown;
     routeSeo: unknown;
+    robotsDisallow: unknown;
     googleAuthEnabled: boolean;
     googleClientId: string;
   }): SiteSettingsAdmin {
@@ -88,6 +91,7 @@ export class SiteSettingsService implements OnModuleInit {
       customHeadSnippet: row.customHeadSnippet,
       verificationFiles: (row.verificationFiles as VerificationFile[] | null) ?? [],
       routeSeo: (row.routeSeo as SiteSettingsPublic['routeSeo'] | null) ?? {},
+      robotsDisallow: normalizeRobotsDisallow(row.robotsDisallow as string[] | null),
       googleAuthEnabled: row.googleAuthEnabled,
       googleClientId: row.googleClientId,
     });
@@ -146,6 +150,7 @@ export class SiteSettingsService implements OnModuleInit {
         customHeadSnippet: next.customHeadSnippet,
         verificationFiles: normalizeVerificationFiles(next.verificationFiles) as object,
         routeSeo: next.routeSeo as object,
+        robotsDisallow: normalizeRobotsDisallow(next.robotsDisallow) as object,
         googleAuthEnabled: next.googleAuthEnabled,
         googleClientId: next.googleClientId,
       },

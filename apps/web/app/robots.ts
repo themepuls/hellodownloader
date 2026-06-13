@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { normalizeRobotsDisallow } from '@hellodownloader/shared-types';
 import { fetchSiteSettings } from '@/lib/fetch-site-settings';
 import { resolveSiteBaseUrl } from '@/lib/sitemap';
 
@@ -10,7 +11,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/dashboard/', '/login', '/register', '/billing/', '/settings/', '/profile/', '/credits/'],
+      disallow: normalizeRobotsDisallow(settings.robotsDisallow),
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };
