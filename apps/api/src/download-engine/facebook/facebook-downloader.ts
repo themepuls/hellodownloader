@@ -7,6 +7,8 @@ export interface FacebookDownloadOptions {
   quality?: number;
   format?: string;
   outputDir: string;
+  onProgress?: (percent: number) => void;
+  durationSeconds?: number;
 }
 
 @Injectable()
@@ -25,6 +27,8 @@ export class FacebookDownloader {
       maxHeight: options.quality ?? 1080,
       format: options.format,
       url,
+      onProgress: options.onProgress,
+      durationSeconds: options.durationSeconds,
     });
   }
 }

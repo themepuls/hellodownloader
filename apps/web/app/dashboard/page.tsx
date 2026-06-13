@@ -48,15 +48,18 @@ function formatRetentionDays(days: number): string {
 
 export default function DashboardPage() {
   const user = useUserStore((s) => s.user);
+  const hasHydrated = useUserStore((s) => s.hasHydrated);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [page, setPage] = useState(1);
   const [loadingActivity, setLoadingActivity] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   const loadDashboard = useCallback(async (pageNum: number) => {
     setLoadingActivity(true);
+    setLoadError(null);
     try {
       const d = (await apiClient.users.dashboard(pageNum, PAGE_SIZE)) as DashboardStats;
       setStats(d);
@@ -64,6 +67,8 @@ export default function DashboardPage() {
         setPage(d.activityPage);
       }
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load dashboard';
+      setLoadError(message);
       console.error(err);
     } finally {
       setLoadingActivity(false);
@@ -71,8 +76,9 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    if (!hasHydrated || !user) return;
     void loadDashboard(page);
-  }, [page, loadDashboard]);
+  }, [page, loadDashboard, hasHydrated, user]);
 
   const handleSaveAgain = async (item: ActivityItem) => {
     setSavingId(item.id);
@@ -106,6 +112,14 @@ export default function DashboardPage() {
     }
   };
 
+  if (!hasHydrated) {
+    return (
+      <div className="container mx-auto px-4 py-16 flex justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -116,6 +130,17 @@ export default function DashboardPage() {
           </Link>{' '}
           to view dashboard.
         </p>
+      </div>
+    );
+  }
+
+  if (loadError?.includes('log in')) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <p className="mb-4">Your session expired. Please sign in again.</p>
+        <Link href="/login">
+          <Button>Go to login</Button>
+        </Link>
       </div>
     );
   }

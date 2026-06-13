@@ -102,6 +102,8 @@ export class DownloadProcessorService {
           quality: maxHeight,
           format: data.format,
           outputDir,
+          onProgress,
+          durationSeconds,
         });
       } else if (data.type === 'REEL_INSTAGRAM' || platform === 'instagram') {
         primaryFilePath = await this.instagramDownloader.download(data.url, {
@@ -109,6 +111,8 @@ export class DownloadProcessorService {
           quality: maxHeight,
           format: data.format,
           outputDir,
+          onProgress,
+          durationSeconds,
         });
       } else {
         // VIDEO, SHORTS, TikTok, Twitter/X, Vimeo, and other yt-dlp-supported sites
@@ -175,7 +179,9 @@ export class DownloadProcessorService {
         this.logger.log(`Download ${data.downloadId} mirrored to R2: ${storedPath}`);
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Download failed';
+      const raw = err instanceof Error ? err.message : 'Download failed';
+      const message =
+        raw.trim() && raw !== 'undefined' && raw !== 'null' ? raw.trim() : 'Download failed';
       this.logger.error(`Download ${data.downloadId} failed: ${message}`);
       await this.prisma.download.update({
         where: { id: data.downloadId },

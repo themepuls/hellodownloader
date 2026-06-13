@@ -260,6 +260,11 @@ export class AdminController {
     return this.admin.getStorageStats();
   }
 
+  @Get('uploads')
+  listUploads() {
+    return this.admin.listPublicUploads();
+  }
+
   @Post('storage/cleanup')
   cleanup(@Body() dto: CleanupDto) {
     return this.admin.runCleanup(dto.hours);
@@ -288,6 +293,23 @@ export class AdminController {
   @Get('system')
   system() {
     return this.admin.getSystemHealth();
+  }
+
+  @Get('cookies/status')
+  cookiesStatus() {
+    return this.admin.getCookiesFileStatus();
+  }
+
+  @Post('cookies/upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 512 * 1024 },
+    }),
+  )
+  uploadCookies(
+    @UploadedFile() file: { buffer: Buffer; originalname: string },
+  ) {
+    return this.admin.uploadMetaCookies(file);
   }
 
   @Get('settings')

@@ -19,6 +19,8 @@ import { Label } from '@/components/ui/label';
 type CustomAdsEditorProps = {
   enabled: boolean;
   onEnabledChange: (value: boolean) => void;
+  bannerHeightPx: number;
+  onBannerHeightPxChange: (value: number) => void;
   items: CustomAdItem[];
   onChange: (items: CustomAdItem[]) => void;
 };
@@ -26,6 +28,8 @@ type CustomAdsEditorProps = {
 export function CustomAdsEditor({
   enabled,
   onEnabledChange,
+  bannerHeightPx,
+  onBannerHeightPxChange,
   items,
   onChange,
 }: CustomAdsEditorProps) {
@@ -65,12 +69,33 @@ export function CustomAdsEditor({
 
       <p className="text-sm text-muted-foreground">
         Image ads for download tools only: Video download, Thumbnail download, and Playlist download.
-        Pick a page, zone (top, sidebar, or bottom), upload an image, and set a link. All zones use the
-        same boxed width as the tool page (max-w-5xl).
+        Use <strong>banner</strong> format for top/bottom zones and <strong>square</strong> for the
+        sidebar.
       </p>
 
+      <div className="grid sm:grid-cols-[minmax(0,1fr)_140px] gap-3 items-end max-w-md">
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Top / bottom banner height (px)</Label>
+          <Input
+            type="number"
+            min={60}
+            max={400}
+            value={bannerHeightPx}
+            onChange={(e) => {
+              const next = Number.parseInt(e.target.value, 10);
+              if (Number.isFinite(next)) onBannerHeightPxChange(next);
+            }}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground pb-2">Default 170 · range 60–400</p>
+      </div>
+
       <div className="rounded-lg border border-border p-3 text-xs text-muted-foreground space-y-1">
-        <p className="font-medium text-foreground">Ad zones</p>
+        <p className="font-medium text-foreground">Recommended image sizes</p>
+        <p>
+          Top / bottom — wide banner matching height above (e.g. 728×170) · Sidebar — 300×300 square
+        </p>
+        <p className="font-medium text-foreground mt-2">Ad zones</p>
         <p>Top — banner strip below the navbar · Sidebar — right column beside tool content · Bottom — above the site footer</p>
         <p>Pricing, FAQ, Terms, Privacy, DMCA, Home, and other pages do not show ads.</p>
       </div>

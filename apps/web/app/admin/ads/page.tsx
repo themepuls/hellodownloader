@@ -55,6 +55,12 @@ export default function AdminAdsPage() {
   };
 
   const save = async () => {
+    if (config.customAdsEnabled && config.customAds.length === 0) {
+      const ok = window.confirm(
+        'No custom ads are configured. Saving now will clear any previously saved banners. Continue?',
+      );
+      if (!ok) return;
+    }
     setSaving(true);
     try {
       const data = (await apiClient.admin.updateAds(config)) as AdsAdminConfig;
@@ -159,6 +165,10 @@ export default function AdminAdsPage() {
               <CustomAdsEditor
                 enabled={config.customAdsEnabled}
                 onEnabledChange={(customAdsEnabled) => patch({ customAdsEnabled })}
+                bannerHeightPx={config.customAdsBannerHeightPx ?? 170}
+                onBannerHeightPxChange={(customAdsBannerHeightPx) =>
+                  patch({ customAdsBannerHeightPx })
+                }
                 items={config.customAds}
                 onChange={(customAds) => patch({ customAds })}
               />

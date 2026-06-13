@@ -22,6 +22,13 @@ import * as path from 'path';
 
 type Pagination = { page?: number; limit?: number };
 
+type PublicUploadItem = {
+  name: string;
+  url: string;
+  bytes: number;
+  updatedAt: string;
+};
+
 @Injectable()
 export class AdminService {
   constructor(
@@ -642,6 +649,7 @@ export class AdminService {
   }
 
   getSystemHealth() {
+    const cookies = this.getCookiesFileStatus();
     return {
       nodeVersion: process.version,
       redisEnabled: process.env.USE_BULLMQ_DOWNLOADS === 'true',
@@ -652,6 +660,48 @@ export class AdminService {
       storagePath: process.env.STORAGE_PATH ?? './storage',
       apiPublicUrl: process.env.API_PUBLIC_URL ?? 'http://localhost:4000',
       uptimeSeconds: Math.floor(process.uptime()),
+      ytDlpImpersonate: process.env.YT_DLP_IMPERSONATE?.trim() || 'chrome',
+      metaCookiesConfigured: cookies.configured,
+      metaCookiesUpdatedAt: cookies.updatedAt,
+    };
+  }
+
+  getCookiesFileStatus() {
+    const storageRoot = path.resolve(process.env.STORAGE_PATH ?? './storage');
+    const dest = path.join(storageRoot, 'cookies.txt');
+    if (!fs.existsSync(dest)) {
+      return { configured: false, path: dest, updatedAt: null as string | null };
+    }
+    const stat = fs.statSync(dest);
+    return {
+      configured: stat.size > 32,
+      path: dest,
+      updatedAt: stat.mtime.toISOString(),
+    };
+  }
+
+  uploadMetaCookies(file: { buffer: Buffer; originalname: string }) {
+    if (!file?.buffer?.length) {
+      throw new BadRequestException('No cookies file provided');
+    }
+    const text = file.buffer.toString('utf8');
+    if (!/# Netscape HTTP Cookie File/i.test(text) && !/\t[\w.-]+\t/.test(text)) {
+      throw new BadRequestException(
+        'Upload a Netscape cookies.txt file (export from browser extension Get cookies.txt LOCALLY)',
+      );
+    }
+
+    const storageRoot = path.resolve(process.env.STORAGE_PATH ?? './storage');
+    fs.mkdirSync(storageRoot, { recursive: true });
+    const dest = path.join(storageRoot, 'cookies.txt');
+    fs.writeFileSync(dest, file.buffer);
+
+    return {
+      ok: true,
+      path: dest,
+      size: file.buffer.length,
+      message:
+        'Cookies saved. Facebook and Instagram downloads should work for posts your account can view.',
     };
   }
 
@@ -737,6 +787,39 @@ export class AdminService {
     return this.uploadPublicImage(file, 'ad');
   }
 
+  listPublicUploads() {
+    const uploadDir = this.resolvePublicUploadsDir();
+    if (!fs.existsSync(uploadDir)) {
+      return { dir: uploadDir, count: 0, items: [] as PublicUploadItem[] };
+    }
+
+    const imageExts = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico']);
+    const items: PublicUploadItem[] = [];
+
+    for (const name of fs.readdirSync(uploadDir)) {
+      if (name.startsWith('.')) continue;
+      const full = path.join(uploadDir, name);
+      if (!fs.statSync(full).isFile()) continue;
+      const ext = path.extname(name).toLowerCase();
+      if (!imageExts.has(ext)) continue;
+      const stat = fs.statSync(full);
+      items.push({
+        name,
+        url: `/uploads/${name}`,
+        bytes: stat.size,
+        updatedAt: stat.mtime.toISOString(),
+      });
+    }
+
+    items.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+    return { dir: uploadDir, count: items.length, items };
+  }
+
+  private resolvePublicUploadsDir(): string {
+    return path.resolve(process.cwd(), '../web/public/uploads');
+  }
+
   private uploadPublicImage(
     file: { buffer: Buffer; originalname: string; mimetype: string },
     prefix: string,
@@ -754,7 +837,7 @@ export class AdminService {
       throw new BadRequestException('File must be an image');
     }
 
-    const webPublicUploads = path.resolve(process.cwd(), '../web/public/uploads');
+    const webPublicUploads = this.resolvePublicUploadsDir();
     fs.mkdirSync(webPublicUploads, { recursive: true });
 
     const safeName = `${prefix}-${Date.now()}${ext}`;

@@ -400,6 +400,14 @@ model StorageSettings {
   @@map("storage_settings")
 }
 
+model AdsSettings {
+  id        Int      @id @default(1)
+  config    Json     @default("{}")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("ads_settings")
+}
+
 model FourKInterestSurvey {
   id         String   @id @default(cuid())
   interested Boolean  @map("interested")

@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Loader2, Save, Zap } from 'lucide-react';
+import Image from 'next/image';
+import { Copy, Loader2, Save, Zap } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { AdminPageHeader, StatCard } from '@/components/admin/AdminShell';
 import { SecretKeyInput } from '@/components/admin/api-settings/SecretKeyInput';
@@ -35,7 +36,29 @@ type System = {
   fileRetentionHours: number;
   deleteAfterDownload: boolean;
   uptimeSeconds: number;
+  metaCookiesConfigured?: boolean;
+  metaCookiesUpdatedAt?: string | null;
+  ytDlpImpersonate?: string;
 };
+
+type UploadItem = {
+  name: string;
+  url: string;
+  bytes: number;
+  updatedAt: string;
+};
+
+type UploadsList = {
+  dir: string;
+  count: number;
+  items: UploadItem[];
+};
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
 
 export default function AdminStoragePage() {
   const { toasts, dismiss, error: toastError, success: toastSuccess } = useToast();
@@ -50,6 +73,8 @@ export default function AdminStoragePage() {
 
   const [configLoading, setConfigLoading] = useState(true);
   const [configError, setConfigError] = useState<string | null>(null);
+  const [cookiesUploading, setCookiesUploading] = useState(false);
+  const [uploads, setUploads] = useState<UploadsList | null>(null);
 
   const load = useCallback(() => {
     setConfigLoading(true);
@@ -81,6 +106,10 @@ export default function AdminStoragePage() {
         toastError(message);
       })
       .finally(() => setConfigLoading(false));
+    apiClient.admin
+      .listUploads()
+      .then((d) => setUploads(d as UploadsList))
+      .catch(() => setUploads(null));
   }, [toastError]);
 
   useEffect(() => {
@@ -169,6 +198,21 @@ export default function AdminStoragePage() {
     }
   };
 
+  const uploadCookies = async (file: File | null) => {
+    if (!file) return;
+    setCookiesUploading(true);
+    try {
+      const res = await apiClient.admin.uploadMetaCookies(file);
+      toastSuccess(res.message);
+      const sys = (await apiClient.admin.system()) as System;
+      setSystem(sys);
+    } catch (e) {
+      toastError(e instanceof Error ? e.message : 'Cookies upload failed');
+    } finally {
+      setCookiesUploading(false);
+    }
+  };
+
   return (
     <>
       <AdminPageHeader
@@ -184,6 +228,49 @@ export default function AdminStoragePage() {
         />
         <StatCard label="Retention" value={storage ? `${storage.retentionHours}h` : '—'} />
         <StatCard label="Uptime" value={system ? `${Math.floor(system.uptimeSeconds / 3600)}h` : '—'} />
+      </div>
+
+      <div className="rounded-xl border border-border p-4 mb-8 space-y-4 max-w-2xl">
+        <div>
+          <h2 className="font-semibold text-lg">Facebook &amp; Instagram cookies</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Meta blocks server downloads without login. Export cookies from your browser (extension:{' '}
+            <span className="font-medium">Get cookies.txt LOCALLY</span>) while logged into Facebook
+            and Instagram, then upload the file here.
+          </p>
+        </div>
+        <p className="text-sm">
+          Status:{' '}
+          {system?.metaCookiesConfigured ? (
+            <span className="text-emerald-600 dark:text-emerald-400">
+              Configured
+              {system.metaCookiesUpdatedAt
+                ? ` · updated ${new Date(system.metaCookiesUpdatedAt).toLocaleString()}`
+                : ''}
+            </span>
+          ) : (
+            <span className="text-amber-600 dark:text-amber-400">Not uploaded — FB/IG may fail</span>
+          )}
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Input
+            type="file"
+            accept=".txt,text/plain"
+            disabled={cookiesUploading}
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              void uploadCookies(file);
+              e.target.value = '';
+            }}
+            className="max-w-xs"
+          />
+          {cookiesUploading && (
+            <span className="text-sm text-muted-foreground inline-flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Uploading…
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="rounded-xl border border-border p-4 mb-8 space-y-5 max-w-2xl">
@@ -354,6 +441,71 @@ export default function AdminStoragePage() {
           <p className="text-xs text-muted-foreground mt-3">Path: {storage.basePath}</p>
         </div>
       )}
+
+      <div className="rounded-xl border border-border p-4 mb-8">
+        <h2 className="font-semibold mb-1">Uploaded images</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          Logo, ad banners, and other files in <code>public/uploads</code>. Use the URL in Ads or
+          Content settings.
+        </p>
+        {uploads ? (
+          <>
+            <p className="text-xs text-muted-foreground mb-3">
+              {uploads.count} file{uploads.count === 1 ? '' : 's'} · {uploads.dir}
+            </p>
+            {uploads.items.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No images uploaded yet.</p>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {uploads.items.map((item) => (
+                  <div
+                    key={item.name}
+                    className="rounded-lg border border-border overflow-hidden bg-background/40"
+                  >
+                    <div className="relative h-32 bg-muted/30">
+                      <Image
+                        src={item.url}
+                        alt={item.name}
+                        fill
+                        className="object-contain p-2"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="p-3 space-y-2 text-xs">
+                      <p className="font-medium truncate" title={item.name}>
+                        {item.name}
+                      </p>
+                      <p className="text-muted-foreground">
+                        {formatBytes(item.bytes)} · {new Date(item.updatedAt).toLocaleString()}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 truncate text-[11px] text-muted-foreground">
+                          {item.url}
+                        </code>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7 shrink-0"
+                          title="Copy URL"
+                          onClick={() => {
+                            void navigator.clipboard.writeText(item.url);
+                            toastSuccess('URL copied');
+                          }}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">Could not load upload folder.</p>
+        )}
+      </div>
 
       <div className="rounded-xl border border-border p-4 mb-8">
         <h2 className="font-semibold mb-3">Run cleanup now</h2>

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { detectPlatform, isSocialPlatform } from '@hellodownloader/shared-types';
+import { detectPlatform, isSocialPlatform, type VideoPlatform } from '@hellodownloader/shared-types';
 import { execa } from 'execa';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -184,6 +184,41 @@ export class YtDlpService {
       }
       return 'This video requires login or is not publicly accessible.';
     }
+    if (/IP address is blocked|blocked from accessing/i.test(stderr)) {
+      if (/tiktok/i.test(stderr)) {
+        return (
+          'TikTok blocked this server IP for that video. Try a vm.tiktok.com short link, ' +
+          'another public video, or try again later.'
+        );
+      }
+      return 'This platform blocked our server from accessing this video. Try another public link.';
+    }
+    if (/empty media response|cannot parse data/i.test(stderr)) {
+      if (/instagram/i.test(stderr)) {
+        return (
+          'Instagram blocked this download. Upload cookies in Admin → Storage (Meta cookies file) ' +
+          'or try a fully public Reel.'
+        );
+      }
+      if (/facebook/i.test(stderr)) {
+        return (
+          'Facebook blocked this download. Upload cookies in Admin → Storage (Meta cookies file) ' +
+          'or try a public Reel/video link.'
+        );
+      }
+    }
+    if (/name resolution|ENOTFOUND|getaddrinfo|Temporary failure in name resolution|Network is unreachable/i.test(stderr)) {
+      if (/tiktok/i.test(stderr)) {
+        return 'TikTok is temporarily unreachable from the server. Try again in a few minutes or use a YouTube link.';
+      }
+      if (/instagram/i.test(stderr)) {
+        return 'Instagram is temporarily unreachable from the server. Try again in a few minutes.';
+      }
+      if (/facebook/i.test(stderr)) {
+        return 'Facebook is temporarily unreachable from the server. Try again in a few minutes.';
+      }
+      return 'The server could not reach this video site (network/DNS issue). Try again in a minute.';
+    }
     if (/Unsupported URL|Unsupported url|No video formats found/i.test(stderr)) {
       return (
         'This link is not supported. Try YouTube, Facebook, Instagram, TikTok, Twitter/X, ' +
@@ -246,11 +281,20 @@ export class YtDlpService {
 
   private resolveCookiesPath(): string | null {
     const configured = process.env.YT_DLP_COOKIES_FILE;
-    if (!configured) return null;
-    const resolved = path.isAbsolute(configured)
-      ? configured
-      : path.join(this.monorepoRoot, configured);
-    return fs.existsSync(resolved) ? resolved : null;
+    const candidates: string[] = [];
+    if (configured) {
+      candidates.push(
+        path.isAbsolute(configured)
+          ? configured
+          : path.join(this.monorepoRoot, configured),
+      );
+    }
+    const storageRoot = process.env.STORAGE_PATH ?? './storage';
+    candidates.push(path.resolve(this.monorepoRoot, storageRoot, 'cookies.txt'));
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) return candidate;
+    }
+    return null;
   }
 
   private cookieArgSets(): string[][] {
@@ -268,25 +312,124 @@ export class YtDlpService {
     return sets;
   }
 
+  /** Meta downloads with cookies — skip slow no-cookie attempts. */
+  private cookieArgSetsForUrl(url: string): string[][] {
+    const sets = this.cookieArgSets();
+    const platform = detectPlatform(url);
+    const needsCookies = platform === 'instagram' || platform === 'facebook';
+    const hasCookies = sets.some((s) => s.length > 0);
+    if (needsCookies && hasCookies) {
+      return sets.filter((s) => s.length > 0);
+    }
+    return sets;
+  }
+
+  private resolveImpersonateTarget(): string | null {
+    const configured = process.env.YT_DLP_IMPERSONATE?.trim();
+    if (configured === '' || configured === 'false' || configured === '0') return null;
+    if (configured) return configured;
+    // Default for social extractors when curl_cffi is available (yt-dlp_linux / pip install curl_cffi).
+    return 'chrome';
+  }
+
+  private socialExtractorArgSets(platform: VideoPlatform): string[][] {
+    if (platform === 'instagram') {
+      return [
+        ['--extractor-args', 'instagram:api=graphql'],
+        ['--extractor-args', 'instagram:api=web'],
+      ];
+    }
+    if (platform === 'facebook') {
+      return [['--extractor-args', 'facebook:tab=watch']];
+    }
+    if (platform === 'tiktok') {
+      return [['--extractor-args', 'tiktok:api=app']];
+    }
+    return [];
+  }
+
   private pushVariant(
     variants: string[][],
     url: string,
     mode: 'metadata' | 'download',
     cookies: string[],
-    client?: string,
+    options: {
+      client?: string;
+      impersonate?: string | null;
+      extraArgs?: string[];
+    } = {},
     downloadArgs: string[] = [],
   ) {
-    const extractor =
-      client && url.includes('youtube')
-        ? ['--extractor-args', `youtube:player_client=${client}`]
-        : [];
+    const extractor: string[] = [];
+    if (options.client && url.includes('youtube')) {
+      extractor.push('--extractor-args', `youtube:player_client=${options.client}`);
+    }
+    if (options.extraArgs?.length) {
+      extractor.push(...options.extraArgs);
+    }
 
-    const shared = [...this.globalArgs(), ...cookies, '--no-playlist', '--no-warnings', ...extractor];
+    const impersonate: string[] = [];
+    if (options.impersonate) {
+      impersonate.push('--impersonate', options.impersonate);
+    }
+
+    const shared = [
+      ...this.globalArgs(),
+      ...cookies,
+      ...impersonate,
+      '--no-playlist',
+      '--no-warnings',
+      ...extractor,
+    ];
 
     if (mode === 'metadata') {
       variants.push([...shared, '--dump-json', url]);
     } else {
       variants.push([url, ...shared, ...downloadArgs]);
+    }
+  }
+
+  private pushSocialVariants(
+    variants: string[][],
+    url: string,
+    mode: 'metadata' | 'download',
+    cookies: string[],
+    downloadArgs: string[] = [],
+  ) {
+    const platform = detectPlatform(url);
+    const impersonate = this.resolveImpersonateTarget();
+    const extractorSets = this.socialExtractorArgSets(platform);
+    const metaHeavy = platform === 'instagram' || platform === 'facebook';
+    const hasAuthCookies = cookies.length > 0;
+
+    const pushDefault = () => this.pushVariant(variants, url, mode, cookies, {}, downloadArgs);
+    const pushImpersonate = (extraArgs?: string[]) => {
+      if (!impersonate) return;
+      this.pushVariant(
+        variants,
+        url,
+        mode,
+        cookies,
+        { impersonate, extraArgs },
+        downloadArgs,
+      );
+    };
+
+    // Logged-in Meta: one fast path — avoid 4+ sequential retries that each take ~30–60s.
+    if (metaHeavy && hasAuthCookies) {
+      pushDefault();
+      pushImpersonate();
+      return;
+    }
+
+    if (metaHeavy) {
+      for (const extraArgs of extractorSets) pushImpersonate(extraArgs);
+      pushImpersonate();
+      pushDefault();
+    } else {
+      pushDefault();
+      pushImpersonate();
+      for (const extraArgs of extractorSets) pushImpersonate(extraArgs);
     }
   }
 
@@ -493,7 +636,10 @@ export class YtDlpService {
   }
 
   /** Ensure MP4 has audio and plays in QuickTime (H.264+AAC or faststart remux). */
-  async ensurePlayableMp4(filePath: string): Promise<string> {
+  async ensurePlayableMp4(
+    filePath: string,
+    options: { onProgress?: (percent: number) => void; transcodePreset?: string } = {},
+  ): Promise<string> {
     if (!this.ffmpegPath || path.extname(filePath).toLowerCase() !== '.mp4') {
       return filePath;
     }
@@ -504,7 +650,7 @@ export class YtDlpService {
     }
 
     if (this.needsCompatTranscode(codecs)) {
-      return this.ensureCompatibleMp4(filePath);
+      return this.ensureCompatibleMp4(filePath, options);
     }
 
     const dir = path.dirname(filePath);
@@ -527,7 +673,10 @@ export class YtDlpService {
     return filePath;
   }
 
-  private async ensureCompatibleMp4(filePath: string): Promise<string> {
+  private async ensureCompatibleMp4(
+    filePath: string,
+    options: { onProgress?: (percent: number) => void; transcodePreset?: string } = {},
+  ): Promise<string> {
     if (!this.ffmpegPath || path.extname(filePath).toLowerCase() !== '.mp4') {
       return filePath;
     }
@@ -545,13 +694,15 @@ export class YtDlpService {
       `Transcoding ${path.basename(filePath)} (${codecs.video ?? 'unknown'}/${codecs.audio ?? 'none'}) to H.264+AAC`,
     );
 
+    options.onProgress?.(92);
+
     await execa(this.ffmpegPath, [
       '-i',
       filePath,
       '-c:v',
       'libx264',
       '-preset',
-      'fast',
+      options.transcodePreset ?? 'fast',
       '-crf',
       '23',
       '-c:a',
@@ -566,6 +717,7 @@ export class YtDlpService {
 
     fs.rmSync(filePath, { force: true });
     fs.renameSync(tempPath, filePath);
+    options.onProgress?.(97);
     return filePath;
   }
 
@@ -602,24 +754,33 @@ export class YtDlpService {
     downloadArgs: string[] = [],
   ): string[][] {
     const variants: string[][] = [];
-    const cookieSets = this.cookieArgSets();
+    const cookieSets = this.cookieArgSetsForUrl(url);
     const isYoutube = /youtube\.com|youtu\.be/i.test(url);
+    const platform = detectPlatform(url);
+    const metaWithCookies =
+      (platform === 'instagram' || platform === 'facebook') &&
+      cookieSets.some((s) => s.length > 0);
 
     if (isYoutube) {
       if (mode === 'metadata') {
-        this.pushVariant(variants, url, mode, [], undefined, downloadArgs);
+        this.pushVariant(variants, url, mode, [], {}, downloadArgs);
         for (const client of YOUTUBE_METADATA_CLIENTS) {
-          this.pushVariant(variants, url, mode, [], client, downloadArgs);
+          this.pushVariant(variants, url, mode, [], { client }, downloadArgs);
         }
       } else {
         // Default yt-dlp client first — web/mweb often expose only 360p (format 18).
-        this.pushVariant(variants, url, mode, [], undefined, downloadArgs);
+        this.pushVariant(variants, url, mode, [], {}, downloadArgs);
         for (const client of YOUTUBE_DOWNLOAD_CLIENTS) {
-          this.pushVariant(variants, url, mode, [], client, downloadArgs);
+          this.pushVariant(variants, url, mode, [], { client }, downloadArgs);
         }
       }
+    } else if (metaWithCookies) {
+      // Cookies on disk — start with authenticated attempts only (much faster for IG/FB).
+      for (const cookies of cookieSets) {
+        this.pushSocialVariants(variants, url, mode, cookies, downloadArgs);
+      }
     } else {
-      this.pushVariant(variants, url, mode, [], undefined, downloadArgs);
+      this.pushSocialVariants(variants, url, mode, [], downloadArgs);
     }
 
     // Authenticated path: cookies for age-restricted / sign-in required
@@ -631,16 +792,16 @@ export class YtDlpService {
             ? YOUTUBE_METADATA_CLIENTS
             : YOUTUBE_DOWNLOAD_CLIENTS;
         if (mode === 'download') {
-          this.pushVariant(variants, url, mode, cookies, undefined, downloadArgs);
+          this.pushVariant(variants, url, mode, cookies, {}, downloadArgs);
         }
         for (const client of clients) {
-          this.pushVariant(variants, url, mode, cookies, client, downloadArgs);
+          this.pushVariant(variants, url, mode, cookies, { client }, downloadArgs);
         }
         if (mode === 'metadata') {
-          this.pushVariant(variants, url, mode, cookies, undefined, downloadArgs);
+          this.pushVariant(variants, url, mode, cookies, {}, downloadArgs);
         }
-      } else {
-        this.pushVariant(variants, url, mode, cookies, undefined, downloadArgs);
+      } else if (!metaWithCookies) {
+        this.pushSocialVariants(variants, url, mode, cookies, downloadArgs);
       }
     }
 
@@ -736,8 +897,8 @@ export class YtDlpService {
       return;
     }
 
-    if (/\[youtube\]|\[info\]|\[ffmpeg\]|Extracting URL/i.test(trimmed)) {
-      phaseProgress.value = Math.max(phaseProgress.value, 15);
+    if (/\[youtube\]|\[info\]|\[ffmpeg\]|\[Instagram\]|\[facebook\]|\[TikTok\]|Extracting URL/i.test(trimmed)) {
+      phaseProgress.value = Math.max(phaseProgress.value, 18);
       report(phaseProgress.value);
     }
   }
@@ -804,7 +965,7 @@ export class YtDlpService {
             phaseProgress.value += 1;
             report(phaseProgress.value);
           }
-        }, 20_000)
+        }, 8_000)
       : null;
 
     const streamOpts = playlistProgress
@@ -1319,7 +1480,24 @@ export class YtDlpService {
 
     options.onProgress?.(90);
     try {
-      filePath = await this.ensurePlayableMp4(filePath);
+      const platform = detectPlatform(url);
+      const social = isSocialPlatform(platform);
+      if (social) {
+        const codecs = await this.probeStreamCodecs(filePath);
+        const video = codecs.video?.toLowerCase() ?? '';
+        const alreadyCompat =
+          Boolean(codecs.audio) &&
+          (video.includes('h264') || video.includes('avc')) &&
+          !this.needsCompatTranscode(codecs);
+        if (alreadyCompat) {
+          options.onProgress?.(98);
+          return filePath;
+        }
+      }
+      filePath = await this.ensurePlayableMp4(filePath, {
+        onProgress: options.onProgress,
+        transcodePreset: social ? 'veryfast' : 'fast',
+      });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (/no audio track/i.test(msg) && (options.format || options.maxHeight)) {
@@ -1327,7 +1505,10 @@ export class YtDlpService {
         await runDownload({ ...options, format: undefined });
         filePath = this.findDownloadedFile(outputDir, preferredExts);
         if (!filePath) throw new Error('Download produced no files');
-        filePath = await this.ensurePlayableMp4(filePath);
+        filePath = await this.ensurePlayableMp4(filePath, {
+          onProgress: options.onProgress,
+          transcodePreset: isSocialPlatform(detectPlatform(url)) ? 'veryfast' : 'fast',
+        });
       } else {
         throw err;
       }

@@ -35,6 +35,14 @@ export const CUSTOM_AD_FORMATS: { value: CustomAdFormat; label: string }[] = [
   { value: 'banner', label: 'Banner' },
 ];
 
+export const DEFAULT_CUSTOM_ADS_BANNER_HEIGHT_PX = 170;
+
+export function normalizeCustomAdsBannerHeightPx(value: unknown): number {
+  const n = typeof value === 'number' ? value : Number.parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(n)) return DEFAULT_CUSTOM_ADS_BANNER_HEIGHT_PX;
+  return Math.max(60, Math.min(400, Math.round(n)));
+}
+
 function defaultPositionForFormat(format: CustomAdFormat): CustomAdPosition {
   return format === 'banner' ? 'top' : 'sidebar';
 }

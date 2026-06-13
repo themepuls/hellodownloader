@@ -37,8 +37,10 @@ import {
 import {
   DEFAULT_DOWNLOAD_CONTENT,
   DEFAULT_HD_QUALITY_ACCESS,
+  detectPlatform,
   hasProAccess,
   isQualityAccessible,
+  isSocialPlatform,
   type DownloadPageContent,
   type HdQualityAccessConfig,
 } from '@hellodownloader/shared-types';
@@ -104,6 +106,27 @@ export function DownloadWorkspace({
   }, [autoAnalyze, initialUrl]);
 
   const meta = metadata as VideoMetadata | null;
+  const platform = detectPlatform(url);
+  const isSocial = isSocialPlatform(platform);
+  const socialSourceLabel =
+    platform === 'instagram'
+      ? 'Instagram'
+      : platform === 'facebook'
+        ? 'Facebook'
+        : platform === 'tiktok'
+          ? 'TikTok'
+          : 'the platform';
+
+  const processingPhaseMessage = (progress: number) => {
+    if (progress < 30) {
+      return isSocial
+        ? `fetching from ${socialSourceLabel} on server — often 1–2 min even for small files`
+        : 'preparing download on server';
+    }
+    if (progress >= 90) return 'converting video for compatibility';
+    if (progress >= 85) return 'saving file on server';
+    return isSocial ? `downloading from ${socialSourceLabel} on server` : 'downloading on server';
+  };
 
   useEffect(() => {
     setThumbnailFailed(false);
@@ -474,14 +497,7 @@ export function DownloadWorkspace({
                   processingDetail={
                     (download.status === 'PROCESSING' || download.status === 'QUEUED') ? (
                       <p className="text-xs text-muted-foreground">
-                        {download.progress ?? 0}% —{' '}
-                        {(download.progress ?? 0) < 30
-                          ? 'preparing download on server'
-                          : (download.progress ?? 0) >= 90
-                            ? 'finishing on server'
-                            : (download.progress ?? 0) >= 85
-                              ? 'saving file on server'
-                              : 'downloading on server'}
+                        {download.progress ?? 0}% — {processingPhaseMessage(download.progress ?? 0)}
                         {(meta?.duration ?? 0) >= 1800
                           ? ' · long videos may take 10–30+ minutes'
                           : ''}

@@ -30,6 +30,29 @@ const ACTIVE_DOWNLOAD_URL_KEY = 'hellodownloader-active-download-url';
 const ACTIVE_DOWNLOAD_TOKEN_KEY = 'hellodownloader-active-download-token';
 const AUTO_SAVED_DOWNLOAD_KEY = 'hellodownloader-auto-saved-id';
 
+function normalizeUserError(value: unknown, fallback: string): string {
+  const raw = typeof value === 'string' ? value.trim() : '';
+  if (!raw || raw === 'undefined' || raw === 'null') return fallback;
+  return raw;
+}
+
+function resolveSaveTitle(
+  ...candidates: Array<string | null | undefined>
+): string | null {
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim();
+    if (
+      trimmed &&
+      trimmed !== 'undefined' &&
+      trimmed !== 'null' &&
+      trimmed !== 'Loading video info…'
+    ) {
+      return trimmed;
+    }
+  }
+  return null;
+}
+
 function readStoredDownloadToken(): string | null {
   if (typeof window === 'undefined') return null;
   return sessionStorage.getItem(ACTIVE_DOWNLOAD_TOKEN_KEY);
@@ -123,9 +146,12 @@ export function useDownloader(initialUrl = '') {
         if (status.status === 'FAILED') {
           sessionStorage.removeItem(ACTIVE_DOWNLOAD_KEY);
           sessionStorage.removeItem(ACTIVE_DOWNLOAD_URL_KEY);
-          if (status.error) {
-            setError(status.error);
-          }
+          setError(
+            normalizeUserError(
+              status.error,
+              'Download failed. Try a lower quality or another link.',
+            ),
+          );
         }
       }
       return status;
@@ -259,10 +285,10 @@ export function useDownloader(initialUrl = '') {
 
     try {
       const data = await apiClient.downloads.metadata(url, controller.signal);
-      if (controller.signal.aborted) return;
+      if (metadataAbortRef.current !== controller) return;
       setMetadata(data as Record<string, unknown>);
     } catch (e) {
-      if (controller.signal.aborted) return;
+      if (metadataAbortRef.current !== controller) return;
       const message = e instanceof Error ? e.message : 'Failed to fetch metadata';
       if (message !== 'Cancelled') {
         setError(message);
@@ -270,8 +296,6 @@ export function useDownloader(initialUrl = '') {
     } finally {
       if (metadataAbortRef.current === controller) {
         metadataAbortRef.current = null;
-      }
-      if (!controller.signal.aborted) {
         setAnalyzing(false);
       }
     }
@@ -282,12 +306,17 @@ export function useDownloader(initialUrl = '') {
     setLoading(true);
     setError(null);
     try {
+      const metaTitle =
+        typeof metadata?.title === 'string' ? metadata.title.trim() : '';
+      const metaThumb =
+        typeof metadata?.thumbnail === 'string' ? metadata.thumbnail.trim() : '';
+      const isOptimistic = Boolean(metadata?._optimistic);
       const cachedMeta =
-        metadata && metadata.title && metadata.thumbnail
+        metadata && metaTitle && metaThumb && !isOptimistic
           ? {
               id: metadata.id as string | undefined,
-              title: metadata.title as string,
-              thumbnail: metadata.thumbnail as string,
+              title: metaTitle,
+              thumbnail: metaThumb,
               uploader: metadata.uploader as string | undefined,
               duration:
                 metadata.duration != null
@@ -334,9 +363,7 @@ export function useDownloader(initialUrl = '') {
       const fileExtension = extensionForDownloadType(downloadType);
 
       const saveTitle =
-        fresh.title ??
-        download.title ??
-        (typeof metadata?.title === 'string' ? metadata.title : null) ??
+        resolveSaveTitle(fresh.title, download.title, metadata?.title as string | undefined) ??
         `download-${download.id}`;
 
       const result = await saveCompletedFile(
@@ -365,8 +392,19 @@ export function useDownloader(initialUrl = '') {
   useEffect(() => {
     if (download?.status !== 'COMPLETED' || !download.id || saving) return;
     if (sessionStorage.getItem(AUTO_SAVED_DOWNLOAD_KEY) === download.id) return;
-    sessionStorage.setItem(AUTO_SAVED_DOWNLOAD_KEY, download.id);
-    void saveToPc();
+
+    const token = readStoredDownloadToken();
+    if (!token) {
+      setError('Download is ready but the session expired. Click Save to your computer.');
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      sessionStorage.setItem(AUTO_SAVED_DOWNLOAD_KEY, download.id);
+      void saveToPc();
+    }, 800);
+
+    return () => window.clearTimeout(timer);
   }, [download?.status, download?.id, saving, saveToPc]);
 
   return {

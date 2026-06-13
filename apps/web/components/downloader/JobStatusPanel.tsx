@@ -34,6 +34,12 @@ function hintForError(error: string): string | null {
   if (/timed out/i.test(error)) {
     return 'Try again with a lower quality, or wait and retry for long videos.';
   }
+  if (/name resolution|ENOTFOUND|network\/dns|unreachable from the server/i.test(error)) {
+    return 'The server had trouble reaching that site. YouTube links usually work — try again in a minute.';
+  }
+  if (/instagram requires login|facebook requires login|empty media response|cannot parse data/i.test(error)) {
+    return 'This post may be private or blocked. Public YouTube and TikTok links usually work without login.';
+  }
   if (/playlist/i.test(error) && /skipped|private|unavailable/i.test(error)) {
     return 'Some playlist items could not be downloaded. The ZIP includes everything that was accessible.';
   }
@@ -125,7 +131,13 @@ export function JobStatusPanel({
   const styles = TONE_STYLES[tone];
   const hint = error ? hintForError(error) : null;
   const displayMessage = isFailed
-    ? error ?? 'Something went wrong. Please try again.'
+    ? (() => {
+        const raw = error?.trim();
+        if (!raw || raw === 'undefined' || raw === 'null') {
+          return 'Download failed. Try a lower quality or another link.';
+        }
+        return raw;
+      })()
     : isComplete && warning
       ? warning
       : null;

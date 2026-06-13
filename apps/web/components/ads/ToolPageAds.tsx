@@ -12,7 +12,7 @@ import { useClientMounted } from '@/hooks/useClientMounted';
 import { useUserStore } from '@/store/userStore';
 import { PageAdsBottom, PageAdsSidebar, PageAdsTop } from '@/components/ads/PageAdsZones';
 
-const TOOL_BOX = 'mx-auto w-full max-w-6xl px-4 sm:px-6';
+const TOOL_BOX = 'mx-auto w-full max-w-5xl px-4 sm:px-6';
 
 function useShowToolAds(page: CustomAdPage) {
   const mounted = useClientMounted();
@@ -72,7 +72,7 @@ export function ToolPageWithSidebar({ page, children, className }: ToolPageWithS
   return (
     <div className={className ?? `${TOOL_BOX} py-8`}>
       {showSidebar ? (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
           <div className="min-w-0">{children}</div>
           <aside className="min-w-0 hidden lg:block">
             <PageAdsSidebar page={page} className="sticky top-24 space-y-4" />

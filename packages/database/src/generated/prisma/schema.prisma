@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -377,6 +377,7 @@ model SiteSettings {
   customHeadSnippet      String   @default("") @map("custom_head_snippet")
   verificationFiles      Json?    @map("verification_files")
   routeSeo               Json?    @map("route_seo")
+  robotsDisallow         Json?    @map("robots_disallow")
   googleAuthEnabled      Boolean  @default(false) @map("google_auth_enabled")
   googleClientId         String   @default("") @map("google_client_id")
   updatedAt              DateTime @updatedAt @map("updated_at")

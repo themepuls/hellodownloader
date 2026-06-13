@@ -104,6 +104,30 @@ function appendDownloadToken(url: string, downloadToken?: string | null): string
   return `${url}${sep}download_token=${encodeURIComponent(downloadToken)}`;
 }
 
+function buildDownloadAuthHeaders(
+  auth: boolean,
+  downloadToken?: string | null,
+): Record<string, string> {
+  const headers = buildAuthHeaders(auth);
+  if (downloadToken) {
+    headers['X-Download-Token'] = downloadToken;
+  }
+  return headers;
+}
+
+function resolveSaveFilename(name: string, fallbackId: string): string {
+  const trimmed = name.trim();
+  if (
+    !trimmed ||
+    trimmed === 'undefined' ||
+    trimmed === 'null' ||
+    trimmed === 'Loading video info…'
+  ) {
+    return `download-${fallbackId}`;
+  }
+  return trimmed;
+}
+
 function buildAuthHeaders(auth: boolean): Record<string, string> {
   if (!auth) return {};
   const token = getAccessToken();
@@ -239,8 +263,21 @@ async function saveViaFetchBlob(
   filename: string,
   headers: Record<string, string> = {},
 ): Promise<void> {
-  const res = await fetch(url, { headers });
-  if (!res.ok) {
+  let lastStatus = 0;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch(url, { headers });
+    lastStatus = res.status;
+    if (res.ok) {
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      await triggerNativeDownload(objectUrl, filename);
+      URL.revokeObjectURL(objectUrl);
+      return;
+    }
+    if (res.status === 404 && attempt === 0) {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      continue;
+    }
     const message =
       res.status === 403
         ? 'Access denied. Start a new download from the same URL.'
@@ -249,10 +286,7 @@ async function saveViaFetchBlob(
           : `Could not download file (${res.status})`;
     throw new Error(message);
   }
-  const blob = await res.blob();
-  const objectUrl = URL.createObjectURL(blob);
-  await triggerNativeDownload(objectUrl, filename);
-  URL.revokeObjectURL(objectUrl);
+  throw new Error(`Could not download file (${lastStatus || 'unknown'})`);
 }
 
 async function saveFileInBrowser(
@@ -290,12 +324,14 @@ export async function saveCompletedFile(
 
   // Browser: fetch+blob for correct Unicode filenames; URL handoff only for very large files.
   if (typeof window !== 'undefined') {
+    const idMatch = path.match(/\/downloads\/([^/?]+)\/file/);
+    const fallbackId = idMatch?.[1] ?? 'file';
     const filename = ensureFileExtension(
-      sanitizeFilename(fallbackFilename),
+      sanitizeFilename(resolveSaveFilename(fallbackFilename, fallbackId)),
       fileExtension,
       forceExtension,
     );
-    const authHeaders = buildAuthHeaders(auth);
+    const authHeaders = buildDownloadAuthHeaders(auth, downloadToken);
     const url = appendDownloadToken(resolveProxiedDownloadUrl(path), downloadToken);
     const knownSize =
       typeof fileSizeBytes === 'string'

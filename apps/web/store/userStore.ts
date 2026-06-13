@@ -13,9 +13,11 @@ interface User {
 interface UserState {
   user: User | null;
   accessToken: string | null;
+  hasHydrated: boolean;
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   logout: () => void;
   updateUser: (partial: Partial<User>) => void;
+  setHasHydrated: (value: boolean) => void;
 }
 
 function setAuthHintCookie(active: boolean) {
@@ -32,6 +34,8 @@ export const useUserStore = create<UserState>()(
     (set) => ({
       user: null,
       accessToken: null,
+      hasHydrated: false,
+      setHasHydrated: (value) => set({ hasHydrated: value }),
       setAuth: (user, accessToken, refreshToken) => {
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', accessToken);
@@ -58,6 +62,7 @@ export const useUserStore = create<UserState>()(
           localStorage.setItem('accessToken', state.accessToken);
           setAuthHintCookie(true);
         }
+        useUserStore.setState({ hasHydrated: true });
       },
     },
   ),

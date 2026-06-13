@@ -15,6 +15,15 @@ function getAccessToken(): string | null {
   );
 }
 
+function clearStaleAuth() {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  import('@/store/userStore').then(({ useUserStore }) => {
+    useUserStore.getState().logout();
+  });
+}
+
 /** Browser uses same-origin proxy (next.config rewrites) to avoid CORS. */
 function getApiUrl(): string {
   if (typeof window !== 'undefined') {
@@ -87,6 +96,7 @@ export async function api<T>(
       err.error ??
       res.statusText;
     if (res.status === 401) {
+      clearStaleAuth();
       throw new Error('Please log in to continue, or try again as a guest.');
     }
     if (res.status === 403) {
@@ -129,7 +139,11 @@ export const apiClient = {
   downloads: {
     qualityAccess: () => api('/downloads/quality-access'),
     metadata: (url: string, signal?: AbortSignal) =>
-      api('/downloads/metadata', { method: 'POST', body: JSON.stringify({ url }), signal }),
+      api(
+        '/downloads/metadata',
+        { method: 'POST', body: JSON.stringify({ url }), signal },
+        120_000,
+      ),
     create: (data: {
       url: string;
       type: string;
@@ -274,6 +288,7 @@ export const apiClient = {
     listCredits: (p: Record<string, string | number | undefined> = {}) =>
       api(`/admin/credits${adminQs(p)}`),
     storage: () => api('/admin/storage'),
+    listUploads: () => api('/admin/uploads'),
     getStorageSettings: () => api('/admin/storage-settings'),
     updateStorageSettings: (data: Record<string, unknown>) =>
       api('/admin/storage-settings', { method: 'PATCH', body: JSON.stringify(data) }),
@@ -283,6 +298,27 @@ export const apiClient = {
       api('/admin/storage/cleanup', { method: 'POST', body: JSON.stringify({ hours }) }),
     analytics: () => api('/admin/analytics'),
     system: () => api('/admin/system'),
+    cookiesStatus: () =>
+      api<{ configured: boolean; path: string; updatedAt: string | null }>('/admin/cookies/status'),
+    uploadMetaCookies: async (file: File) => {
+      const token = getAccessToken();
+      const body = new FormData();
+      body.append('file', file);
+      const res = await fetch(`${getApiUrl()}/admin/cookies/upload`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        const message =
+          (Array.isArray(err.message) ? err.message.join(', ') : err.message) ??
+          err.error ??
+          res.statusText;
+        throw new Error(message);
+      }
+      return res.json() as Promise<{ ok: boolean; message: string }>;
+    },
     settings: () => api('/admin/settings'),
     updateSettings: (data: Record<string, unknown>) =>
       api('/admin/settings', { method: 'PATCH', body: JSON.stringify(data) }),

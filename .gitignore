@@ -19,6 +19,7 @@ logs
 npm-debug.log*
 
 # Storage (runtime)
+storage/cookies.txt
 storage/youtube-cookies.txt
 storage/temp/*
 !storage/temp/.gitkeep

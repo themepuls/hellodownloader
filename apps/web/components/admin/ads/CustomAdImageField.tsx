@@ -6,6 +6,7 @@ import { Upload } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/toast';
 
 export function CustomAdImageField({
   value,
@@ -17,6 +18,7 @@ export function CustomAdImageField({
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { success: toastSuccess } = useToast();
 
   const upload = async (file: File) => {
     setUploading(true);
@@ -24,6 +26,7 @@ export function CustomAdImageField({
     try {
       const res = (await apiClient.admin.uploadAdImage(file)) as { url: string };
       onChange(res.url);
+      toastSuccess('Image uploaded — click Save to keep it after server updates');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Upload failed');
     } finally {

@@ -1,5 +1,5 @@
 import type { CustomAdItem } from './custom-ads';
-import { activeCustomAds, normalizeCustomAds } from './custom-ads';
+import { activeCustomAds, normalizeCustomAds, normalizeCustomAdsBannerHeightPx } from './custom-ads';
 
 export type AffiliateLinksConfig = {
   enabled: boolean;
@@ -53,6 +53,8 @@ export type AdsPublicConfig = {
   };
   customAds: CustomAdItem[];
   affiliateLinks: AffiliateLinksConfig | null;
+  /** Top/bottom custom banner strip height in pixels. */
+  customAdsBannerHeightPx: number;
 };
 
 export type AdsAdminConfig = {
@@ -83,6 +85,8 @@ export type AdsAdminConfig = {
   globalCss: string;
   customAds: CustomAdItem[];
   affiliateLinksEnabled: boolean;
+  /** Top/bottom custom banner strip height in pixels (admin). */
+  customAdsBannerHeightPx: number;
   affiliateLinkDownload: string;
   affiliateLinkAudio: string;
   affiliateLinkSubtitle: string;
@@ -118,6 +122,7 @@ export const DEFAULT_ADS_ADMIN_CONFIG: AdsAdminConfig = {
   globalCss: '',
   customAds: [],
   affiliateLinksEnabled: false,
+  customAdsBannerHeightPx: 170,
   affiliateLinkDownload: '',
   affiliateLinkAudio: '',
   affiliateLinkSubtitle: '',
@@ -221,6 +226,7 @@ export function adsAdminToPublic(admin: AdsAdminConfig, showAds: boolean): AdsPu
       showAds && admin.customAdsEnabled
         ? activeCustomAds(normalizeCustomAds(admin.customAds))
         : [],
+    customAdsBannerHeightPx: normalizeCustomAdsBannerHeightPx(admin.customAdsBannerHeightPx),
     affiliateLinks: affiliateLinksFromAdmin(admin, showAds),
   };
 }

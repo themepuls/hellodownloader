@@ -13,7 +13,7 @@ const monorepoRoot = path.resolve(__dirname, '../../..');
 
 if (process.env.DATABASE_URL?.startsWith('file:')) {
   const filePath = process.env.DATABASE_URL.replace('file:', '').replace(/^\.\//, '');
-  if (!path.isAbsolute(filePath)) {
+  if (!path.isAbsolute(filePath) && (filePath.startsWith('packages/') || filePath.includes('/packages/'))) {
     process.env.DATABASE_URL = `file:${path.join(monorepoRoot, filePath)}`;
   }
 }
