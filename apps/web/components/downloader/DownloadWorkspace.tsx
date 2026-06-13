@@ -123,7 +123,7 @@ export function DownloadWorkspace({
   };
 
   const handleQualityDownload = (height: number, formatId?: string) => {
-    void startDownload('VIDEO', height, formatId);
+    void startDownload('VIDEO', height, formatId?.trim() || undefined);
   };
 
   const saveOriginalThumbnail = async () => {

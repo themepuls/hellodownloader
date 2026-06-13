@@ -69,10 +69,10 @@ export async function processDownload(data: DownloadJobData) {
       `bestvideo[height<=${maxHeight}][ext=mp4]+bestaudio[ext=m4a]/` +
       `bestvideo[height<=${maxHeight}]+bestaudio/` +
       `best[height<=${maxHeight}][ext=mp4][acodec!=none]/` +
-      `best[height<=${maxHeight}]`;
+      `best[height<=${maxHeight}][acodec!=none]/bestvideo+bestaudio/best`;
     const videoFormat =
       data.format && data.type !== 'MP3'
-        ? `${data.format}+bestaudio/${data.format}/best[format_id=${data.format}]/${heightFallback}`
+        ? `best[format_id=${data.format}][acodec!=none]/${data.format}+bestaudio/bestvideo[format_id=${data.format}]+bestaudio/${heightFallback}`
         : heightFallback;
 
     const args = [

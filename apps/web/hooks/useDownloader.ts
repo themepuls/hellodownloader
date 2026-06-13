@@ -287,7 +287,10 @@ export function useDownloader(initialUrl = '') {
               title: metadata.title as string,
               thumbnail: metadata.thumbnail as string,
               uploader: metadata.uploader as string | undefined,
-              duration: metadata.duration as number | undefined,
+              duration:
+                metadata.duration != null
+                  ? Math.round(Number(metadata.duration))
+                  : undefined,
               formats: metadata.formats as unknown[] | undefined,
             }
           : undefined;

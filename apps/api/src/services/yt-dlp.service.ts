@@ -313,7 +313,16 @@ export class YtDlpService {
   private buildSocialFormatSelector(options: DownloadOptions): string {
     const { format, maxHeight } = options;
     if (format) {
-      return `best[format_id=${format}][acodec!=none]/${format}+bestaudio/${format}/hd/sd/best`;
+      // Never fall back to bare format id — video-only DASH streams have no audio.
+      return [
+        `best[format_id=${format}][acodec!=none]`,
+        `${format}+bestaudio`,
+        `bestvideo[format_id=${format}]+bestaudio`,
+        'hd',
+        'sd',
+        'best[acodec!=none]',
+        'bestvideo+bestaudio/best',
+      ].join('/');
     }
     if (maxHeight) {
       return [
@@ -323,9 +332,9 @@ export class YtDlpService {
         `bestvideo[vcodec^=avc1][width<=${maxHeight}]+bestaudio/`,
         `bestvideo[height<=${maxHeight}]+bestaudio/`,
         `bestvideo[width<=${maxHeight}]+bestaudio/`,
-        `best[height<=${maxHeight}]/`,
-        `best[width<=${maxHeight}]/`,
-        'best',
+        `best[height<=${maxHeight}][acodec!=none]/`,
+        `best[width<=${maxHeight}][acodec!=none]/`,
+        'best[acodec!=none]/bestvideo+bestaudio/best',
       ].join('/');
     }
     return 'hd/sd/bestvideo[vcodec^=avc1]+bestaudio/bestvideo+bestaudio/best';
@@ -1200,7 +1209,7 @@ export class YtDlpService {
         thumbnail,
         thumbnailWidth: isYoutube ? 480 : thumb.width,
         thumbnailHeight: isYoutube ? 360 : thumb.height,
-        duration: data.duration ?? 0,
+        duration: Math.round(Number(data.duration) || 0),
         uploader: data.uploader ?? data.channel ?? data.uploader_id ?? 'Unknown',
         formats: this.mapVideoFormats(data.formats ?? [], url),
       };

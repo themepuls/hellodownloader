@@ -1,6 +1,13 @@
 import { IsEnum, IsInt, IsOptional, IsString, IsUrl, Max, Min, IsArray, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { DownloadType } from '@hellodownloader/shared-types';
+
+function toOptionalInt(value: unknown): number | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return undefined;
+  return Math.round(n);
+}
 
 /** Metadata from a prior analyze call — skips a second yt-dlp round-trip on create. */
 export class CachedDownloadMetadataDto {
@@ -19,6 +26,7 @@ export class CachedDownloadMetadataDto {
   uploader?: string;
 
   @IsOptional()
+  @Transform(({ value }) => toOptionalInt(value))
   @IsInt()
   duration?: number;
 
@@ -39,6 +47,7 @@ export class CreateDownloadDto {
   format?: string;
 
   @IsOptional()
+  @Transform(({ value }) => toOptionalInt(value))
   @IsInt()
   @Min(144)
   @Max(4320)

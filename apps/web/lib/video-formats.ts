@@ -128,11 +128,9 @@ function preferFormat(a: VideoFormat, b: VideoFormat, durationSec: number): Vide
     const est = estimateFormatBytes(f, durationSec);
     let s = est;
     if (f.ext === 'mp4') s += 1_000_000;
-    // Progressive combined MP4 (e.g. format 18) — matches what users get when available.
-    if (isCombined(f) && hasKnownSize(f)) s += 2_000_000_000;
-    if (isCombined(f) && direct > 0) s += 500_000_000;
-    // DASH video-only with known size + merged audio — matches server yt-dlp merge path.
-    if (!isCombined(f) && hasKnownSize(f)) s += 1_500_000_000;
+    // Prefer progressive combined MP4 — guaranteed audio on desktop players.
+    if (isCombined(f)) s += 3_000_000_000;
+    if (isCombined(f) && hasKnownSize(f)) s += 500_000_000;
     if (isH264Codec(f.vcodec)) s += 10_000_000;
     // Deprioritize HLS combined rows that only expose tbr (often 2× actual merged size).
     if (isOpaqueCombined(f)) s -= 1_000_000_000;
@@ -207,7 +205,8 @@ export function getVideoQualityOptions(
       badge: qualityBadge(resolution),
       ext: 'MP4',
       filesize: filesize || undefined,
-      formatId: best.format_id,
+      // Only pass format id when audio is bundled — server merges audio for DASH video-only.
+      formatId: isCombined(best) ? best.format_id : '',
     });
   }
 
