@@ -69,7 +69,11 @@ cd "${APP_DIR}"
 
 if [[ ! -f .env ]]; then
   echo "==> Creating .env from template..."
-  cp deploy/env.production.example .env
+  if [[ -f deploy/env.hellodownloader.example ]]; then
+    cp deploy/env.hellodownloader.example .env
+  else
+    cp deploy/env.production.example .env
+  fi
   JWT1="$(openssl rand -base64 48)"
   JWT2="$(openssl rand -base64 48)"
   sed -i "s|CHANGE_ME_DB_PASSWORD|${DB_PASS}|g" .env
@@ -120,13 +124,16 @@ pm2 startup systemd -u root --hp /root || true
 
 if [[ -n "${DOMAIN}" ]]; then
   echo "==> Configuring Nginx for ${DOMAIN}..."
-  sed "s/YOUR_DOMAIN/${DOMAIN}/g" deploy/nginx.site.conf.example > /etc/nginx/sites-available/hellodownloader
+  if [[ -f deploy/nginx.hellodownloader.conf && "${DOMAIN}" == "hellodownloader.com" ]]; then
+    cp deploy/nginx.hellodownloader.conf /etc/nginx/sites-available/hellodownloader
+  else
+    sed "s/YOUR_DOMAIN/${DOMAIN}/g" deploy/nginx.site.conf.example > /etc/nginx/sites-available/hellodownloader
+  fi
   ln -sf /etc/nginx/sites-available/hellodownloader /etc/nginx/sites-enabled/hellodownloader
-  rm -f /etc/nginx/sites-enabled/default
   nginx -t && systemctl reload nginx
 
   echo "==> SSL (optional — DNS must point to this server first)..."
-  echo "Run: certbot --nginx -d ${DOMAIN}"
+  echo "Run: certbot --nginx -d hellodownloader.com -d www.hellodownloader.com -d api.hellodownloader.com"
 fi
 
 echo "==> Firewall..."

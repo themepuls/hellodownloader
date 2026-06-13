@@ -169,10 +169,19 @@ if ! command -v nginx >/dev/null 2>&1; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-NGINX_TEMPLATE="${SCRIPT_DIR}/nginx.site.conf.example"
 NGINX_SITE="/etc/nginx/sites-available/hellodownloader"
 
-if [[ -f "${NGINX_TEMPLATE}" ]]; then
+if [[ -f "${SCRIPT_DIR}/nginx.hellodownloader.conf" ]]; then
+  NGINX_SOURCE="${SCRIPT_DIR}/nginx.hellodownloader.conf"
+  run "Configure Nginx (hellodownloader.com + www + api)" "
+    cp \"${NGINX_SOURCE}\" \"${NGINX_SITE}\"
+    ln -sf \"${NGINX_SITE}\" /etc/nginx/sites-enabled/hellodownloader
+    nginx -t
+    systemctl enable nginx
+    systemctl reload nginx
+  "
+elif [[ -f "${SCRIPT_DIR}/nginx.site.conf.example" ]]; then
+  NGINX_TEMPLATE="${SCRIPT_DIR}/nginx.site.conf.example"
   SERVER_NAME="${DOMAIN:-_}"
   run "Configure Nginx site (server_name=${SERVER_NAME})" "
     sed \"s/YOUR_DOMAIN/${SERVER_NAME}/g\" \"${NGINX_TEMPLATE}\" > \"${NGINX_SITE}\"
@@ -182,7 +191,7 @@ if [[ -f "${NGINX_TEMPLATE}" ]]; then
     systemctl reload nginx
   "
 else
-  warn "Nginx template not found at ${NGINX_TEMPLATE} — skip site config"
+  warn "No Nginx template found in ${SCRIPT_DIR} — skip site config"
 fi
 
 run "Nginx service" "systemctl is-active nginx"
