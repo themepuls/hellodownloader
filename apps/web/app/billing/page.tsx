@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Bitcoin, CreditCard, Landmark, Loader2 } from 'lucide-react';
@@ -12,6 +12,20 @@ import { useUserStore } from '@/store/userStore';
 type PaymentGateway = 'stripe' | 'binance' | 'sslcommerz';
 
 export default function BillingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto px-4 py-16 text-center">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <BillingPageContent />
+    </Suspense>
+  );
+}
+
+function BillingPageContent() {
   const user = useUserStore((s) => s.user);
   const searchParams = useSearchParams();
   const [sub, setSub] = useState<Record<string, unknown> | null>(null);

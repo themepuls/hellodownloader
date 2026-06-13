@@ -56,6 +56,15 @@ function estimateFormatBytes(f: VideoFormat, durationSec: number): number {
   return estimateBytesFromBitrate(streamBitrate(f), durationSec);
 }
 
+function hasKnownSize(f: VideoFormat): boolean {
+  return formatBytes(f) > 0;
+}
+
+/** HLS/m3u8 combined rows (e.g. YouTube format 91–95) advertise tbr but not real file size. */
+function isOpaqueCombined(f: VideoFormat): boolean {
+  return isCombined(f) && !hasKnownSize(f);
+}
+
 function estimateAudioBytes(formats: VideoFormat[], durationSec: number): number {
   let best = 0;
   for (const f of formats) {
@@ -64,7 +73,9 @@ function estimateAudioBytes(formats: VideoFormat[], durationSec: number): number
       direct > 0 ? direct : estimateBytesFromBitrate(audioBitrate(f), durationSec);
     best = Math.max(best, est);
   }
-  return best;
+  if (best > 0) return best;
+  // yt-dlp merges bestaudio (~128 kbps m4a) when metadata has no separate audio rows.
+  return estimateBytesFromBitrate(128, durationSec);
 }
 
 /** Standard resolution label — uses the shorter edge for vertical/square video. */
@@ -117,10 +128,14 @@ function preferFormat(a: VideoFormat, b: VideoFormat, durationSec: number): Vide
     const est = estimateFormatBytes(f, durationSec);
     let s = est;
     if (f.ext === 'mp4') s += 1_000_000;
-    // Prefer progressive/combined streams (video+audio) — avoids silent or broken MP4s.
-    if (isCombined(f)) s += 2_000_000_000;
+    // Progressive combined MP4 (e.g. format 18) — matches what users get when available.
+    if (isCombined(f) && hasKnownSize(f)) s += 2_000_000_000;
     if (isCombined(f) && direct > 0) s += 500_000_000;
+    // DASH video-only with known size + merged audio — matches server yt-dlp merge path.
+    if (!isCombined(f) && hasKnownSize(f)) s += 1_500_000_000;
     if (isH264Codec(f.vcodec)) s += 10_000_000;
+    // Deprioritize HLS combined rows that only expose tbr (often 2× actual merged size).
+    if (isOpaqueCombined(f)) s -= 1_000_000_000;
     if (!est) s -= 2_000_000_000;
     return s;
   };

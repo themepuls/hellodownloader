@@ -83,10 +83,11 @@ export class DownloadService {
 
     let metadata;
     if (dto.metadata?.title && dto.metadata?.thumbnail) {
+      const safeThumbnail = assertAllowedThumbnailUrl(dto.metadata.thumbnail);
       metadata = {
         id: dto.metadata.id ?? '',
         title: dto.metadata.title,
-        thumbnail: dto.metadata.thumbnail,
+        thumbnail: safeThumbnail,
         thumbnailWidth: 480,
         thumbnailHeight: 360,
         duration: dto.metadata.duration ?? 0,

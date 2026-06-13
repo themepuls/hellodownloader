@@ -1,0 +1,49 @@
+# Copy to /etc/nginx/sites-available/hellodownloader
+# Replace YOUR_DOMAIN with your domain or server IP for initial testing.
+
+upstream hd_api {
+    server 127.0.0.1:4001;
+    keepalive 32;
+}
+
+upstream hd_web {
+    server 127.0.0.1:3000;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name YOUR_DOMAIN;
+
+    client_max_body_size 500M;
+
+    # Large downloads / playlist jobs
+    proxy_read_timeout 3600s;
+    proxy_send_timeout 3600s;
+    proxy_connect_timeout 60s;
+
+    location /api/ {
+        proxy_pass http://hd_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+    }
+
+    location / {
+        proxy_pass http://hd_web;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+
+# After DNS points here, enable HTTPS:
+# sudo certbot --nginx -d YOUR_DOMAIN

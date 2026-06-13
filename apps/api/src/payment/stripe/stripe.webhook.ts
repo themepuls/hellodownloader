@@ -1,7 +1,9 @@
 import { Controller, Headers, Post, RawBodyRequest, Req } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { StripeService } from './stripe.service';
 import { Public } from '../../modules/auth/public.decorator';
 
+@SkipThrottle()
 @Controller('webhooks/stripe')
 export class StripeWebhookController {
   constructor(private stripeService: StripeService) {}

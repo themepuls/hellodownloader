@@ -1,7 +1,9 @@
 import { Body, Controller, Headers, HttpCode, Logger, Post } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { BinanceService } from './binance.service';
 import { Public } from '../../modules/auth/public.decorator';
 
+@SkipThrottle()
 @Controller('webhooks/binance')
 export class BinanceWebhookController {
   private readonly logger = new Logger(BinanceWebhookController.name);

@@ -1,11 +1,13 @@
 import 'dotenv/config';
 import { Worker } from 'bullmq';
-import { createRedisConnection } from '@hellodownloader/queue-utils';
+import IORedis from 'ioredis';
 import { QueueName } from '@hellodownloader/shared-types';
 import type { DownloadJobData } from '@hellodownloader/shared-types';
 import { processDownload } from './process-download';
 
-const connection = createRedisConnection(process.env.REDIS_URL ?? 'redis://localhost:6379');
+const connection = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379', {
+  maxRetriesPerRequest: null,
+});
 
 const worker = new Worker<DownloadJobData>(
   QueueName.DOWNLOAD,

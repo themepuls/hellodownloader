@@ -3,6 +3,11 @@ import { PrismaClient } from '../packages/database/src/generated/prisma/index.js
 
 const prisma = new PrismaClient();
 
+if (process.env.NODE_ENV === 'production' && !process.env.ADMIN_PASSWORD) {
+  console.error('Refusing to create admin in production without ADMIN_PASSWORD env var.');
+  process.exit(1);
+}
+
 const email = process.env.ADMIN_EMAIL ?? 'admin@hellodownloader.local';
 const password = process.env.ADMIN_PASSWORD ?? 'Admin123!';
 

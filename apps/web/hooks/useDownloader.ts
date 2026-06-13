@@ -328,9 +328,15 @@ export function useDownloader(initialUrl = '') {
       const downloadType = fresh.type ?? download.type;
       const fileExtension = extensionForDownloadType(downloadType);
 
+      const saveTitle =
+        fresh.title ??
+        download.title ??
+        (typeof metadata?.title === 'string' ? metadata.title : null) ??
+        `download-${download.id}`;
+
       const result = await saveCompletedFile(
         `/downloads/${download.id}/file`,
-        fresh.title ?? download.title ?? metadata?.title ?? `download-${download.id}`,
+        saveTitle,
         {
           downloadUrl: fresh.downloadUrl ?? download.downloadUrl,
           fileSizeBytes: fresh.fileSize ?? download.fileSize,

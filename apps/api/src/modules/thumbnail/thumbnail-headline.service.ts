@@ -7,6 +7,7 @@ import {
   type ThumbnailStrategyResult,
 } from '@hellodownloader/shared-types';
 import { AiApiSettingsService } from '../ai-api-settings/ai-api-settings.service';
+import { assertAllowedThumbnailUrl } from '../../utils/safe-url';
 
 import { ThumbnailPromptsService } from '../thumbnail-prompts/thumbnail-prompts.service';
 
@@ -63,7 +64,8 @@ export class ThumbnailHeadlineService {
 
     const userContent: ContentPart[] = [{ type: 'text', text: promptText }];
     if (hasImage) {
-      userContent.push({ type: 'image_url', image_url: { url: input.thumbnailUrl!.trim() } });
+      const safeThumbnailUrl = assertAllowedThumbnailUrl(input.thumbnailUrl!.trim());
+      userContent.push({ type: 'image_url', image_url: { url: safeThumbnailUrl } });
     }
 
     const res = await fetch('https://api.openai.com/v1/chat/completions', {

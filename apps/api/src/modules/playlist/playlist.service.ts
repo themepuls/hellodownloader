@@ -1,5 +1,4 @@
-import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { DownloadQueueService } from '../../queues/download.queue';
 import { PlaylistProcessorService } from '../../services/playlist-processor.service';
@@ -11,6 +10,7 @@ import * as path from 'path';
 import { deliverLocalFile } from '../../utils/file-delivery';
 import { StorageService } from '../../services/storage.service';
 import { fromR2Reference, isR2Reference } from '../../utils/r2-storage';
+import { assertSafeVideoUrl } from '../../utils/safe-url';
 
 @Injectable()
 export class PlaylistService {
@@ -21,48 +21,33 @@ export class PlaylistService {
     private downloadQueue: DownloadQueueService,
     private playlistProcessor: PlaylistProcessorService,
     private ytDlp: YtDlpService,
-    private jwtService: JwtService,
     private storage: StorageService,
   ) {}
-
-  resolveRequestUserId(
-    authenticatedUser: { id: string } | null | undefined,
-    accessToken?: string,
-  ): string {
-    if (authenticatedUser?.id) return authenticatedUser.id;
-    if (!accessToken) throw new UnauthorizedException();
-    try {
-      const payload = this.jwtService.verify<{ sub: string }>(accessToken);
-      if (!payload.sub) throw new UnauthorizedException();
-      return payload.sub;
-    } catch {
-      throw new UnauthorizedException();
-    }
-  }
 
   async create(userId: string, plan: PlanType, url: string, quality?: number) {
     if (!PLAN_LIMITS[plan].playlistZip) {
       throw new BadRequestException('Playlist export is not available on your plan');
     }
 
+    const safeUrl = assertSafeVideoUrl(url);
     const maxQuality = Math.min(quality ?? PLAN_LIMITS[plan].maxResolution, PLAN_LIMITS[plan].maxResolution);
 
     let title: string | undefined;
     try {
-      const meta = await this.ytDlp.extractMetadata(url);
+      const meta = await this.ytDlp.extractMetadata(safeUrl);
       title = meta.title;
     } catch {
       title = undefined;
     }
 
     const playlist = await this.prisma.playlist.create({
-      data: { userId, url, status: 'QUEUED', title },
+      data: { userId, url: safeUrl, status: 'QUEUED', title },
     });
 
     const jobData = {
       downloadId: playlist.id,
       userId,
-      url,
+      url: safeUrl,
       type: DownloadType.PLAYLIST,
       plan,
       quality: maxQuality,
@@ -75,7 +60,7 @@ export class PlaylistService {
       void this.playlistProcessor.process({
         playlistId: playlist.id,
         userId,
-        url,
+        url: safeUrl,
         plan,
         quality: maxQuality,
       });
@@ -94,9 +79,9 @@ export class PlaylistService {
     });
   }
 
-  async getStatus(id: string) {
-    const playlist = await this.prisma.playlist.findUnique({ where: { id } });
-    if (!playlist) throw new BadRequestException('Playlist not found');
+  async getStatus(userId: string, id: string) {
+    const playlist = await this.prisma.playlist.findFirst({ where: { id, userId } });
+    if (!playlist) throw new ForbiddenException('Playlist not found');
     return playlist;
   }
 

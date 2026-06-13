@@ -13,6 +13,7 @@
     "db:generate": "pnpm --filter @hellodownloader/database exec prisma generate --schema=prisma/schema.prisma",
     "db:push": "pnpm --filter @hellodownloader/database exec prisma db push --schema=prisma/schema.prisma",
     "db:migrate": "pnpm --filter @hellodownloader/database db:migrate",
+    "db:migrate:deploy": "pnpm --filter @hellodownloader/database exec prisma migrate deploy --schema=prisma/schema.prisma",
     "db:studio": "pnpm --filter @hellodownloader/database db:studio"
   },
   "devDependencies": {

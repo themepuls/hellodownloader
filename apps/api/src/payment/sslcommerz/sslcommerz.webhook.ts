@@ -1,7 +1,9 @@
 import { Body, Controller, HttpCode, Logger, Post } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { SslcommerzService } from './sslcommerz.service';
 import { Public } from '../../modules/auth/public.decorator';
 
+@SkipThrottle()
 @Controller('webhooks/sslcommerz')
 export class SslcommerzWebhookController {
   private readonly logger = new Logger(SslcommerzWebhookController.name);

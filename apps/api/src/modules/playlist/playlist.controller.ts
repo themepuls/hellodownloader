@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Post,
-  Query,
   Req,
   Res,
   StreamableFile,
@@ -13,7 +12,6 @@ import { Response } from 'express';
 import { PlaylistService } from './playlist.service';
 import { IsOptional, IsUrl, IsInt, Min, Max } from 'class-validator';
 import { PlanType } from '@hellodownloader/shared-types';
-import { Public } from '../auth/public.decorator';
 
 class CreatePlaylistDto {
   @IsUrl()
@@ -49,8 +47,8 @@ export class PlaylistController {
   }
 
   @Get(':id/status')
-  getStatus(@Param('id') id: string) {
-    return this.playlistService.getStatus(id);
+  getStatus(@Req() req: { user: { id: string } }, @Param('id') id: string) {
+    return this.playlistService.getStatus(req.user.id, id);
   }
 
   @Post(':id/confirm-save')
@@ -63,16 +61,13 @@ export class PlaylistController {
     return { ok: true };
   }
 
-  @Public()
   @Get(':id/file')
   async downloadFile(
-    @Req() req: { user?: { id: string } | null },
+    @Req() req: { user: { id: string } },
     @Param('id') id: string,
-    @Query('access_token') accessToken: string | undefined,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const userId = this.playlistService.resolveRequestUserId(req.user, accessToken);
-    const record = await this.playlistService.getFileForUser(userId, id);
+    const record = await this.playlistService.getFileForUser(req.user.id, id);
     const { stream, filename, safeName } = await this.playlistService.getFileStream(record.zipPath!);
 
     res.set({

@@ -14,23 +14,34 @@ export class CreditsService {
   }
 
   async deduct(userId: string, amount: number, reason: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user || user.credits < amount) {
-      throw new BadRequestException(`Insufficient credits. Need ${amount}, have ${user?.credits ?? 0}`);
-    }
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.updateMany({
+        where: { id: userId, credits: { gte: amount } },
+        data: { credits: { decrement: amount } },
+      });
 
-    const balance = user.credits - amount;
-    await this.prisma.$transaction([
-      this.prisma.user.update({
+      if (updated.count === 0) {
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+          select: { credits: true },
+        });
+        throw new BadRequestException(
+          `Insufficient credits. Need ${amount}, have ${user?.credits ?? 0}`,
+        );
+      }
+
+      const user = await tx.user.findUnique({
         where: { id: userId },
-        data: { credits: balance },
-      }),
-      this.prisma.creditLog.create({
-        data: { userId, amount: -amount, reason, balance },
-      }),
-    ]);
+        select: { credits: true },
+      });
+      const balance = user!.credits;
 
-    return { credits: balance };
+      await tx.creditLog.create({
+        data: { userId, amount: -amount, reason, balance },
+      });
+
+      return { credits: balance };
+    });
   }
 
   async add(userId: string, amount: number, reason: string) {

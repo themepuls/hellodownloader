@@ -119,9 +119,12 @@ export class SslcommerzService {
       throw new Error('SSLCommerz payment not valid');
     }
 
-    if (creds.storeId && creds.storePass && val_id) {
+    if (creds.storeId && creds.storePass) {
+      if (!val_id?.trim()) {
+        throw new Error('SSLCommerz val_id missing');
+      }
       const verifyRes = await fetch(
-        `${this.gatewayUrl(creds.isLive)}/validator/api/validationserverAPI.php?val_id=${val_id}&store_id=${creds.storeId}&store_passwd=${creds.storePass}&format=json`,
+        `${this.gatewayUrl(creds.isLive)}/validator/api/validationserverAPI.php?val_id=${encodeURIComponent(val_id)}&store_id=${encodeURIComponent(creds.storeId)}&store_passwd=${encodeURIComponent(creds.storePass)}&format=json`,
       );
       const verified = (await verifyRes.json()) as { status: string };
       if (verified.status !== 'VALID' && verified.status !== 'VALIDATED') {
