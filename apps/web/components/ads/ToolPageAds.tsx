@@ -41,7 +41,7 @@ export function ToolPageAdsTop({ page }: { page: CustomAdPage }) {
   if (!showTop) return null;
 
   return (
-    <div className={className ?? `${TOOL_BOX} mb-4`}>
+    <div className={`${TOOL_BOX} mb-4`}>
       <PageAdsTop page={page} />
     </div>
   );
