@@ -34,6 +34,12 @@ pnpm --filter @hellodownloader/api build
 
 echo "==> Build Web (requires TypeScript)..."
 cp .env apps/web/.env.production
+# Next.js rewrites must target local API, not public HTTPS URL
+echo 'API_PUBLIC_URL=http://127.0.0.1:4001' >> apps/web/.env.production
+grep -q '^NEXT_PUBLIC_API_URL=' apps/web/.env.production || echo 'NEXT_PUBLIC_API_URL=/api/v1' >> apps/web/.env.production
+sed -i 's|^NEXT_PUBLIC_API_URL=.*|NEXT_PUBLIC_API_URL=/api/v1|' apps/web/.env.production
+sed -i '/^API_PUBLIC_URL=/d' apps/web/.env.production
+echo 'API_PUBLIC_URL=http://127.0.0.1:4001' >> apps/web/.env.production
 pnpm --filter @hellodownloader/web build
 
 if [[ ! -f apps/web/.next/BUILD_ID ]]; then
