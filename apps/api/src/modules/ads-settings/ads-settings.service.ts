@@ -63,11 +63,25 @@ function mergeWithDefaults(stored: Partial<AdsAdminConfig> | null | undefined): 
   return { ...DEFAULT_ADS_ADMIN_CONFIG, ...(stored ?? {}) };
 }
 
+function hasStoredAdsConfig(stored: Partial<AdsAdminConfig> | null | undefined): boolean {
+  if (!stored || typeof stored !== 'object') return false;
+  return Object.keys(stored).length > 0;
+}
+
 function hasPersistedAds(config: Partial<AdsAdminConfig>): boolean {
   if (config.customAds?.length) return true;
   if (config.bannerAdTag?.trim() || config.bannerHtml?.trim()) return true;
   if (config.popupAdTag?.trim() || config.popupHtml?.trim()) return true;
   if (config.globalAdTag?.trim() || config.globalHeadHtml?.trim()) return true;
+  if (config.affiliateLinksEnabled) return true;
+  if (
+    config.bannerEnabled ||
+    config.popupEnabled ||
+    config.rewardedEnabled ||
+    config.customAdsEnabled
+  ) {
+    return hasStoredAdsConfig(config);
+  }
   return false;
 }
 
@@ -92,7 +106,7 @@ export class AdsSettingsService implements OnModuleInit {
       const filePath = this.configFilePath();
       if (!fs.existsSync(filePath)) return null;
       const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8')) as Partial<AdsAdminConfig>;
-      return hasPersistedAds(parsed) ? parsed : null;
+      return hasStoredAdsConfig(parsed) ? parsed : null;
     } catch (err) {
       this.logger.warn(
         `Could not read ads file backup: ${err instanceof Error ? err.message : err}`,
@@ -139,8 +153,8 @@ export class AdsSettingsService implements OnModuleInit {
 
     try {
       const row = await this.prisma.adsSettings.findUnique({ where: { id: 1 } });
-      const stored = mergeWithDefaults((row?.config ?? {}) as Partial<AdsAdminConfig>);
-      if (hasPersistedAds(stored)) return;
+      const raw = (row?.config ?? {}) as Partial<AdsAdminConfig>;
+      if (hasStoredAdsConfig(raw)) return;
 
       const restored = applyEnvOverrides(mergeWithDefaults(backup));
       await this.prisma.adsSettings.update({
@@ -169,8 +183,8 @@ export class AdsSettingsService implements OnModuleInit {
 
     const backup = this.readFileBackup();
     const merged = mergeWithDefaults(stored ?? backup);
-    const dbEmpty = !hasPersistedAds(stored ?? {});
-    const fileHasData = Boolean(backup && hasPersistedAds(backup));
+    const dbEmpty = !hasStoredAdsConfig(stored);
+    const fileHasData = Boolean(backup);
 
     if (dbEmpty && fileHasData) {
       return applyEnvOverrides(mergeWithDefaults(backup));
