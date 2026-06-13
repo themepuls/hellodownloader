@@ -79,7 +79,11 @@ pnpm --filter @hellodownloader/shared-types build
 pnpm --filter @hellodownloader/config build
 pnpm --filter @hellodownloader/auth-utils build
 pnpm --filter @hellodownloader/queue-utils build
-cp .env apps/web/.env.production
+# Web build: browser uses same-origin /api/v1; Next rewrites to local API only
+cat > apps/web/.env.production <<'EOF'
+NEXT_PUBLIC_API_URL=/api/v1
+API_PUBLIC_URL=http://127.0.0.1:4001
+EOF
 pnpm --filter @hellodownloader/api build
 pnpm --filter @hellodownloader/web build
 pnpm db:push

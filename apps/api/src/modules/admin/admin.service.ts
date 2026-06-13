@@ -754,12 +754,11 @@ export class AdminService {
       throw new BadRequestException('File must be an image');
     }
 
-    const monorepoRoot = path.resolve(__dirname, '../../../../..');
-    const uploadDir = path.join(monorepoRoot, 'apps/web/public/uploads');
-    fs.mkdirSync(uploadDir, { recursive: true });
+    const webPublicUploads = path.resolve(process.cwd(), '../web/public/uploads');
+    fs.mkdirSync(webPublicUploads, { recursive: true });
 
     const safeName = `${prefix}-${Date.now()}${ext}`;
-    const dest = path.join(uploadDir, safeName);
+    const dest = path.join(webPublicUploads, safeName);
     fs.writeFileSync(dest, file.buffer);
 
     return { url: `/uploads/${safeName}` };
