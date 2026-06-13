@@ -54,8 +54,39 @@ fi
 
 echo "==> [5/8] Install + database..."
 NODE_ENV=development pnpm install --ignore-scripts 2>/dev/null || NODE_ENV=development pnpm install --ignore-scripts
+
+set -a
+# shellcheck disable=SC1091
+source .env
+set +a
+
+if [[ -z "${DATABASE_URL:-}" ]]; then
+  echo "CRITICAL: DATABASE_URL missing in .env"
+  exit 1
+fi
+
+if [[ "${DATABASE_URL}" == file:* ]]; then
+  echo "CRITICAL: .env still uses SQLite (file:). Production needs PostgreSQL."
+  echo "  Example: DATABASE_URL=postgresql://hellodownloader:PASSWORD@localhost:5432/hellodownloader"
+  exit 1
+fi
+
+echo "  DATABASE_URL host: $(node -e "try{const u=new URL(process.env.DATABASE_URL);console.log(u.hostname+':'+u.port)}catch(e){console.log('invalid')}" 2>/dev/null || echo unknown)"
+
+if ! systemctl is-active --quiet postgresql 2>/dev/null; then
+  echo "  Starting PostgreSQL..."
+  systemctl start postgresql || true
+fi
+
 pnpm db:generate
-pnpm db:push
+
+echo "  Syncing schema (non-interactive)..."
+if ! PRISMA_ACCEPT_DATA_LOSS=1 pnpm db:push; then
+  echo ""
+  echo "WARN: db:push failed — site may still run if DB was already set up."
+  echo "      To reset DB (WIPES DATA): bash deploy/fix-db-migrate.sh"
+  echo "      Continuing with build..."
+fi
 
 echo "==> [6/8] Build packages, API, web..."
 pnpm --filter @hellodownloader/shared-types build
