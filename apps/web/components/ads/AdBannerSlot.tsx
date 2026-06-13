@@ -5,7 +5,6 @@ import { useAdsConfig } from '@/hooks/useAdsConfig';
 import { useClientMounted } from '@/hooks/useClientMounted';
 import { useUserStore } from '@/store/userStore';
 import { cn } from '@/lib/utils';
-import { BANNER_AD_MARGIN } from './ad-banner-styles';
 import { AdCodeSlot } from './AdCodeSlot';
 
 type AdBannerSlotProps = {
@@ -31,8 +30,7 @@ export function AdBannerSlot({ placement = 'banner', className }: AdBannerSlotPr
       css={banner.css}
       js={banner.js}
       className={cn(
-        BANNER_AD_MARGIN,
-        'relative min-h-[90px] overflow-hidden rounded-xl border border-border bg-card/80',
+        'relative mx-auto h-[90px] max-w-full overflow-hidden rounded-lg border border-border/40 bg-muted/15',
         className,
       )}
     />

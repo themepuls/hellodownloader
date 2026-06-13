@@ -31,7 +31,7 @@ function useShowToolAds(page: CustomAdPage) {
   return {
     showTop: hasTopCustom || bannerEnabled,
     showSidebar: hasSidebar,
-    showBottom: hasBottom || bannerEnabled,
+    showBottom: hasBottom,
   };
 }
 
@@ -41,13 +41,13 @@ export function ToolPageAdsTop({ page }: { page: CustomAdPage }) {
   if (!showTop) return null;
 
   return (
-    <div className={TOOL_BOX}>
+    <div className={className ?? `${TOOL_BOX} mb-4`}>
       <PageAdsTop page={page} />
     </div>
   );
 }
 
-/** Bottom ads inside the tool page box (above site footer). */
+/** Bottom ads inside the tool page box (above site footer). Custom bottom slots only — no duplicate network banner. */
 export function ToolPageAdsBottom({ page }: { page: CustomAdPage }) {
   const { showBottom } = useShowToolAds(page);
   if (!showBottom) return null;
@@ -72,10 +72,10 @@ export function ToolPageWithSidebar({ page, children, className }: ToolPageWithS
   return (
     <div className={className ?? `${TOOL_BOX} py-8`}>
       {showSidebar ? (
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
           <div className="min-w-0">{children}</div>
-          <aside className="min-w-0">
-            <PageAdsSidebar page={page} className="sticky top-24 space-y-3" />
+          <aside className="min-w-0 hidden lg:block">
+            <PageAdsSidebar page={page} className="sticky top-24 space-y-4" />
           </aside>
         </div>
       ) : (

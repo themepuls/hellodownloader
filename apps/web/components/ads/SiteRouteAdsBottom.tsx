@@ -22,12 +22,8 @@ export function SiteRouteAdsBottom() {
   }
 
   const hasCustomBottom = activeCustomAds(config.customAds, { page, position: 'bottom' }).length > 0;
-  const banner = config.banner;
-  const hasBanner =
-    Boolean(banner?.enabled) &&
-    hasAdContent(banner?.adTag ?? '', banner?.html ?? '', banner?.css ?? '', banner?.js ?? '');
 
-  if (!hasCustomBottom && !hasBanner) return null;
+  if (!hasCustomBottom) return null;
 
   return (
     <div className="border-t border-border/60 bg-background/40">

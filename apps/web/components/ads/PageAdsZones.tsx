@@ -23,12 +23,11 @@ export function PageAdsSidebar({ page, className }: PageAdsZoneProps) {
   return <CustomAdsSlot page={page} position="sidebar" className={className} />;
 }
 
-/** Bottom banner zone: custom banner ads + network banner code. */
+/** Bottom zone: custom ads only (network banner stays top-only to avoid duplicates). */
 export function PageAdsBottom({ page, className }: PageAdsZoneProps) {
   return (
     <div className={className}>
       <CustomAdsSlot page={page} position="bottom" />
-      <AdBannerSlot placement={`${page}-bottom`} />
     </div>
   );
 }

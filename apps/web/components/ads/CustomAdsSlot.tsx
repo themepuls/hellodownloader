@@ -11,7 +11,7 @@ import {
 import { useAdsConfig } from '@/hooks/useAdsConfig';
 import { useClientMounted } from '@/hooks/useClientMounted';
 import { useUserStore } from '@/store/userStore';
-import { BANNER_AD_MARGIN } from './ad-banner-styles';
+import { cn } from '@/lib/utils';
 
 type CustomAdsSlotProps = {
   page: CustomAdPage;
@@ -31,35 +31,34 @@ export function CustomAdsSlot({ page, position, className }: CustomAdsSlotProps)
   const items = activeCustomAds(config.customAds, { page, position });
   if (!items.length) return null;
 
-  const banners = items.filter((item) => item.format === 'banner');
-  const squares = items.filter((item) => item.format === 'square');
-
   return (
-    <div className={className ?? 'space-y-3'}>
-      {banners.map((ad) => (
-        <CustomAdCard key={ad.id} ad={ad} />
-      ))}
-      {squares.map((ad) => (
-        <CustomAdCard key={ad.id} ad={ad} />
+    <div className={className ?? 'space-y-4'}>
+      {items.map((ad) => (
+        <CustomAdCard key={ad.id} ad={ad} position={position} />
       ))}
     </div>
   );
 }
 
-function CustomAdCard({ ad }: { ad: CustomAdItem }) {
-  const isBanner = ad.format === 'banner';
-  const frameClass = isBanner
-    ? `${BANNER_AD_MARGIN} relative w-full overflow-hidden rounded-xl border border-border bg-card/80 aspect-[728/90] min-h-[72px]`
-    : 'relative w-full overflow-hidden rounded-xl border border-border bg-card/80 aspect-square max-w-[320px] mx-auto lg:mx-0';
+function CustomAdCard({ ad, position }: { ad: CustomAdItem; position: CustomAdPosition }) {
+  const isBannerSlot = ad.format === 'banner' || position === 'top' || position === 'bottom';
+  const isSidebar = position === 'sidebar';
+
+  const frameClass = cn(
+    'relative w-full overflow-hidden rounded-lg border border-border/40 bg-muted/15',
+    isBannerSlot && 'mx-auto h-[90px] max-w-full',
+    isSidebar && !isBannerSlot && 'mx-auto aspect-square max-h-[220px] max-w-[220px]',
+    isSidebar && isBannerSlot && 'h-auto min-h-[120px] max-h-[280px] aspect-[4/5]',
+  );
 
   const image = (
     <Image
       src={ad.imageUrl}
       alt={ad.title.trim() || 'Advertisement'}
       fill
-      className="object-cover"
+      className="object-contain p-1.5"
       unoptimized
-      sizes={isBanner ? '100vw' : '320px'}
+      sizes={isBannerSlot ? '(max-width: 768px) 100vw, 728px' : '240px'}
     />
   );
 
