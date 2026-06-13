@@ -88,7 +88,7 @@ if [[ ! -f .env ]]; then
 fi
 
 echo "==> Installing dependencies & building..."
-pnpm install --frozen-lockfile 2>/dev/null || pnpm install
+pnpm install --ignore-scripts --frozen-lockfile 2>/dev/null || pnpm install --ignore-scripts
 pnpm db:generate
 pnpm --filter @hellodownloader/shared-types build
 pnpm --filter @hellodownloader/config build

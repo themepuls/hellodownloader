@@ -72,7 +72,8 @@ if [[ ! -f .env ]]; then
 fi
 
 echo "==> [6/8] Build app..."
-pnpm install --frozen-lockfile 2>/dev/null || pnpm install
+# Skip postinstall db:push — production uses migrate deploy (avoids Prisma P3005)
+pnpm install --ignore-scripts --frozen-lockfile 2>/dev/null || pnpm install --ignore-scripts
 pnpm db:generate
 pnpm --filter @hellodownloader/shared-types build
 pnpm --filter @hellodownloader/config build
