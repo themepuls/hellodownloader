@@ -42,14 +42,35 @@ NEXT_PUBLIC_API_URL=/api/v1
 API_PUBLIC_URL=http://127.0.0.1:4001
 EOF
 
-echo "==> [4/8] Nginx — serve /uploads/ from disk..."
-if [[ -f deploy/nginx.hellodownloader.conf ]]; then
-  cp deploy/nginx.hellodownloader.conf /etc/nginx/sites-available/hellodownloader
-  ln -sf /etc/nginx/sites-available/hellodownloader /etc/nginx/sites-enabled/hellodownloader
-  # Ensure alias path matches this server
-  sed -i "s|/var/www/hellodownloader|${APP_DIR}|g" /etc/nginx/sites-available/hellodownloader
+echo "==> [4/8] Nginx — add /uploads/ alias (keep existing SSL config)..."
+UPLOADS_BLOCK='    location /uploads/ {
+        alias APP_DIR_PLACEHOLDER/apps/web/public/uploads/;
+        expires 7d;
+        add_header Cache-Control "public";
+        access_log off;
+    }
+'
+UPLOADS_BLOCK="${UPLOADS_BLOCK//APP_DIR_PLACEHOLDER/${APP_DIR}}"
+NGINX_SITE="/etc/nginx/sites-available/hellodownloader"
+
+if [[ -f "${NGINX_SITE}" ]]; then
+  if ! grep -q 'location /uploads/' "${NGINX_SITE}"; then
+    # Insert uploads block before first "location /" in main hellodownloader.com server
+    sed -i "/server_name hellodownloader.com;/,/location \//{
+      /location \//i\\
+${UPLOADS_BLOCK}
+    }" "${NGINX_SITE}" 2>/dev/null || true
+  fi
+  sed -i "s|/var/www/hellodownloader|${APP_DIR}|g" "${NGINX_SITE}"
   nginx -t
   systemctl reload nginx
+elif [[ -f deploy/nginx.hellodownloader.conf ]]; then
+  cp deploy/nginx.hellodownloader.conf "${NGINX_SITE}"
+  sed -i "s|/var/www/hellodownloader|${APP_DIR}|g" "${NGINX_SITE}"
+  ln -sf "${NGINX_SITE}" /etc/nginx/sites-enabled/hellodownloader
+  nginx -t
+  systemctl reload nginx
+  echo "  (fresh nginx config — run bash deploy/fix-ssl.sh for HTTPS)"
 fi
 
 echo "==> [5/8] Install + database..."
@@ -122,7 +143,8 @@ echo ok > "${TEST_FILE}"
 echo ""
 echo "============================================"
 echo " DONE"
-echo " 1. Hard refresh: https://hellodownloader.com/admin/ads"
-echo " 2. Upload image again (old paths may 404 — re-upload)"
-echo " 3. Admin login: cat /root/hellodownloader-admin.txt"
+echo " 1. If https:// fails: bash deploy/fix-ssl.sh"
+echo " 2. Hard refresh: https://hellodownloader.com/admin/ads"
+echo " 3. Upload image again (old paths may 404 — re-upload)"
+echo " 4. Admin login: cat /root/hellodownloader-admin.txt"
 echo "============================================"
