@@ -41,6 +41,7 @@ cat > apps/web/.env.production <<'EOF'
 NEXT_PUBLIC_API_URL=/api/v1
 API_PUBLIC_URL=http://127.0.0.1:4001
 NEXT_PUBLIC_SITE_URL=https://hellodownloader.com
+WEB_URL=https://hellodownloader.com
 EOF
 
 echo "==> [4/8] Nginx — add /uploads/ alias (keep existing SSL config)..."
