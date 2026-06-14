@@ -452,33 +452,49 @@ export class YtDlpService {
     ].join('/');
   }
 
-  /** Facebook/Instagram/TikTok — prefer progressive H.264 (hd/sd) over VP9 DASH. */
+  /** Height-capped selectors — exact match first, then best at or below cap. */
+  private buildSocialHeightCap(maxHeight: number): string {
+    return [
+      `bestvideo[height=${maxHeight}]+bestaudio/`,
+      `bestvideo[width=${maxHeight}]+bestaudio/`,
+      `best[height=${maxHeight}][acodec!=none]/`,
+      `best[width=${maxHeight}][acodec!=none]/`,
+      `bestvideo[vcodec^=avc1][height=${maxHeight}]+bestaudio/`,
+      `bestvideo[vcodec^=avc1][width=${maxHeight}]+bestaudio/`,
+      `bestvideo[vcodec^=avc1][height<=${maxHeight}]+bestaudio/`,
+      `bestvideo[vcodec^=avc1][width<=${maxHeight}]+bestaudio/`,
+      `bestvideo[height<=${maxHeight}]+bestaudio/`,
+      `bestvideo[width<=${maxHeight}]+bestaudio/`,
+      `best[height<=${maxHeight}][acodec!=none]/`,
+      `best[width<=${maxHeight}][acodec!=none]/`,
+    ].join('');
+  }
+
+  /** Facebook/Instagram/TikTok — prefer exact format/height over generic hd/sd aliases. */
   private buildSocialFormatSelector(options: DownloadOptions): string {
     const { format, maxHeight } = options;
+    const cap = maxHeight ?? 4320;
+    const heightChain = maxHeight ? this.buildSocialHeightCap(maxHeight) : '';
+
     if (format) {
-      // Never fall back to bare format id — video-only DASH streams have no audio.
       return [
-        `best[format_id=${format}][acodec!=none]`,
-        `${format}+bestaudio`,
-        `bestvideo[format_id=${format}]+bestaudio`,
-        'hd',
-        'sd',
-        'best[acodec!=none]',
-        'bestvideo+bestaudio/best',
-      ].join('/');
+        `best[format_id=${format}][acodec!=none]/`,
+        `${format}+bestaudio/`,
+        `bestvideo[format_id=${format}]+bestaudio/`,
+        heightChain,
+        'best[acodec!=none]/bestvideo+bestaudio/best',
+      ]
+        .filter(Boolean)
+        .join('');
     }
     if (maxHeight) {
       return [
-        'hd',
-        'sd',
-        `bestvideo[vcodec^=avc1][height<=${maxHeight}]+bestaudio/`,
-        `bestvideo[vcodec^=avc1][width<=${maxHeight}]+bestaudio/`,
-        `bestvideo[height<=${maxHeight}]+bestaudio/`,
-        `bestvideo[width<=${maxHeight}]+bestaudio/`,
-        `best[height<=${maxHeight}][acodec!=none]/`,
-        `best[width<=${maxHeight}][acodec!=none]/`,
+        heightChain,
+        // Generic aliases last — they ignore the user's chosen resolution.
+        'hd/',
+        'sd/',
         'best[acodec!=none]/bestvideo+bestaudio/best',
-      ].join('/');
+      ].join('');
     }
     return 'hd/sd/bestvideo[vcodec^=avc1]+bestaudio/bestvideo+bestaudio/best';
   }
@@ -1448,9 +1464,11 @@ export class YtDlpService {
       await runDownload(options);
     } catch (err) {
       const msg = YtDlpService.parseError(err);
+      const platform = detectPlatform(url);
+      const social = isSocialPlatform(platform);
       if (
         options.format &&
-        /not available|quality too low/i.test(msg)
+        /not available|quality too low|requested format/i.test(msg)
       ) {
         this.logger.warn(
           `Format ${options.format} unavailable at ${options.maxHeight ?? '?'}p — retrying with height cap only`,
@@ -1458,7 +1476,8 @@ export class YtDlpService {
         await runDownload({ ...options, format: undefined });
       } else if (
         options.maxHeight &&
-        /not available|quality too low/i.test(msg)
+        /not available|quality too low|requested format/i.test(msg) &&
+        !social
       ) {
         this.logger.warn(
           `Quality cap ${options.maxHeight}p unavailable — retrying with best available format`,

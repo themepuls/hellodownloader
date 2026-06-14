@@ -205,8 +205,8 @@ export function getVideoQualityOptions(
       badge: qualityBadge(resolution),
       ext: 'MP4',
       filesize: filesize || undefined,
-      // Only pass format id when audio is bundled — server merges audio for DASH video-only.
-      formatId: isCombined(best) ? best.format_id : '',
+      // Always pass format id — server merges audio for DASH video-only streams.
+      formatId: best.format_id,
     });
   }
 
