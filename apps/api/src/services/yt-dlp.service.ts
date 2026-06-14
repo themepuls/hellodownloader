@@ -644,6 +644,11 @@ export class YtDlpService {
     );
   }
 
+  private shouldCompatTranscode(): boolean {
+    const v = process.env.DOWNLOAD_COMPAT_TRANSCODE?.trim().toLowerCase();
+    return v === '1' || v === 'true' || v === 'yes';
+  }
+
   /** Re-encode VP9/AV1/HEVC MP4 to H.264+AAC for QuickTime, Photos, etc. */
   async finishCompatTranscode(filePath: string): Promise<string> {
     return this.ensurePlayableMp4(filePath);
@@ -668,7 +673,17 @@ export class YtDlpService {
     }
 
     if (this.needsCompatTranscode(codecs)) {
+      if (!this.shouldCompatTranscode()) {
+        this.logger.log(
+          `Fast download: keeping ${codecs.video ?? 'unknown'} as-is (set DOWNLOAD_COMPAT_TRANSCODE=true for QuickTime H.264)`,
+        );
+        return filePath;
+      }
       return this.ensureCompatibleMp4(filePath, options);
+    }
+
+    if (!this.shouldCompatTranscode()) {
+      return filePath;
     }
 
     const dir = path.dirname(filePath);
@@ -1476,7 +1491,7 @@ export class YtDlpService {
     } else {
       formatArgs.push(
         '-f',
-        'best[ext=mp4][acodec!=none]/bestvideo[vcodec^=avc1][ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best',
+        'best[ext=mp4][vcodec^=avc1][acodec!=none]/bestvideo[vcodec^=avc1][ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4][acodec!=none]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best',
         '--merge-output-format',
         'mp4',
         '--postprocessor-args',
@@ -1536,25 +1551,11 @@ export class YtDlpService {
       return filePath;
     }
 
-    options.onProgress?.(90);
+    options.onProgress?.(95);
     try {
-      const platform = detectPlatform(url);
-      const social = isSocialPlatform(platform);
-      if (social) {
-        const codecs = await this.probeStreamCodecs(filePath);
-        const video = codecs.video?.toLowerCase() ?? '';
-        const alreadyCompat =
-          Boolean(codecs.audio) &&
-          (video.includes('h264') || video.includes('avc')) &&
-          !this.needsCompatTranscode(codecs);
-        if (alreadyCompat) {
-          options.onProgress?.(98);
-          return filePath;
-        }
-      }
       filePath = await this.ensurePlayableMp4(filePath, {
         onProgress: options.onProgress,
-        transcodePreset: social ? 'veryfast' : undefined,
+        transcodePreset: isSocialPlatform(detectPlatform(url)) ? 'veryfast' : undefined,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);

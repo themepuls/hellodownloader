@@ -123,12 +123,7 @@ export function DownloadWorkspace({
         ? `fetching from ${socialSourceLabel} on server — often 1–2 min even for small files`
         : 'preparing download on server';
     }
-    if (progress >= 90) {
-      const longOrHeavy = (meta?.duration ?? 0) > 600 || progress >= 92;
-      return longOrHeavy
-        ? 'converting video for compatibility — HD/4K can take 5–15 min, please wait'
-        : 'converting video for compatibility — almost done';
-    }
+    if (progress >= 90) return 'finishing download on server';
     if (progress >= 85) return 'saving file on server';
     return isSocial ? `downloading from ${socialSourceLabel} on server` : 'downloading on server';
   };
