@@ -438,8 +438,10 @@ export class YtDlpService {
    * Do not require both width AND height <= max — that rejects 854×480 and 1080×1920 streams.
    */
   private buildHeightCappedFallbacks(maxHeight: number): string {
-    // Merge DASH first — combined 360p MP4 (format 18) must not win over 720p video+audio.
+    // Prefer H.264 first — avoids slow VP9→H.264 transcode on the server.
     return [
+      `bestvideo[vcodec^=avc1][height<=${maxHeight}]+bestaudio[ext=m4a]/`,
+      `bestvideo[vcodec^=avc1][width<=${maxHeight}]+bestaudio[ext=m4a]/`,
       `bestvideo[height<=${maxHeight}][ext=mp4]+bestaudio[ext=m4a]/`,
       `bestvideo[width<=${maxHeight}][ext=mp4]+bestaudio[ext=m4a]/`,
       `bestvideo[height<=${maxHeight}]+bestaudio/`,
@@ -689,6 +691,22 @@ export class YtDlpService {
     return filePath;
   }
 
+  private resolveTranscodePreset(
+    filePath: string,
+    requested?: string,
+  ): 'ultrafast' | 'veryfast' | 'fast' {
+    if (requested === 'ultrafast' || requested === 'veryfast' || requested === 'fast') {
+      return requested;
+    }
+    try {
+      const size = fs.statSync(filePath).size;
+      if (size > 50 * 1024 * 1024) return 'ultrafast';
+    } catch {
+      // ignore
+    }
+    return 'veryfast';
+  }
+
   private async ensureCompatibleMp4(
     filePath: string,
     options: { onProgress?: (percent: number) => void; transcodePreset?: string } = {},
@@ -705,36 +723,57 @@ export class YtDlpService {
     const dir = path.dirname(filePath);
     const base = path.basename(filePath, '.mp4');
     const tempPath = path.join(dir, `${base}.compat.mp4`);
+    const preset = this.resolveTranscodePreset(filePath, options.transcodePreset);
 
     this.logger.log(
-      `Transcoding ${path.basename(filePath)} (${codecs.video ?? 'unknown'}/${codecs.audio ?? 'none'}) to H.264+AAC`,
+      `Transcoding ${path.basename(filePath)} (${codecs.video ?? 'unknown'}/${codecs.audio ?? 'none'}) to H.264+AAC [${preset}]`,
     );
 
     options.onProgress?.(92);
 
-    await execa(this.ffmpegPath, [
-      '-i',
-      filePath,
-      '-c:v',
-      'libx264',
-      '-preset',
-      options.transcodePreset ?? 'fast',
-      '-crf',
-      '23',
-      '-c:a',
-      'aac',
-      '-b:a',
-      '128k',
-      '-movflags',
-      '+faststart',
-      '-y',
-      tempPath,
-    ]);
+    let transcodeProgress = 92;
+    const heartbeat = options.onProgress
+      ? setInterval(() => {
+          if (transcodeProgress < 97) {
+            transcodeProgress += 1;
+            options.onProgress?.(transcodeProgress);
+          }
+        }, 10_000)
+      : null;
 
-    fs.rmSync(filePath, { force: true });
-    fs.renameSync(tempPath, filePath);
-    options.onProgress?.(97);
-    return filePath;
+    try {
+      await execa(
+        this.ffmpegPath,
+        [
+          '-i',
+          filePath,
+          '-c:v',
+          'libx264',
+          '-preset',
+          preset,
+          '-crf',
+          '23',
+          '-threads',
+          '0',
+          '-c:a',
+          'aac',
+          '-b:a',
+          '128k',
+          '-movflags',
+          '+faststart',
+          '-y',
+          tempPath,
+        ],
+        { timeout: 1_800_000 },
+      );
+
+      fs.rmSync(filePath, { force: true });
+      fs.renameSync(tempPath, filePath);
+      options.onProgress?.(98);
+      return filePath;
+    } finally {
+      if (heartbeat) clearInterval(heartbeat);
+    }
   }
 
   private async probeVideoShortEdge(filePath: string): Promise<number | null> {
@@ -1515,7 +1554,7 @@ export class YtDlpService {
       }
       filePath = await this.ensurePlayableMp4(filePath, {
         onProgress: options.onProgress,
-        transcodePreset: social ? 'veryfast' : 'fast',
+        transcodePreset: social ? 'veryfast' : undefined,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -1526,7 +1565,7 @@ export class YtDlpService {
         if (!filePath) throw new Error('Download produced no files');
         filePath = await this.ensurePlayableMp4(filePath, {
           onProgress: options.onProgress,
-          transcodePreset: isSocialPlatform(detectPlatform(url)) ? 'veryfast' : 'fast',
+          transcodePreset: isSocialPlatform(detectPlatform(url)) ? 'veryfast' : undefined,
         });
       } else {
         throw err;
