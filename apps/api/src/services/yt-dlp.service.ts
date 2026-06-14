@@ -454,17 +454,19 @@ export class YtDlpService {
     ].join('/');
   }
 
-  /** Height-capped selectors — exact match first, then best at or below cap. */
+  /** Height-capped selectors — H.264 first so files play in QuickTime/Windows without slow re-encode. */
   private buildSocialHeightCap(maxHeight: number): string {
     return [
+      `bestvideo[vcodec^=avc1][height=${maxHeight}]+bestaudio/`,
+      `bestvideo[vcodec^=avc1][width=${maxHeight}]+bestaudio/`,
+      `best[height=${maxHeight}][vcodec^=avc1][acodec!=none]/`,
+      `best[width=${maxHeight}][vcodec^=avc1][acodec!=none]/`,
+      `bestvideo[vcodec^=avc1][height<=${maxHeight}]+bestaudio/`,
+      `bestvideo[vcodec^=avc1][width<=${maxHeight}]+bestaudio/`,
       `bestvideo[height=${maxHeight}]+bestaudio/`,
       `bestvideo[width=${maxHeight}]+bestaudio/`,
       `best[height=${maxHeight}][acodec!=none]/`,
       `best[width=${maxHeight}][acodec!=none]/`,
-      `bestvideo[vcodec^=avc1][height=${maxHeight}]+bestaudio/`,
-      `bestvideo[vcodec^=avc1][width=${maxHeight}]+bestaudio/`,
-      `bestvideo[vcodec^=avc1][height<=${maxHeight}]+bestaudio/`,
-      `bestvideo[vcodec^=avc1][width<=${maxHeight}]+bestaudio/`,
       `bestvideo[height<=${maxHeight}]+bestaudio/`,
       `bestvideo[width<=${maxHeight}]+bestaudio/`,
       `best[height<=${maxHeight}][acodec!=none]/`,
@@ -480,6 +482,8 @@ export class YtDlpService {
 
     if (format) {
       return [
+        `best[format_id=${format}][vcodec^=avc1][acodec!=none]/`,
+        `bestvideo[vcodec^=avc1][format_id=${format}]+bestaudio/`,
         `best[format_id=${format}][acodec!=none]/`,
         `${format}+bestaudio/`,
         `bestvideo[format_id=${format}]+bestaudio/`,
@@ -631,21 +635,33 @@ export class YtDlpService {
 
   private needsCompatTranscode(codecs: { video?: string; audio?: string }): boolean {
     const video = codecs.video?.toLowerCase() ?? '';
-    if (!video) return false;
-    if (video.includes('h264') || video.includes('avc')) return false;
-    return (
-      video.includes('vp9') ||
-      video.includes('vp09') ||
-      video.includes('av1') ||
-      video.includes('av01') ||
-      video.includes('hevc') ||
-      video.includes('hev1') ||
-      video.includes('h265')
-    );
+    const audio = codecs.audio?.toLowerCase() ?? '';
+    const videoOk =
+      !video || video.includes('h264') || video.includes('avc');
+    const audioOk =
+      !audio ||
+      audio.includes('aac') ||
+      audio.includes('mp4a') ||
+      audio.includes('m4a');
+    if (videoOk && audioOk) return false;
+    if (!videoOk) {
+      return (
+        video.includes('vp9') ||
+        video.includes('vp09') ||
+        video.includes('av1') ||
+        video.includes('av01') ||
+        video.includes('hevc') ||
+        video.includes('hev1') ||
+        video.includes('h265')
+      );
+    }
+    // Opus/Vorbis in MP4 breaks QuickTime, Windows Media Player, etc.
+    return audio.includes('opus') || audio.includes('vorbis');
   }
 
-  private shouldCompatTranscode(): boolean {
-    const v = process.env.DOWNLOAD_COMPAT_TRANSCODE?.trim().toLowerCase();
+  /** Optional faststart remux for already-compatible H.264 files (copy-only, seconds). */
+  private shouldFaststartRemux(): boolean {
+    const v = process.env.DOWNLOAD_COMPAT_FASTSTART?.trim().toLowerCase();
     return v === '1' || v === 'true' || v === 'yes';
   }
 
@@ -673,16 +689,13 @@ export class YtDlpService {
     }
 
     if (this.needsCompatTranscode(codecs)) {
-      if (!this.shouldCompatTranscode()) {
-        this.logger.log(
-          `Fast download: keeping ${codecs.video ?? 'unknown'} as-is (set DOWNLOAD_COMPAT_TRANSCODE=true for QuickTime H.264)`,
-        );
-        return filePath;
-      }
+      this.logger.log(
+        `Converting ${codecs.video ?? 'unknown'}/${codecs.audio ?? 'none'} to H.264+AAC for player compatibility`,
+      );
       return this.ensureCompatibleMp4(filePath, options);
     }
 
-    if (!this.shouldCompatTranscode()) {
+    if (!this.shouldFaststartRemux()) {
       return filePath;
     }
 
@@ -715,11 +728,11 @@ export class YtDlpService {
     }
     try {
       const size = fs.statSync(filePath).size;
-      if (size > 50 * 1024 * 1024) return 'ultrafast';
+      if (size > 25 * 1024 * 1024) return 'ultrafast';
     } catch {
       // ignore
     }
-    return 'veryfast';
+    return 'ultrafast';
   }
 
   private async ensureCompatibleMp4(
